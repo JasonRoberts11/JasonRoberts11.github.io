@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Neural Network</title>
+         <style>
+             body{
+                 font-family: Arial, Helvetica, sans-serif	;
+                    padding: 0px 0px;
+                 background: linear-gradient(to right, #edf0ff,#ffedfc);
+                 perspective: 1000px;
+                 perspective-origin: top;
+             }
+        </style>
+    </head>
+    <body>
+        <h1>Neural Network</h1>
+        <div class="param">
+        <p>Num of Groups:<input type="number" id="num_group" value="2"></p>
+            <p><button id = "but_ref">Refresh</button></p>
+        </div>
+        <canvas id = "nerview"></canvas>
+        <script>
+            var view_size = 300;
+            var view = document.getElementById("nerview");
+            var ctx = view.getContext("2d");
+            var but_ref = document.getElementById("but_ref");
+
+            but_ref.onclick = function refresh(){
+                //clearInterval(up8);
+                 
+            }
+            
+            var space3d= new Array(50);
+            var xrot=0;
+            var yrot=0;
+            var fov =250;
+            
+            
+            
+            
+            
+            var upd8int = setInterval(function(){upd8()},10);
+            
+            view.setAttribute("width",view_size);
+            view.setAttribute("height",view_size);
+            ctx.strokeStyle= "#00FF00";
+            ctx.fillStyle="#FF0000";
+            ctx.lineWidth=1;
+            ctx.clearRect(0,0,view_size,view_size);
+            ctx.fillText("FPS: 1293427",0,20,view_size);
+            for(var i = 0; i <50;i++){
+                space3d[i]= new Array(Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),0,0,0,100);
+            }
+            
+            function upd8(){
+                ctx.fillStyle="#FF0000";
+                ctx.clearRect(0,0,view_size,view_size);
+                ctx.fillText("FPS:"+yrot,0,20,view_size);
+               paint3d();
+                xrot+=0.02;
+                yrot+=0.01;
+                
+                addline(Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),10);
+                 //console.log(yrot);
+            }
+            
+            
+            
+            
+            
+            function paint3d(){
+                ctx.strokeStyle = "#0000FF";
+                ctx.beginPath();
+                for(var i = 0; i <space3d.length-1; i+=2){
+                    moveto(i);
+                    lineto(i+1);
+                }
+                ctx.stroke();
+            }
+            
+            
+            
+            
+            
+            function clearspace(){
+                space3d = [];
+            }
+            
+            function addline(x1,y1,z1,x2,y2,z2,c){
+                space3d.push([x1,y1,z1,0,0,0,c]);
+                space3d.push([x2,y2,z2,0,0,0,0]);
+            }
+            
+            function get3dx(x,y,z){
+            return (getclose(x,y,z)*((Math.cos(xrot)*x)-(Math.sin(xrot)*y))+view_size/2);
+        }
+            function get3dy(x,y,z){
+            return (getclose(x,y,z)*((((Math.cos(xrot)*y)+(Math.sin(xrot)*x))*Math.cos(yrot)+Math.sin(yrot)*z))+view_size/2);
+        }
+            function getclose(x,y,z){
+            return (fov/((Math.cos(xrot)*y+Math.sin(xrot)*x)*Math.sin(yrot)+fov-(z*Math.cos(yrot))));
+        }
+            function getxind(i){
+            return get3dx(space3d[i][0],space3d[i][1],space3d[i][2]);
+        }
+            function getyind(i){
+            return get3dy(space3d[i][0],space3d[i][1],space3d[i][2]);
+        }
+            function lineto(i){
+            ctx.lineTo(getxind(i),getyind(i));
+        }
+            function moveto(i){
+            ctx.moveTo(getxind(i),getyind(i));
+        }
+             
+            
+            
+            
+        </script>
+    </body>
+</html>
