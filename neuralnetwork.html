@@ -16,7 +16,10 @@
         <h1>Neural Network</h1>
         <div class="param">
         <p>Num of Groups:<input type="number" id="num_group" value="2"></p>
+            <p>Max Length<input type="number" id="tlen" value="10"></p>
             <p><button id = "but_ref">Refresh</button></p>
+        </div>
+        <div id= "lists">
         </div>
         <canvas id = "nerview"></canvas>
         <script>
@@ -24,18 +27,32 @@
             var view = document.getElementById("nerview");
             var ctx = view.getContext("2d");
             var but_ref = document.getElementById("but_ref");
-
+            var numofgroups = document.getElementById("num_group");
+            var tlen = document.getElementById("tlen");
+            var list_htm = document.getElementById("lists");
             but_ref.onclick = function refresh(){
-                //clearInterval(up8);
-                 
+                //clearInterval(upd8int);
+                console.log(numofgroups.value);
+               var html = `<div>
+            <p><input type="text" id="dom_0" value = "Area_1"></p>
+            <p><textarea rows ="6" cols = "25"></textarea></p>
+            </div>`
+               for(var i = 1;i< numofgroups.value;i++){
+                 html+=`<div>
+            <p><input type="text" id="dom_`+i+`" value = "Area_`+(i+1)+`"></p>
+            <p><textarea rows ="6" cols = "25"></textarea></p>
+            </div>`
+               }
+                 list_htm.innerHTML = html;
             }
             
             var space3d= new Array(50);
             var xrot=0;
             var yrot=0;
             var fov =250;
-            
-            
+            var nods=[5];
+            //Neurons will be organized as follows
+            //(alldifferentstages()
             
             
             
@@ -56,16 +73,32 @@
                 ctx.fillStyle="#FF0000";
                 ctx.clearRect(0,0,view_size,view_size);
                 ctx.fillText("FPS:"+yrot,0,20,view_size);
-               paint3d();
+                paint3d();
                 xrot+=0.02;
                 yrot+=0.01;
-                
-                addline(Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),10);
+                /*addline(Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),10);*/
                  //console.log(yrot);
             }
-            
-            
-            
+            function drawneurons(){
+                
+                
+                
+                
+                
+            }
+            funtion resetneurons(){
+               var len = 0;
+                var numout = numofgroups.value;
+                if(nods.length == 0){
+                    len += (tlen*26)*numout;
+                } else {
+                    len+=
+                    for(var i =0;i<numout-1;i++){
+                    len += nods[i]*nods[i+1];
+                    }
+                    
+                }
+            }
             
             
             function paint3d(){
@@ -77,20 +110,13 @@
                 }
                 ctx.stroke();
             }
-            
-            
-            
-            
-            
             function clearspace(){
                 space3d = [];
             }
-            
             function addline(x1,y1,z1,x2,y2,z2,c){
                 space3d.push([x1,y1,z1,0,0,0,c]);
                 space3d.push([x2,y2,z2,0,0,0,0]);
             }
-            
             function get3dx(x,y,z){
             return (getclose(x,y,z)*((Math.cos(xrot)*x)-(Math.sin(xrot)*y))+view_size/2);
         }
