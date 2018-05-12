@@ -2,59 +2,87 @@
 <html>
     <head>
         <title>Neural Network</title>
+        <link rel="stylesheet" type="text/css" href="robstyle.css">
          <style>
              body{
                  font-family: Arial, Helvetica, sans-serif	;
                     padding: 0px 0px;
                  background: linear-gradient(to right, #edf0ff,#ffedfc);
-                 perspective: 1000px;
-                 perspective-origin: top;
              }
         </style>
+        
     </head>
     <body>
+        	<div class="topnav">
+				<a href="index.html">Main</a>
+                <a href="neuralnetwork.html">NeuralNetwork</a>
+			</div>
+        
         <h1>Neural Network</h1>
         <div class="param">
         <p>Num of Groups:<input type="number" id="num_group" value="2"></p>
-            <p>Max Length<input type="number" id="tlen" value="10"></p>
+            <p>Max Length<input type="number" id="tlen" value="7"></p>
             <p><button id = "but_ref">Refresh</button></p>
         </div>
         <div id= "lists">
         </div>
+        <p><button id = "but_td">AddtoTrainingData</button></p>
+         <p><button id = "but_res">Reset</button></p>
         <canvas id = "nerview"></canvas>
         <script>
-            var view_size = 300;
+            var view_size = 500;
+            var alph = "abcdefghijklmnopqrstuvwxyz";
             var view = document.getElementById("nerview");
             var ctx = view.getContext("2d");
             var but_ref = document.getElementById("but_ref");
+            var but_res = document.getElementById("but_res");
+             var but_td = document.getElementById("but_td");
             var numofgroups = document.getElementById("num_group");
-            var tlen = document.getElementById("tlen");
+            var tlen = document.getElementById("tlen").value;
             var list_htm = document.getElementById("lists");
             but_ref.onclick = function refresh(){
+                numofgroups = document.getElementById("num_group");
                 //clearInterval(upd8int);
-                console.log(numofgroups.value);
                var html = `<div>
             <p><input type="text" id="dom_0" value = "Area_1"></p>
-            <p><textarea rows ="6" cols = "25"></textarea></p>
+            <p><textarea rows ="6" cols = "25" id ="are_0"></textarea></p>
             </div>`
                for(var i = 1;i< numofgroups.value;i++){
                  html+=`<div>
             <p><input type="text" id="dom_`+i+`" value = "Area_`+(i+1)+`"></p>
-            <p><textarea rows ="6" cols = "25"></textarea></p>
+            <p><textarea rows ="6" cols = "25" id = "are_`+i+`"></textarea></p>
             </div>`
                }
                  list_htm.innerHTML = html;
+            }
+            but_res.onclick = function reset(){
+                 numofgroups = document.getElementById("num_group");
+                tlen = document.getElementById("tlen").value;
+                resetneurons(1,0.5);
+                drawneurons();
+     console.log(neurons.length);
+            }
+            but_td.onclick = function retraindata(){
+                numofgroups = document.getElementById("num_group");
+                tlen = document.getElementById("tlen").value;
+                traindata = new Array(numofgroups);
+                for(var i=0;i<traindata.length;i++){
+                    traindata[i] = document.getElementById("are_"+i).value.split("\n").join(",").split(",");
+                }
+                console.log(traindata[0][0]+" to add");
             }
             
             var space3d= new Array(50);
             var xrot=0;
             var yrot=0;
-            var fov =250;
-            var nods=[5];
+            var fov =500;
+            var nods=[7];
+            var siz3d =300;
+            var color;
             //Neurons will be organized as follows
             //(alldifferentstages()
-            
-            
+            var neurons = [];
+            var traindata = [];
             
             var upd8int = setInterval(function(){upd8()},10);
             
@@ -79,37 +107,121 @@
                 /*addline(Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),10);*/
                  //console.log(yrot);
             }
-            function drawneurons(){
+            function testword(str){
+                var numout = numofgroups.value;
+                var wleng = tlen;
+                var temp1;
+                if(nods.length=0){
+                    temp1 = new Array(numout);
+                }else{
+                    temp1 = new Array(nods[0]);
+                }
+                if(tlen>str.length){
+                    wleng = str.length;
+                }
+                for(var i=0; i<wleng;i++){
                 
+                var n = alph.indexOf(str[i]);
                 
-                
-                
-                
+                }
             }
-            funtion resetneurons(){
+            
+            
+            
+            
+            function drawneurons(){
+                 var numout = numofgroups.value;
+                clearspace();
+                if(nods.length == 0){
+                    for(var y = 0; y < numout ; y++){
+                        var dx = siz3d/2*Math.cos(2*Math.PI/numout*y);
+                        var dy = siz3d/2*Math.sin(2*Math.PI/numout*y);
+                        for (var x = 0;x<tlen*26;x++){
+                       
+                           addline((Math.floor(x/26))*(siz3d/tlen)-(siz3d/2),(x%26)*(siz3d/26)-siz3d/2,(-siz3d/2),dx,dy,siz3d/2,neurons[x+y*tlen*26]);
+                       }    
+                   }
+                } else {
+                     var len = 0;
+                    //console.log(nods[0]);
+                    for(var y = 0; y < nods[0] ; y++){
+                        var dx = siz3d/2*Math.cos(2*Math.PI/nods[0]*y);
+                        var dy = siz3d/2*Math.sin(2*Math.PI/nods[0]*y);
+                        for (var x = 0;x<tlen*26;x++){
+                       
+                           addline((Math.floor(x/26))*(siz3d/tlen)-(siz3d/2),(x%26)*(siz3d/26)-siz3d/2,(-siz3d/2),dx,dy,siz3d/(nods.length+1)-siz3d/2,neurons[x+y*tlen*26]);
+                       }    
+                   }
+                    len += tlen*26*nods[0];
+                    
+                    
+                    for(var i =0;i<nods.length-1;i++){
+  
+                        for(var y = 0; y < nods[i+1] ; y++){
+                            var dx = siz3d/2*Math.cos(2*Math.PI/nods[i+1]*y);
+                            var dy = siz3d/2*Math.sin(2*Math.PI/nods[i+1]*y);
+                                for (var x = 0;x<nods[i];x++){
+                                    var dx1= siz3d/2*Math.cos(2*Math.PI/nods[i]*x);
+                                    var dy1= siz3d/2*Math.sin(2*Math.PI/nods[i]*x);
+                                    addline(dx1,dy1,siz3d/(nods.length+1)*(i+1)-siz3d/2,dx,dy,siz3d/(nods.length+1)*(i+2)-siz3d/2,neurons[len+x+y*nods[i]]);
+                                }    
+                        }
+                        len += nods[i]*nods[i+1];  
+                    }
+                    for(var y = 0; y <numout ; y++){
+                            var dx = siz3d/2*Math.cos(2*Math.PI/numout*y);
+                            var dy = siz3d/2*Math.sin(2*Math.PI/numout*y);
+                                for (var x = 0;x<nods[i];x++){
+                       
+                                    var dx1= siz3d/2*Math.cos(2*Math.PI/nods[i]*x);
+                                    var dy1= siz3d/2*Math.sin(2*Math.PI/nods[i]*x);
+                                    addline(dx1,dy1,siz3d/(nods.length+1)*(i+1)-siz3d/2,dx,dy,siz3d/(nods.length+1)*(i+2)-siz3d/2,neurons[len+x+y*nods[i]]);
+                                }    
+                        }
+                }
+            }
+            function resetneurons(d,g){
                var len = 0;
                 var numout = numofgroups.value;
                 if(nods.length == 0){
                     len += (tlen*26)*numout;
                 } else {
-                    len+=
-                    for(var i =0;i<numout-1;i++){
+                    len += tlen*26*nods[0];
+                    for(var i =0;i<nods.length-1;i++){
                     len += nods[i]*nods[i+1];
                     }
-                    
+                    len += nods[nods.length-1]*numout;
+                }
+                neurons = new Array(len);
+                for(var i=0; i < neurons.length; i++){
+                    neurons[i] = d*(Math.random()-0.5)+g;
                 }
             }
             
             
             function paint3d(){
                 ctx.strokeStyle = "#0000FF";
-                ctx.beginPath();
+                
                 for(var i = 0; i <space3d.length-1; i+=2){
-                    moveto(i);
-                    lineto(i+1);
+                    if(space3d[i][6]>=0){
+                        ctx.beginPath();
+                        setcolor((space3d[i][6]*100),0);
+                        ctx.strokeStyle = color;
+                        moveto(i);
+                        lineto(i+1);
+                        ctx.stroke();
+                        ctx.closePath();
+                    }
                 }
-                ctx.stroke();
+                for(var i = 0; i <space3d.length; i++){
+                       ctx.fillRect(getxind(i)-1,getyind(i)-1,2,2)
+                       
+                }
+               
             }
+            
+            
+            
             function clearspace(){
                 space3d = [];
             }
@@ -138,8 +250,17 @@
             function moveto(i){
             ctx.moveTo(getxind(i),getyind(i));
         }
-             
-            
+            function setcolor(col,sha){
+                   var ha = 0+(100*Math.sin(sha/180*3.14)); 
+                    var mult = (100-0.8*Math.abs(ha));
+                    color=rgbToHex(
+                    Math.floor(127+ha+mult*Math.sin(col/180*3.14)),
+                    Math.floor(127+ha+mult*Math.sin((col+120)/180*3.14)),
+                    Math.floor(127+ha+mult*Math.sin((col+240)/180*3.14)));
+                }
+             function rgbToHex(r, g, b) {
+                        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                }
             
             
         </script>
