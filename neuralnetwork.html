@@ -40,6 +40,10 @@
             var numofgroups = document.getElementById("num_group");
             var tlen = document.getElementById("tlen").value;
             var list_htm = document.getElementById("lists");
+            
+            var trainloop;
+            
+            
             but_ref.onclick = function refresh(){
                 numofgroups = document.getElementById("num_group");
                 //clearInterval(upd8int);
@@ -62,6 +66,7 @@
                 drawneurons();
      console.log(neurons.length);
             }
+            
             but_td.onclick = function retraindata(){
                 numofgroups = document.getElementById("num_group");
                 tlen = document.getElementById("tlen").value;
@@ -70,6 +75,9 @@
                     traindata[i] = document.getElementById("are_"+i).value.split("\n").join(",").split(",");
                 }
                 console.log(traindata[0][0]+" to add");
+                train();
+                
+                trainloop = setInterval(train(),100);
             }
             
             var space3d= new Array(50);
@@ -107,11 +115,27 @@
                 /*addline(Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),10);*/
                  //console.log(yrot);
             }
+            function train(){
+                console.log("training");
+                testword(traindata[0][0]);
+                
+                
+                
+                
+            }
             function testword(str){
+                console.log(str);
                 var numout = numofgroups.value;
                 var wleng = tlen;
+                var len=0;
                 var temp1;
-                if(nods.length=0){
+                var temp2 = new Array(tlen*26);
+                temp2.fill(0);
+                for(var l=0;l<tlen;l++){
+                    temp2[l*26+alph.indexOf(str[l])]=1;
+                }
+                
+                if(nods.length==0){
                     temp1 = new Array(numout);
                 }else{
                     temp1 = new Array(nods[0]);
@@ -119,10 +143,24 @@
                 if(tlen>str.length){
                     wleng = str.length;
                 }
-                for(var i=0; i<wleng;i++){
-                
-                var n = alph.indexOf(str[i]);
-                
+                for(var k = 0; k<nods.length+1;k++){
+                console.log("tmp1: "+temp1.length+" tmp2: "+temp2.length);
+                for(var i=0; i<temp1.length;i++){                  
+                    for(var j=0; j<temp2.length;j++){
+                    temp1[i] += temp2[j]*neurons[len];
+                    len++;
+                    }   
+                }
+                    
+                console.log(len);
+                    temp2=temp1.slice();
+                    if(k+2>=nods.length){
+                        temp1.length = numout;
+                        temp1.fill(0);
+                    }
+                    else{
+                     temp1 = new Array(nods[k+1])
+                    }
                 }
             }
             
@@ -182,6 +220,7 @@
             }
             function resetneurons(d,g){
                var len = 0;
+                console.log(nods.length);
                 var numout = numofgroups.value;
                 if(nods.length == 0){
                     len += (tlen*26)*numout;
