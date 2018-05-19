@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Choose Gen</title>
+        <link rel="stylesheet" type="text/css" href="robstyle.css">
+        <style>
+             body{
+                 font-family: Arial, Helvetica, sans-serif	;
+                    padding: 0px 0px;
+                 background: linear-gradient(to right, #edf0ff,#ffedfc);
+             }
+             div{
+                  text-align: center;
+             }
+        </style>
+        
+    </head>
+    <body>
+        	<div id="topnav" class="topnav">
+				<a href="index.html">Main</a>
+                <a href="neuralnetwork.html">NeuralNetwork</a>
+			</div>
+        
+        <h1>Choose Generator</h1>
+        <div class="param">
+        <p>Group ID:<input type="number" id="group_id" value="2"></p>
+            <p>Correct Letter<input type="text" id="cletter" value="7"></p>
+            <p>ID:<input type="text" id="id_name" value = ""></p>
+            <textarea rows = "6" cols = "25" id="inputvalues">CHOOSE,</textarea>
+            <p><button id = "but_make">Make HTML</button></p>
+        </div>
+        <div id= "lists">
+            <div>
+            <p><textarea rows ="6" cols = "25" id ="are_0"></textarea></p>
+                 <p><textarea rows ="1" cols = "25" id ="are_1"></textarea></p>
+            </div>
+        </div>
+        <script>
+            var alph = "abcdefghijklmnopqrstuvwxyz";
+            var but_make = document.getElementById("but_make");
+            var inp_group_id = document.getElementById("group_id");
+            var inp_cletter = document.getElementById("cletter");
+            var inp_id_name = document.getElementById("id_name");
+            var area_htm = document.getElementById("are_0");
+             var but_htm = document.getElementById("are_1");
+            var inp_values = document.getElementById("inputvalues");
+            but_make.onclick = function refresh(){
+                gid = inp_group_id.value;
+                clet = inp_cletter.value;
+                id = inp_id_name.value;
+                values = inp_values.value.split(",");
+                //clearInterval(upd8int);
+               var html = "<select id = 'sel_" +id+"' class='ie e_sel_"+id+"'>";
+               for(var i = 0;i< values.length;i++){
+                 html+="<option value='"+alph[i]+"'>"+values[i]+"</option>"
+               }
+                html+="</select>"
+                html+=`    <input type='text' class='eval' id='e_sel_`+id+`' data-group='`+gid+`' data-points='5' data-rule="[~#sel_`+id+`_storage;.is_exact_match('`+clet+`')]">`
+                 area_htm.innerHTML = html;
+                but_htm.innerHTML = `<p><input type="button" class="check" id="check_sel_`+gid+`" data-group="`+gid+`" value="CHECK"></p>`
+            }
+        </script>
+    </body>
+     <script src="navbar.js"></script>
+</html>
