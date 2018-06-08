@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ART</title>
+       
+         <link rel="stylesheet" href="robstyle.css">
+		 <style>
+             body{
+                 font-family: Arial, Helvetica, sans-serif	;
+                    padding: 0px 0px;
+                 background: linear-gradient(to right, #edf0ff,#ffedfc);
+                 perspective: 1000px;
+                 perspective-origin: top;
+             }
+             
+             canvas{
+                 transition: transform 2s;
+             }
+             .button {
+            background: linear-gradient(to right, #e0e0ff, #e0f2ff);
+            border: none;
+            color: black;
+            padding: 15px 32px;
+            text-align: center;
+            display: inline-block;
+            font-size: 20px;
+            transition: padding 2s;
+             }
+             h1{
+                color: whitesmoke;
+                 text-align: center;
+                 font-size: 80px;
+                 background: linear-gradient(to right, #101050, #202030);
+                 padding: 30px 30px;
+                 margin: 0px 0px;
+             }
+             button:hover{
+                padding: 15px 72px;
+             }
+             canvas:hover{
+                 transform: rotate3d(1,1,0.5,360deg);
+             }
+             div{
+                  text-align: center;
+             }
+             .cent{
+                 
+                 text-align: center;
+                 padding:15px 15px;
+                 background: linear-gradient(to right, #e0e0ff, #e0f2ff);
+             }
+             p{
+                 font-size: 20px;
+             }
+             #sos{
+                 animation: anime 2s ease infinite normal;
+             }
+             @keyframes anime{
+                 0% {transform: rotateY(-20deg)}
+                 50% {transform: rotateY(20deg)}
+                 100%   {transform: rotateY(-20deg)}
+             }
+             
+        </style>
+    </head>
+    <body>
+        <div>
+			<div id="topnav" class="topnav">
+				<a href="index.html">Main</a>
+                <a href="neuralnetwork.html">NeuralNetwork</a>
+			</div>
+		
+            <h1>Here is my ART</h1>
+            <div><p id = "sos">Scroll Down</p>
+            </div>
+            <div id ="out">
+            </div>
+            
+            <script>
+            var out = document.getElementById("out");
+            out.innerHTML = "Kill you";
+            var fs = require("fs");
+            var etext = fs.readfFileSync("./picdata.txt").toString('utf-8');
+            out.innerHTML += etext;
+            
+            
+            </script>
+            
+
+        </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    </body>
+    
+    
+    
+     <script src="navbar.js"></script>
+</html>

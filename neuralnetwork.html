@@ -28,6 +28,7 @@
         </div>
         <p><button id = "but_td">AddtoTrainingData</button></p>
          <p><button id = "but_res">Reset</button></p>
+        <p><button id = "but_run">Run Words</button></p>
         <canvas id = "nerview"></canvas>
         <script>
             var view_size = 500;
@@ -40,7 +41,7 @@
             var numofgroups = document.getElementById("num_group");
             var tlen = document.getElementById("tlen").value;
             var list_htm = document.getElementById("lists");
-            
+            var error;
             var trainloop;
             
             
@@ -78,6 +79,10 @@
                 train();
                 
                 trainloop = setInterval(train(),100);
+            }
+            
+            document.getElementById("but_run").onclick = function run(){
+                console.log("Heyllloo");
             }
             
             var space3d= new Array(50);
