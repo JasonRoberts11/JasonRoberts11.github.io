@@ -8,13 +8,19 @@
         <h1 id="head">JASN 188</h1>
         <p><i>There are some <strong>bugs</strong> in here</i></p>
         <p id = "output"></p>
-        <button id ="test">TEST</button>
+        <button id ="test">TEST</button><br/>
         <canvas id="main" width="500" height="500">
         </canvas>
         
         <script>
             var main = document.getElementById("main");
             var ctx = main.getContext("2d");
+            var scrwid =800;
+            var scrhig=800;
+            
+            main.getAttributeNode("width").value=scrwid;
+            main.getAttributeNode("height").value=scrhig;
+            
             var title = document.getElementById("title");
             var icon = document.getElementById("icon");
             var head = document.getElementById("head");
@@ -34,11 +40,19 @@
             
             var mousex;
             var mousey;
+            var mdx = 0;
+            var mdy = 0;
             var mousepressed=0;
             function setMouse(event){
+                mdx = event.layerX-mousex;
+                mdy = event.layerY-mousey;
                 mousex = event.layerX;
                 mousey = event.layerY;
-                setSelection();
+                if(picked==-1){
+                    setSelection();
+                }else{
+                    setOver();
+                }
                 output.innerHTML="Mouse: " +mousex+ " "+mousey+"   Selected: "+ selected;
                 update();
                 title.innerHTML= Math.floor(Math.random()*1000)+" Ways to Fail"
@@ -54,12 +68,15 @@
             main.addEventListener('mousemove',setMouse);
             main.addEventListener('mousedown',click);
             main.addEventListener('mouseup',cluck)
-            ctx.beginPath();
-            ctx.arc(250,250,100,0,2*Math.PI);
-            ctx.stroke();
+
+            
             var elements = new Array(0);
             var maxlayer = 0;
             var selected = -1;
+            var picked = -1;
+            var over = -1;
+            var seldat =-1;
+            var selrad = 10;
             var defsize = 25;
             var colorblocks = new Array(new Array(0,150,200));
             
@@ -89,17 +106,27 @@
             function update(){
                 head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
                 renderElements();
+                dragger();
             }
             function addElement(type,xpos,ypos){
                 elements.push(new Array(type,0,new Array(),xpos,ypos,new Array(),xpos,ypos,maxlayer,defsize));
             }
             function renderElements(){
-                for(var layer = 0;layer<maxlayer;layer++){
+                ctx.clearRect(0,0,scrwid,scrhig);
+                for(var layer = 0;layer<maxlayer+1;layer++){
                     for(i= 0;i<elements.length;i++){
+                        if(elements[i][8]==layer){
                         if(i==selected){
-                            displayElement(elements[i],1.2);
+                            if(seldat==1){
+                                displayElement(elements[i],1.2,1);
+                            }else{
+                                displayElement(elements[i],1,2)
+                            }
+                        }else if(over==i){
+                            displayElement(elements[i],0.8,1);   
                         }else{
-                            displayElement(elements[i],1);   
+                            displayElement(elements[i],1,1);
+                        }
                         }
                     }
                 }
@@ -108,16 +135,62 @@
                 selected=-1;
                 for(var layer = 0;layer<maxlayer;layer++){
                     for(i= 0;i<elements.length;i++){
-                        e=elements[i];
-                        if(dist(e[6],e[7],mousex,mousey,e[9])){
-                            selected=i;
+                        if(elements[i][8]==layer){
+                            e=elements[i];
+                            if(dist(e[6],e[7],mousex,mousey,e[9])){
+                                if(dist(e[6],e[7],mousex,mousey,e[9]-selrad)){
+                                    seldat=1;
+                                }else{
+                                    seldat=-1;
+                                }
+                                selected=i;
+                            }
                         }
                     }
                 }
             }
-            function displayElement(e,t){
+            function setOver(){
+                over=-1;
+                for(var layer = 0;layer<maxlayer;layer++){
+                    for(i= 0;i<elements.length;i++){
+                        if(elements[i][8]==layer){
+                            e=elements[i];
+                            if(i!=picked){
+                                if(dist(e[6],e[7],mousex,mousey,e[9])){
+                                    over=i;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            function dragger(){
+                if(selected!=-1){
+                    if(seldat==1){
+                        if(mousepressed==1){
+                            picked=selected;
+                        }
+                    }
+                }
+                if(picked!=-1){
+                    if(mousepressed==1){
+                        elements[picked][8]=maxlayer;
+                        elements[picked][6]+=mdx;
+                        elements[picked][7]+=mdy;
+                        elements[picked][3]+=mdx;
+                        elements[picked][4]+=mdy;
+                    }
+                    if(mousepressed==2){
+                        elements[picked][8]=0;
+                        picked=-1;
+                    }
+                }
+            }
+            function displayElement(e,t,s){
                 if(e[0] == 1){
                     ctx.fillStyle= tint(colorblocks[0],t);
+                    ctx.strokeStyle=tint(colorblocks[0],0.6*s);
+                    ctx.lineWidth = s*2;
                     ctx.beginPath();
                     ctx.arc(e[6],e[7],e[9],0,2*Math.PI);
                     ctx.fill();
