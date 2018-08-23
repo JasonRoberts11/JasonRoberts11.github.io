@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title id="title">THIS IS GOOD</title>
+        <link id="icon" rel="icon" href="icon1.png">
+    </head>
+    <body>
+        <h1 id="head">JASN 188</h1>
+        <p><i>There are some <strong>bugs</strong> in here</i></p>
+        <p id = "output"></p>
+        <button id ="test">TEST</button>
+        <canvas id="main" width="500" height="500">
+        </canvas>
+        
+        <script>
+            var main = document.getElementById("main");
+            var ctx = main.getContext("2d");
+            var title = document.getElementById("title");
+            var icon = document.getElementById("icon");
+            var head = document.getElementById("head");
+            var output = document.getElementById("output");
+            var testButton = document.getElementById("test");
+            testButton.onclick = function test(){
+                addElement(1,200,200);
+                updateMaxLayer();
+            }
+            icond=1;
+            var iconchanger=setInterval(function(){
+                icon.getAttributeNode("href").value = "icon"+icond+".png";
+                icond=(icond%2)+1;
+            },1000)
+            
+            
+            
+            var mousex;
+            var mousey;
+            var mousepressed=0;
+            function setMouse(event){
+                mousex = event.layerX;
+                mousey = event.layerY;
+                setSelection();
+                output.innerHTML="Mouse: " +mousex+ " "+mousey+"   Selected: "+ selected;
+                update();
+                title.innerHTML= Math.floor(Math.random()*1000)+" Ways to Fail"
+            }
+            function click(event){
+                mousepressed=1;
+                update();
+            }
+            function cluck(event){
+                mousepressed=2;
+                update();
+            }
+            main.addEventListener('mousemove',setMouse);
+            main.addEventListener('mousedown',click);
+            main.addEventListener('mouseup',cluck)
+            ctx.beginPath();
+            ctx.arc(250,250,100,0,2*Math.PI);
+            ctx.stroke();
+            var elements = new Array(0);
+            var maxlayer = 0;
+            var selected = -1;
+            var defsize = 25;
+            var colorblocks = new Array(new Array(0,150,200));
+            
+            //THE STRUCTURE FOR THE ARRAY
+            //Absolutes then the easily changed...
+            // 0type, 1parent, 2children[], 3local xpos, 4local ypos, 5connections[],  6abs xpos, 7abs ypos, 8layer , 9size
+            
+            //TYPE STRUCTURES
+            // type: 1 
+            //  A basic circle
+            
+            
+            
+            /**for(var i = 0; i < 100; i++){
+                elements[i] = new Array(Math.random()*100,Math.random()*100);
+            }
+            for(var i = 0; i < 100; i++){
+                ctx.fillStyle ='rgb(0,0,'+i*10+')';
+                ctx.beginPath();
+                ctx.arc(elements[i][0]+250,elements[i][1]+250,10,0,2*Math.PI);
+                ctx.fill();
+                ctx.stroke();
+            }**/
+            //var uptimer = setInterval(function(){update()},100);
+            
+            
+            function update(){
+                head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
+                renderElements();
+            }
+            function addElement(type,xpos,ypos){
+                elements.push(new Array(type,0,new Array(),xpos,ypos,new Array(),xpos,ypos,maxlayer,defsize));
+            }
+            function renderElements(){
+                for(var layer = 0;layer<maxlayer;layer++){
+                    for(i= 0;i<elements.length;i++){
+                        if(i==selected){
+                            displayElement(elements[i],1.2);
+                        }else{
+                            displayElement(elements[i],1);   
+                        }
+                    }
+                }
+            }
+            function setSelection(){
+                selected=-1;
+                for(var layer = 0;layer<maxlayer;layer++){
+                    for(i= 0;i<elements.length;i++){
+                        e=elements[i];
+                        if(dist(e[6],e[7],mousex,mousey,e[9])){
+                            selected=i;
+                        }
+                    }
+                }
+            }
+            function displayElement(e,t){
+                if(e[0] == 1){
+                    ctx.fillStyle= tint(colorblocks[0],t);
+                    ctx.beginPath();
+                    ctx.arc(e[6],e[7],e[9],0,2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                }
+            }
+            function updateMaxLayer(){
+                for(i= 0;i<elements.length;i++){
+                     if(elements[i][8]>=maxlayer){
+                         maxlayer=elements[i][8]+1;
+                     }   
+                }
+            }
+            
+                        
+            function dist(x,y,x2,y2,r){
+                if(Math.pow((x-x2),2)+Math.pow((y-y2),2)<Math.pow(r,2)){
+                    return true;
+                }else{
+                    return false;
+                }
+            }
+            function tint(color,tint){
+                return("rgb("+color[0]*tint+","+color[1]*tint+","+color[2]*tint+")");
+            }
+        
+        </script>
+        
+        
+        
+    </body>
+</html>
