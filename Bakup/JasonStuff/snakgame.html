@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <title>Snake Game</title>
+        <style>.button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <!--JAPPELT-->
+        <script src="http://www.java.com/js/deployJava.js"></script>
+<script>
+    var attributes = {
+        code:'bin/voxeltest/VoxelMain.class',
+    width:700, height:500} ;
+    var parameters = {}; // does the Applet take parameters?
+    var version = '1.6' ; // does the Applet require a minimum version of Java
+    deployJava.runApplet(attributes, parameters, version);
+</script>
+        
+        
+        <!-- SNAKE GAME-->
+        <div>
+    <h1>THE SNAKE GAME</h1>
+        <p id = "dis"></p>
+             <p><button class="button" id="sgp1">Play</button></p>
+            <canvas id="Canvas"></canvas>
+    <script>
+        var hs = getCookie("hs");
+        var snakebutton = document.getElementById("sgp1");
+        var snakegame = false;
+        var snkupd;
+        snakebutton.onclick = function startSnake(){
+            if (snakegame==false){
+                snkupd = setInterval(update,100);
+                snakegame= true;
+                snakebutton.innerHTML="Stop";
+            }   else{
+                clearInterval(snkupd);
+                snakegame= false;
+                snakebutton.innerHTML="Play";
+            }
+        }
+        var canvas = document.getElementById("Canvas");
+        var ctx = canvas.getContext("2d");
+        var siz=20;
+        var board = new Array(20);
+        var length = 10;
+        var ssiz=10;
+        
+        for(var i = 0; i <siz;i++){
+            board[i]= new Array(siz);
+            for(var j = 0; j <siz;j++){
+                board[i][j]=0;
+            }   
+        }
+         canvas.setAttribute("width",ssiz*siz);
+         canvas.setAttribute("height",ssiz*siz);
+        var x=5;
+        var y=5;
+        var dir =0;
+        var randx = Math.floor(Math.random() * siz);
+        var randy = Math.floor(Math.random() * siz);
+        board[randx][randy]=-1;
+        
+        
+        document.addEventListener('keydown', function(event) {
+        if(event.keyCode == 37) {
+            dir=2;
+        }
+        if(event.keyCode == 38) {
+            dir=3;
+        }
+        if(event.keyCode == 40) {
+            dir=1;
+        }
+        if(event.keyCode == 39) {
+            dir=0;
+        }
+        });
+        
+        
+    function update(){
+        ctx.clearRect(0,0,siz*ssiz,siz*ssiz);
+        for(var i = 0; i <siz;i++){
+            for(var j = 0; j <siz;j++){
+                if(board[i][j]>0){
+                    ctx.fillStyle = "#00FF00";
+                   ctx.fillRect(i*ssiz,j*ssiz,ssiz-1,ssiz-1);
+                    board[i][j]-=1;
+                }
+                if(board[i][j]==-1){
+                    ctx.fillStyle = "#FF0000";
+                     ctx.fillRect(i*ssiz,j*ssiz,ssiz-1,ssiz-1);
+                }
+            }   
+        }
+        if (dir == 0){
+            x = (x+1) % siz;
+        }
+        if (dir == 1){
+            y = (y+1) % siz;
+        }
+        if (dir == 2){
+            x = (x-siz) % siz +siz-1;
+        }
+        if (dir == 3){
+            y = (y-siz) % siz +siz-1;
+        }
+        ctx.fillStyle = "#0000FF";
+        ctx.fillRect(x*ssiz,y*ssiz,ssiz-1,ssiz-1);
+        document.getElementById("dis").innerHTML="X:"+x+" Y:"+y+" Length:"+length+ " Highscore:"+ hs;
+        if (board[x][y] == -1){
+            length+=1;
+            board[x][y]=0;
+            var breaks = 0;
+            while (breaks==0){
+            randx = Math.floor(Math.random() * siz);
+            randy = Math.floor(Math.random() * siz);
+            if(board[randx][randy]==0){
+                board[randx][randy]=-1;
+                breaks = 1;
+            }
+            }
+        }
+        if(board[x][y]==0){
+        board[x][y]=length;
+        }else{
+            setCookie("hs",length,3);
+            hs = getCookie("hs");
+            for(var i = 0; i <siz;i++){
+                board[i]= new Array(siz);
+                for(var j = 0; j <siz;j++){
+                    board[i][j]=0;
+                }   
+            }
+            length = 10;
+            x=1;
+            y=1;
+            dir=0;
+            board[4][4]=-1;
+        }
+    }
+    function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+    </script>
+    </div>
+        <!-- 3D -->
+        <div>
+        <h1>3D Test</h1>
+        <p id = "dis2"></p>
+             <p><button class="button" id="sgp2">Play</button></p>
+            <canvas id="Canvas2"></canvas>
+    <script>
+        var button2 = document.getElementById("sgp2");
+        var game2 = false;
+        var upd2;
+        button2.onclick = function startGame2(){
+            if (game2==false){
+                upd2 = setInterval(update2,20);
+                game2= true;
+                button2.innerHTML="Stop";
+            }   else{
+                clearInterval(upd2);
+                game2= false;
+                button2.innerHTML="Play";
+            }
+        }
+        var canvas2 = document.getElementById("Canvas2");
+        var ctx2 = canvas2.getContext("2d");
+        var siz2=400;
+         canvas2.setAttribute("width",siz2);
+         canvas2.setAttribute("height",siz2);
+        var dir2;
+        var fov =250;
+        var xrot=0;
+        var yrot=0;
+        var xa = 0;
+        var ya = 0;
+        var za = 0;
+        var space3d= new Array(50);
+        for(var i = 0; i <50;i++){
+            space3d[i]= new Array(Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),Math.floor(Math.random() * 200-100),0,0,0,100);
+        }
+        var circles = new Array(0);
+
+        document.addEventListener('keydown', function(event) {
+        if(event.keyCode == 37) {
+            dir2=2;
+        }
+        if(event.keyCode == 38) {
+            dir2=3;
+        }
+        if(event.keyCode == 40) {
+            dir2=1;
+        }
+        if(event.keyCode == 39) {
+            dir2=0;
+        }
+        });
+        
+        
+    function update2(){
+        ctx2.clearRect(0,0,siz2,siz2);
+        ctx2.beginPath();
+        ctx2.moveTo(getxind(0),getyind(0));
+        /*if (space3d.length>10){
+            space3d.shift();
+    }*/
+        for(var i=0; i <5; i++){
+        space3d.push(new Array(xa,ya,za,Math.random()*10-5,Math.random()*10-5,Math.random()*10-5,50));
+        }
+            for(var i = 0; i <space3d.length;i++){
+            
+            moveto(i);
+            setpos(space3d[i][0]+space3d[i][3],space3d[i][1]+space3d[i][4],space3d[i][2]+space3d[i][5],i);
+            lineto(i);
+            
+            space3d[i][6] -=1;
+            space3d[i][5] -=1;
+            if(space3d[i][2]<-100){
+               space3d[i][5]= -0.5*space3d[i][5];
+               }
+            if(space3d[i][6]<0){
+               space3d.splice(i,1);
+               }
+        }
+        ctx2.stroke();
+        ctx2.fillStyle = "#0000FF";
+        ctx2.fillRect(get3dx(100,100,100),get3dy(100,100,100),10,10);
+        ctx2.fillRect(get3dx(100,100,-100),get3dy(100,100,-100),10,10);
+        ctx2.fillRect(get3dx(100,-100,100),get3dy(100,-100,100),10,10);
+        ctx2.fillRect(get3dx(100,-100,-100),get3dy(100,-100,-100),10,10);
+        ctx2.fillRect(get3dx(-100,100,100),get3dy(-100,100,100),10,10);
+        ctx2.fillRect(get3dx(-100,100,-100),get3dy(-100,100,-100),10,10);
+        ctx2.fillRect(get3dx(-100,-100,100),get3dy(-100,-100,100),10,10);
+        ctx2.fillRect(get3dx(-100,-100,-100),get3dy(-100,-100,-100),10,10);
+        //document.getElementById("dis2").innerHTML="X:"+x+" Y:"+y+" Length:"+length;
+        xrot+=0.02;
+        yrot+=0.01;
+        xa+=Math.floor(Math.random() * 40-20);
+        ya+=Math.floor(Math.random() * 40-20);
+        za+=Math.floor(Math.random() * 40-20);
+        xa=xa*0.9;
+        ya=ya*0.9;
+        za=za*0.9;
+        function get3dx(x,y,z){
+            return (getclose(x,y,z)*((Math.cos(xrot)*x)-(Math.sin(xrot)*y))+siz2/2);
+        }
+        function get3dy(x,y,z){
+            return (getclose(x,y,z)*((((Math.cos(xrot)*y)+(Math.sin(xrot)*x))*Math.cos(yrot)+Math.sin(yrot)*z))+siz2/2);
+        }
+        function getclose(x,y,z){
+            return (fov/((Math.cos(xrot)*y+Math.sin(xrot)*x)*Math.sin(yrot)+fov-(z*Math.cos(yrot))));
+        }
+        function getxind(i){
+            return get3dx(space3d[i][0],space3d[i][1],space3d[i][2]);
+        }
+        function getyind(i){
+            return get3dy(space3d[i][0],space3d[i][1],space3d[i][2]);
+        }
+        function lineto(i){
+            ctx2.lineTo(getxind(i),getyind(i));
+        }
+        function moveto(i){
+            ctx2.moveTo(getxind(i),getyind(i));
+        }
+        function setpos(x,y,z,i){
+            space3d[i]=new Array(x,y,z,space3d[i][3],space3d[i][4],space3d[i][5],space3d[i][6]);
+        }
+    }
+    </script>
+        </div>
+    </body>
+    
+    
+    
+    
+</html>

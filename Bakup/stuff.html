@@ -1,0 +1,538 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Accounting Lesson 7</title>
+<script src="https://intelligentdesigneronline.com/stt/common/stt/shortcut.js"></script>
+</head>
+
+<body class="new_temp" data-progress="stereo">
+<!--This creates the assignment header at the top of the page-->
+<header class="page-header" data-title="Lesson 7" data-subtitle="Account Balance" data-activity="Practice">
+<div class="generate_toolbar" data-buttons="graph"></div>
+</header>
+
+<!--This creates the assignment questions-->
+<main id="mainContainer">
+<section id="mainContent">
+
+<!--This creates an individual skill section -->
+<section class="question qt_completion" data-num="1"><!--must have class of either qt_completion or qt_mastery and a unique data-num-->
+<div class="notes">
+<p class="skill" data-skill="Positives and Negatives"></p>
+<div class="paper">
+<div class="video" data-src="video_url.mp4"></div>
+<div class="book">The dollar amount associated with an account is called the ACCOUNT BALANCE.  Any business activity that changes an account balance is called a TRANSACTION.
+
+If the account balance changes by a positive amount, the account has INCREASED.  For example, if a business receives $500 from a customer then the cash balance with increase by +500.  They have MORE cash now than they did before.
+
+If the account balance changes by a negative amount, the account has DECREASED.  For example, if a business pays $200 for a cell phone bill then the cash balance will decrease by -20.  They have LESS cash now than they did before.</div>
+<div class="qtext">
+    <div class="new_question">
+        
+        <p>What do we call an event that changes the account balance?
+    </p>
+    
+    <p>
+<span><input type="radio" id="money_a" class="ie e_money" name="money" value="a"/>&nbsp;Account Event<br/></span>
+        
+<span><input type="radio" id="money_b" class="ie e_money" name="money" value="b"/>&nbsp;Action<br/></span>
+        
+<span><input type="radio" id="money_c" class="ie e_money" name="money" value="c"/>&nbsp;Transaction<br/></span>
+        
+<span><input type="radio" id="money_d" class="ie e_money" name="money" value="d"/>&nbsp;Transfer<br/></span>
+        
+<span><input type="radio" id="money_e" class="ie e_money" name="money" value="e"/>&nbsp;Deposit<br/></span>
+</p>
+    
+    <input type="button" class="check" id="check_1" data-group="1" value="Check"/>
+    
+    <input type="text" class="eval" data-group="1" id="e_money" data-rule="[~#money_storage;.is_exact_match('c')]"/>
+    
+    </div>
+    
+<div class="new_question">
+    
+    <p>If a transaction is given a NEGATIVE value it means that 
+    </p>
+    
+        <p>
+<span><input type="radio" id="negative_a" class="ie e_negative" name="negative" value="a"/>&nbsp;the account balance will increase<br/></span>
+        
+<span><input type="radio" id="negative_b" class="ie e_negative" name="negative" value="b"/>&nbsp;the account balance will decrease<br/></span>
+        
+<span><input type="radio" id="negative_c" class="ie e_negative" name="negative" value="c"/>&nbsp;the account balance will stay the same<br/></span>
+        
+</p>
+    
+    <input type="button" class="check" id="check_2" data-group="2" value="Check"/>
+    
+    <input type="text" class="eval" data-group="2" id="e_negative" data-rule="[~#negative_storage;.is_exact_match('b')]"/>
+    
+    </div>
+    
+<div class="new_question">
+    
+    <p>Peter's Plumbing pays for a new tool.
+    </p>
+    
+    <p>The equipment account will change by a <select id="tool" class="ie eval_tool">
+    <option value="0">choose</option>
+    <option value="1">positive</option>
+    <option value="2">negative</option>
+        </select>
+        amount
+    </p>
+    <p>The cash account will change by a <select id="tool_money" class="ie eval_tool_money">
+    <option value="0">choose</option>
+    <option value="1">positive</option>
+    <option value="2">negative</option>
+   
+        </select>
+        amount
+        </p>
+    
+    <input type="button" class="check" data-group="3" id="check_3" value="Check"/>
+    
+    <input type="text" class="eval" id="eval_tool" data-group="3" data-rule="[~#tool_storage;.is_exact_match('1')]"/>
+    <input type="text" class="eval" id="eval_tool_money" data-group="3" data-rule="[~#tool_money_storage;.is_exact_match('2')]"/>
+    
+    </div>
+    
+    <div class="new_question">
+        
+     <p>Peter's Plumbing uses all of its paper towels.</p>
+    <p>The supplies account will change by a <select id="paper" class="ie eval_paper">
+    <option value="0">choose</option>
+    <option value="1">positive</option>
+        <option value="2">negative</option>
+        </select> amount
+    </p>
+     <input type="button" class="check" data-group="4" id="check_4" value="Check"/>
+    
+    <input type="text" class="eval" id="eval_paper" data-group="4" data-rule="[~#paper_storage;.is_exact_match('2')]"/>
+        
+    </div>
+    
+<div class="new_question">
+    
+    <p>Peter's Plumbing breaks a pipe wrench.</p>
+    <p>The equipment account will change by a <select id="wrench" class="ie eval_wrench">
+    <option value="0">choose</option>
+    <option value="1">positive</option>
+        <option value="2">negative</option>
+        </select> amount 
+    </p>
+    <input type="button" class="check" data-group="5" id="check_5" value="Check"/>
+    
+    <input type="text" class="eval" id="eval_wrench" data-group="5" data-rule="[~#wrench_storage;.is_exact_match('2')]"/>
+    
+    </div>
+    
+<div class="new_question">
+    
+    <p>Peter's Plumbing is paid $350 by a customer.</p>
+    <p>The cash account will change by a <select id="cash" class="ie eval_cash">
+    <option value="0">choose</option>
+    <option value="1">positive</option>
+        <option value="2">negative</option>
+        </select> amount 
+    </p>
+    
+     <input type="button" class="check" data-group="6" id="check_6" value="Check"/>
+    
+    <input type="text" class="eval" id="eval_cash" data-group="6" data-rule="[~#cash_storage;.is_exact_match('1')]"/>
+    
+    </div>
+
+    </div>
+</div>
+</div>
+</section>
+    
+<!--This creates an individual skill section -->
+<section class="question qt_completion" data-num="2"><!--must have class of either qt_completion or qt_mastery and a unique data-num-->
+<div class="notes">
+<p class="skill" data-skill="Calculating the New Balance"></p>
+<div class="paper">
+<div class="video" data-src="video_url.mp4"></div>
+<div class="book"><p>The dollar amount of an account BEFORE a transaction occurred is called the BEGINNING BALANCE.</p>
+
+    <p>The dollar amount of an account AFTER a transaction occurred is called the NEW BALANCE.</p>
+
+    <p>The formula for calculating the new balance is easy:</p>
+
+<p>New Balance = Beginning Balance + Transaction</p>
+
+<p>Remember, the the transaction might have a negative value, in which case you will SUBTRACT.</p>
+
+<p>Example:
+
+Peter’s Plumbing owns $2,500 of plumbing equipment.  
+An employee accidentally breaks a $500 tool.
+What will the new equipment balance be?</p>
+
+<p>N = B + T</p>
+
+<p>The beginning  balance was 2500.
+The transaction decreased the equipment by -500.</p>
+
+<p>N = 2500 - 500 = 2000</p>
+
+<p>The new equipment balance is $2,000.</p>
+
+    </div>
+    <div class="qtext">
+         <p>Rita owns a hair salon. Calculate the new balances after the following transactions.
+        </p>
+        
+        <div class="new_question">
+            
+        <p>
+            
+            The salon already had  
+            <input type="text" class="rn" id="hair_cash" data-min="700" data-max="900"/> 
+            dollars of cash. Then a customer paid $80 for a haircut. What will the new cash balance be?
+            
+            </p>
+            
+            <p>
+                
+            <input type="text" id="hair_answer" class="ie eval_hair" />
+                
+            </p>
+            
+            <div class="hidden">
+                
+            <input type="text" class="ccn" id="hair_formula" data-formula="#hair_cash;+80"/>
+                
+            </div>
+            
+            <input type="button" class="check" id="check_7" data-group="7" value="Check"/>
+            
+            
+            <input type="text" class="eval" data-group="7" id="eval_hair" data-points="5" data-rule="[~#hair_answer;.is_exact_match('#hair_formula;')]"/>
+            
+        </div>
+        
+<div class="new_question">
+    
+    <p>
+        
+        The salon already had 
+    <input type="text" class="rn" id="equip_worth" data-min="1000" data-max="2000"/> 
+    dollars of equipment.  Then Rita got a new hair dryer worth <input type="text" class="rn" id="new_equip" data-min="400" data-max="500"/> 
+    dollars.  What will the new equipment balance be?
+    
+    </p>
+    
+        <input type="text" id="equip_answer" class="ie eval_equip"/>
+    
+    <div class="hidden">
+        
+    <input type="text" class="ccn" id="equip_formula" data-formula="#equip_worth; + #new_equip;"/>
+        
+    </div>
+    <p>
+    <input type="button" class="check" id="check_8" data-group="8" value="Check"/>
+        </p>
+            
+            <input type="text" class="eval" data-group="8" id="eval_equip" data-points="5" data-rule="[~#equip_answer;.is_exact_match('#equip_formula;')]"/>
+    
+        </div>
+        
+<div class="new_question">
+    <p>
+    Transactions and balances can be recorded in a data spreadsheet like the one shown below.
+    </p>
+    <p>
+    Calculate the new balance after each transaction.
+    </p>
+    
+    <style>
+        td {text-align: left}
+        #table_table,th,td {
+            border:1px solid black;
+        }
+        #table_response1, #table_response2, #table_response3 {
+            border:1px solid blue;
+        }
+    </style>
+    <table style="width:100%" id="table_table">
+  <tr>
+      <th>Transaction No.</th>
+    <th>Cash</th> 
+    <th>Check</th>
+  </tr>
+  <tr>
+    <td>Beg. Balance</td>
+    <td>+$<input type="text" class="rn" id="table_1" data-min="600" data-max="700"/></td> 
+    <td></td>
+  </tr>
+  <tr>
+    <td>Transaction 1</td>
+    <td>+$<input type="text" class="rn" id="table_2" data-min="100" data-max="200"/></td> 
+    <td></td>
+      
+  </tr>
+<tr>
+    <td>New Balance</td>
+    <td><input type="text" id="table_response1" class="ie eval_table_response1" placeholder="New Cash Amount"/></td> 
+    <td><input type="button" class="check" id="check_9" data-group="9" value="Check"/></td>
+        </tr>
+<tr>
+    <td>Transaction 2</td>
+    <td>-$<input type="text" class="rn" id="table_3" data-min="400" data-max="300"/></td> 
+    <td></td>
+      
+  </tr>
+ <tr>
+    <td>New Balance</td>
+    <td><input type="text" class="ie eval_table_response2" id="table_response2" placeholder="New Cash Amount"/></td> 
+    <td><input type="button" class="check" id="check_10" data-group="10" value="Check"/></td>
+      
+  </tr>
+<tr>
+    <td>Transaction 3</td>
+    <td>+$<input type="text" class="rn" id="table_4" data-min="200" data-max="400"/></td> 
+    <td></td>
+      
+  </tr>
+    <tr>
+    <td>New Balance</td>
+    <td><input type="text" class="ie eval_table_response3" id="table_response3" placeholder="New Cash Amount"/></td> 
+    <td><input type="button" class="check" id="check_11" data-group="11" value="Check"/></td>
+      
+  </tr>
+ 
+</table>
+    <div class="hidden">
+    <input type="text" class="ccn" id="table_calc1" data-formula="#table_1; + #table_2;"/>
+    
+    <input type="text" class="ccn" id="table_calc2" data-formula="#table_calc1; - #table_3;"/>
+    
+    <input type="text" class="ccn" id="table_calc3" data-formula="#table_calc2; + #table_4;"/>
+        
+        </div>
+    
+       <input type="text" class="eval" data-group="9" id="eval_table_response1" data-points="5" data-rule="[~#table_response1;.is_exact_match('#table_calc1;')]"/> 
+    
+    <input type="text" class="eval" data-group="10" id="eval_table_response2" data-points="5" data-rule="[~#table_response2;.is_exact_match('#table_calc2;')]"/>
+    
+    <input type="text" class="eval" data-group="11" id="eval_table_response3" data-points="5" data-rule="[~#table_response3;.is_exact_match('#table_calc3;')]"/>
+        </div>
+<div class="new_question">
+    <p>
+    This time, use the transaction description to determine the transaction values as well as the new balances.
+    </p>
+    
+    <style>
+        td {text-align: left}
+        #table_table1,th,td {
+            border:1px solid black;
+        }
+        #table_response4, #table_response5, #table_response6, #table_response7, #table_response8, #table_response9, #table_response10, #table_response11
+        {
+            border:1px solid blue;
+        }
+        
+    </style>
+    <table style="width:100%" id="table_table1">
+        
+  <tr>
+    <th>Description</th>
+    <th>Transaction No.</th>
+    <th>Cash</th>
+      <th>Check</th>
+  </tr>
+  <tr>
+      <td></td>
+      <td>Beginning Balance</td>
+    <td>$<input type="text" class="rn" id="table1_5" data-min="2000" data-max="3000"/></td>
+      <td></td>
+  </tr>
+  <tr>
+<td>1. The business earns $<input type="text" class="rn" id="table_5" data-min="500" data-max="600"/> from sales.</td>
+<td>Transaction 1</td>
+    <td><input type="text" id="table_response4" class="ie eval_table_response4" placeholder="Money Gained"/></td>
+<td><input type="button" class="check" id="check_12" data-group="12" value="Check"/></td>
+  </tr>
+<tr>
+    <td></td>
+    <td>New Balance</td>
+    <td><input type="text" id="table_response5" class="ie eval_table_response5" placeholder="New Balance Amount"/></td>
+    <td><input type="button" class="check" id="check_13" data-group="13" value="Check"/></td>
+  </tr>
+<tr>
+<td>2. The business pays $<input type="text" class="rn" id="table_6" data-min="100" data-max="200"/> to pay a utilities bill</td>
+    <td>Transaction 2</td>
+    <td><input type="text" id="table_response6" class="ie eval_table_response6" placeholder="Money Spent"/></td>
+    <td><input type="button" class="check" id="check_14" data-group="14" value="Check"/></td>
+    
+</tr>
+<tr>
+<td></td>        
+    <td>New Balance</td>
+    <td><input type="text" id="table_response7" class="ie eval_table_response7" placeholder="New Balance Amount"/></td>
+    <td><input type="button" class="check" id="check_15" data-group="15" value="Check"/></td>
+</tr>
+<tr>
+<td>3. The business pays $<input type="text" class="rn" id="table_7" data-min="1000" data-max="2000"/> rent.</td>  
+    <td> Transaction 3</td>
+    <td><input type="text" id="table_response8" class="ie eval_table_response8" placeholder="Money Spent"/></td>
+    <td><input type="button" class="check" id="check_16" data-group="16" value="Check"/></td>
+</tr>
+<tr>
+<td></td>      
+<td>New Balance</td>
+    <td><input type="text" id="table_response9" class="ie eval_table_response9" placeholder="New Balance Amount"/></td>
+    <td><input type="button" class="check" id="check_17" data-group="17" value="Check"/></td>   
+</tr>
+<tr>
+        <td>4. The business is paid $<input type="text" class="rn" id="table_8" data-min="2000" data-max="3000"/> by a client in exchange for a service</td>
+    <td>Transaction 4</td>
+        <td><input type="text" id="table_response10" class="ie eval_table_response10" placeholder="Money Gained"/></td>
+        <td><input type="button" class="check" id="check_18" data-group="18" value="Check"/></td>
+    </tr>
+<tr>
+<td></td>
+<td>New Balance</td>
+<td><input type="text" id="table_response11" class="ie eval_table_response11" placeholder="New Balance Amount"/></td>
+<td><input type="button" class="check" id="check_19" data-group="19" value="Check"/></td>
+</tr>
+</table>
+    
+    <div class="hidden">
+    <input type="text" class="ccn" id="table_calc4" data-formula="#table1_5; + #table_5;"/>
+    
+    <input type="text" class="ccn" id="table_calc5" data-formula="#table_calc4; - #table_6;"/>
+    
+    <input type="text" class="ccn" id="table_calc6" data-formula="#table_calc5; - #table_7;"/>
+    
+    <input type="text" class="ccn" id="table_calc7" data-formula="#table_calc6; + #table_8;"/>
+    </div>
+    
+    <input type="text" class="eval" data-group="12" id="eval_table_response4" data-points="5" data-rule="[~#table_response4;.is_exact_match('#table_5;')]"/>
+    
+    <input type="text" class="eval" data-group="13" id="eval_table_response5" data-points="5" data-rule="[~#table_response5;.is_exact_match('#table_calc4;')]"/>
+    
+    <input type="text" class="eval" data-group="14" id="eval_table_response6" data-points="5" data-rule="[~#table_response6;.is_exact_match('-#table_6;')]"/>
+    
+    <input type="text" class="eval" data-group="15" id="eval_table_response7" data-points="5" data-rule="[~#table_response7;.is_exact_match('#table_calc5;')]"/>
+    
+    <input type="text" class="eval" data-group="16" id="eval_table_response8" data-points="5" data-rule="[~#table_response8;.is_exact_match('-#table_7;')]"/>
+    
+    <input type="text" class="eval" data-group="17" id="eval_table_response9" data-points="5" data-rule="[~#table_response9;.is_exact_match('#table_calc6;')]"/>
+    
+    <input type="text" class="eval" data-group="18" id="eval_table_response10" data-points="5" data-rule="[~#table_response10;.is_exact_match('#table_8;')]"/>
+    
+    <input type="text" class="eval" data-group="19" id="eval_table_response11" data-points="5" data-rule="[~#table_response11;.is_exact_match('#table_calc7;')]"/>
+
+        </div>
+        
+        <div class="new_question">
+         <p>Use the transaction descriptions to fill out the account spreadsheet</p>  
+            
+            <p>1. A $<input type="text" class="rn" id="table_9" data-min="500" data-max="800"/>  mitre saw is damage during a rainstorm and has to be thrown away.</p>
+            
+            <p>2. The company gains a $<input type="text" class="rn" id="table_10" data-min="2000" data-max="3000"/>  laser engraver</p>
+            
+            <p>3. The owner's friend donates a $<input type="text" class="rn" id="table_11" data-min="1000" data-max="2000"/>  air compressor to the business.</p>
+            
+            <p>4. A $<input type="text" class="rn" id="table_12" data-min="100" data-max="200"/>  saw blade is lost by the construction crew.</p>
+            
+            <table>
+            <th>Transaction No.</th>
+            <th>Equipment Worth</th>
+            <th>Check</th>
+            <tr>
+                <td>Beginning Balance</td>
+                <td>$<input type="text" class="rn" id="table_13" data-min="1000" data-max="2000"/></td>
+                <td></td>
+                </tr>
+                
+                <tr>
+                <td>Transaction 1</td>
+                <td><input type="text" id="table_response12" class="ie eval_table_response12" placeholder="Equipment Worth Lost"/></td>
+                <td><input type="button" class="check" id="check_27" data-group="27" value="Check"/></td>
+                </tr>
+                
+                <tr>
+                <td>New Balance</td>
+                <td><input type="text" id="table_response13" class="ie eval_table_response13" placeholder="New Equipment Worth"/></td>
+                <td><input type="button" class="check" id="check_20" data-group="20" value="Check"/></td>
+                </tr>
+                
+                <tr>
+                <td>Transaction 2</td>
+                <td><input type="text" id="table_response14" class="ie eval_table_response14" placeholder="Equipment Worth Gain"/></td>
+                <td><input type="button" class="check" id="check_21" data-group="21" value="Check"/></td>
+                </tr>
+                
+                <tr>
+                <td>New Balance</td>
+                <td><input type="text" id="table_response15" class="ie eval_table_response15" placeholder="New Equipment Worth"/></td>
+                <td><input type="button" class="check" id="check_22" data-group="22" value="Check"/></td>
+                </tr>
+                
+                <tr>
+                <td>Transaction 3</td>
+                <td><input type="text" id="table_response16" class="ie eval_table_response16" placeholder="Equipment Worth Gain"/></td>
+                <td><input type="button" class="check" id="check_23" data-group="23" value="Check"/></td>
+                </tr>
+                
+                <tr>
+                <td>New Balance</td>
+                <td><input type="text" id="table_response17" class="ie eval_table_response17" placeholder="New Equipment Worth"/></td>
+                <td><input type="button" class="check" id="check_24" data-group="24" value="Check"/></td>
+                </tr>
+                
+                <tr>
+                <td>Transaction 4</td>
+                <td><input type="text" id="table_response18" class="ie eval_table_response18" placeholder="Equipment Worth Lost"/></td>
+                <td><input type="button" class="check" id="check_25" data-group="25" value="Check"/></td>
+                </tr>
+                
+                <tr>
+                <td>New Balance</td>
+                <td><input type="text" id="table_response19" class="ie eval_table_response19" placeholder="New Equipment Worth"/></td>
+                <td><input type="button" class="check" id="check_26" data-group="26" value="Check"/></td>
+                </tr>
+            </table>
+            <div class="hidden">
+             <input type="text" class="ccn" id="table_calc8" data-formula="#table_13; - #table_9;"/>
+            
+             <input type="text" class="ccn" id="table_calc9" data-formula="#table_calc8; + #table_10;"/>
+            
+             <input type="text" class="ccn" id="table_calc10" data-formula="#table_calc9; + #table_11;"/>
+            
+             <input type="text" class="ccn" id="table_calc11" data-formula="#table_calc10; - #table_12;"/>
+            </div>
+            
+            <input type="text" class="eval" data-group="27" id="eval_table_response12" data-points="5" data-rule="[~#table_response12;.is_exact_match('-#table_9;')]"/>
+            
+            <input type="text" class="eval" data-group="20" id="eval_table_response13" data-points="5" data-rule="[~#table_response13;.is_exact_match('#table_calc8;')]"/>
+            
+            <input type="text" class="eval" data-group="21" id="eval_table_response14" data-points="5" data-rule="[~#table_response14;.is_exact_match('#table_10;')]"/>
+            
+            <input type="text" class="eval" data-group="22" id="eval_table_response15" data-points="5" data-rule="[~#table_response15;.is_exact_match('#table_calc9;')]"/>
+            
+            <input type="text" class="eval" data-group="23" id="eval_table_response16" data-points="5" data-rule="[~#table_response16;.is_exact_match('#table_11;')]"/>
+            
+            <input type="text" class="eval" data-group="24" id="eval_table_response17" data-points="5" data-rule="[~#table_response17;.is_exact_match('#table_calc10;')]"/>
+            
+            <input type="text" class="eval" data-group="25" id="eval_table_response18" data-points="5" data-rule="[~#table_response18;.is_exact_match('-#table_12;')]"/>
+            
+            <input type="text" class="eval" data-group="26" id="eval_table_response19" data-points="5" data-rule="[~#table_response19;.is_exact_match('#table_calc11;')]"/>
+        </div>
+  
+        
+    </div>
+    </div>
+    </div>
+    </section>
+
+</section>
+</main>
+</body>
+
+</html>
