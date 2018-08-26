@@ -43,32 +43,59 @@
             var mdx = 0;
             var mdy = 0;
             var mousepressed=0;
+            var upmos=0;
             function setMouse(event){
                 mdx = event.layerX-mousex;
                 mdy = event.layerY-mousey;
                 mousex = event.layerX;
                 mousey = event.layerY;
+                //if(mousepressed==1||upmos<10){
                 if(picked==-1){
                     setSelection();
                 }else{
                     setOver();
                 }
                 output.innerHTML="Mouse: " +mousex+ " "+mousey+"   Selected: "+ selected;
+                if(selected!=-1){
+                   output.innerHTML+=" Parent: "+ elements[selected][1];
+                    output.innerHTML+=" Children: " +elements[selected][2];
+                    output.innerHTML+=" Layer: "+ elements[selected][8];
+                }
+                
                 update();
                 title.innerHTML= Math.floor(Math.random()*1000)+" Ways to Fail"
+                //}
             }
             function click(event){
                 mousepressed=1;
                 update();
             }
             function cluck(event){
+                upmos=0;
                 mousepressed=2;
                 update();
             }
             main.addEventListener('mousemove',setMouse);
             main.addEventListener('mousedown',click);
             main.addEventListener('mouseup',cluck)
+            
+            offcan = document.createElement('canvas');
+            offcan.width = scrwid;
+            offcan.height= scrhig;
+            offctx = offcan.getContext('2d');
+            function renderOffCan(i){
+                for(k=0;k<elements[i][2].length;k++){
+                    rendChild(i);
+                }
+            }
+            function rendChild(i){
+                p=elements[i][1];
 
+                for(var k = 0;k<elements[i][2].length;k++){
+                    rendChild(elements[i][2][k]);   
+                }
+            }
+            
             
             var elements = new Array(0);
             var maxlayer = 0;
@@ -80,9 +107,40 @@
             var defsize = 25;
             var colorblocks = new Array(new Array(0,150,200));
             
-            //THE STRUCTURE FOR THE ARRAY
+            //THE STRUCTURE FOR THE Element OBject
             //Absolutes then the easily changed...
-            // 0type, 1parent, 2children[], 3local xpos, 4local ypos, 5connections[],  6abs xpos, 7abs ypos, 8layer , 9size
+            // 0type, 1parent, 2children[], 3local xpos, 4local ypos, 5connections[],  6abs xpos, 7abs ypos, 8layer , 9size,10 open?
+            
+            
+            
+            //OBjECT
+            function element(i,type,xpos,ypos){
+                this.x = xpos;
+                this.y = ypos;
+                this.type = type;
+                this.parent = -1;
+                this.children = new Array(0);
+                this.id = i;
+                this.layer=0;
+                this.size = defsize;
+                this.open = true;
+                this.connections = new Array(0);
+                
+                this.render = function(){
+                    ctx.fillStyle= tint(colorblocks[0],t);
+                    ctx.strokeStyle=tint(colorblocks[0],0.6*s);
+                    ctx.lineWidth = s*2;
+                    ctx.beginPath();
+                    ctx.arc(e[6],e[7],e[9],0,2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();
+                };
+            }
+            
+            var bob = new element(1,2,5,6);
+            console.log(bob.type);
+            
+            
             
             //TYPE STRUCTURES
             // type: 1 
@@ -101,7 +159,7 @@
                 ctx.stroke();
             }**/
             //var uptimer = setInterval(function(){update()},100);
-            
+            var upmostim = setInterval(function(){upmos++;},100);
             
             function update(){
                 head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
@@ -109,7 +167,7 @@
                 dragger();
             }
             function addElement(type,xpos,ypos){
-                elements.push(new Array(type,0,new Array(),xpos,ypos,new Array(),xpos,ypos,maxlayer,defsize));
+                elements.push(new Array(type,-1,new Array(),xpos,ypos,new Array(),xpos,ypos,maxlayer,defsize,true));
             }
             function renderElements(){
                 ctx.clearRect(0,0,scrwid,scrhig);
@@ -164,6 +222,18 @@
                     }
                 }
             }
+            function drop(p,c){
+                elements[p][2].push(c);
+                elements[c][1]=p;
+                elements[c][3]=-elements[p][6]+elements[c][6];
+                elements[c][4]=-elements[p][7]+elements[c][7];
+                elements[c][8]=elements[p][8]+1;
+                d=dist2(elements[p][6],elements[p][7],elements[c][6],elements[c][7]);
+                    if(elements[p][9]<d+elements[c][9]){
+                    elements[p][9] = d+elements[c][9];
+                }
+            }
+            var pik=0;
             function dragger(){
                 if(selected!=-1){
                     if(seldat==1){
@@ -173,15 +243,39 @@
                     }
                 }
                 if(picked!=-1){
-                    if(mousepressed==1){
+                    if(pik==0){
                         elements[picked][8]=maxlayer;
+                        p=elements[picked][1];
+                        if(p!=-1){
+                            arr = elements[p][2];
+                            index = arr.indexOf(picked);
+                            if(index>-1){
+                                elements[p][2].splice(index,1)
+                            }
+                            elements[picked][1]=-1;
+                        }
+                        //updatelayers();
+                        pik=1;
+                    }
+                    if(mousepressed==1){
                         elements[picked][6]+=mdx;
                         elements[picked][7]+=mdy;
                         elements[picked][3]+=mdx;
                         elements[picked][4]+=mdy;
+                        updateAbsPos(picked);
                     }
                     if(mousepressed==2){
-                        elements[picked][8]=0;
+                        if(over!=-1){
+                           drop(over,picked);
+                            updateMaxLayer();    
+                        }else{
+                           elements[picked][8]=0;
+                            elements[picked][1]=-1;
+                           }
+                        if(pik == 1){
+                            updateAbsPos(picked);
+                            pik=0;
+                        }
                         picked=-1;
                     }
                 }
@@ -204,14 +298,31 @@
                      }   
                 }
             }
-            
-                        
+            function updateAbsPos(i){
+                    //if(elements[i][8]==0){
+                        for(k = 0;k<elements[i][2].length;k++){
+                            upabspos(elements[i][2][k]);
+                        }       
+                    //}
+            }
+            function upabspos(i){
+                p=elements[i][1];
+                elements[i][6]=elements[p][6]+elements[i][3];
+                elements[i][7]=elements[p][7]+elements[i][4];
+                for(var k = 0;k<elements[i][2].length;k++){
+                    upabspos(elements[i][2][k]);   
+                }
+            }
+
             function dist(x,y,x2,y2,r){
                 if(Math.pow((x-x2),2)+Math.pow((y-y2),2)<Math.pow(r,2)){
                     return true;
                 }else{
                     return false;
                 }
+            }
+            function dist2(x,y,x2,y2){
+                return (Math.pow((Math.pow((x-x2),2)+Math.pow((y-y2),2)),0.5));
             }
             function tint(color,tint){
                 return("rgb("+color[0]*tint+","+color[1]*tint+","+color[2]*tint+")");
