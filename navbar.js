@@ -6,6 +6,7 @@ navbar.innerHTML = `
 <a href="neuralnetwork.html">NeuralNetwork</a>
 <a href="choose_gen.html">ChooseGenerator</a>
 <a href="pictures.html">Art</a>
+<a href="https://JChat--cookiepie.repl.co">Chat</a>
 
 `;
 }
