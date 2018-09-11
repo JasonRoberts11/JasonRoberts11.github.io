@@ -17,7 +17,6 @@
             var ctx = main.getContext("2d");
             var scrwid =800;
             var scrhig=800;
-            
             main.getAttributeNode("width").value=scrwid;
             main.getAttributeNode("height").value=scrhig;
             
@@ -100,6 +99,7 @@
             var seldat =-1;
             var selrad = 10;
             var defsize = 25;
+            var ddde=10;
             var colorblocks = new Array([100,150,200],[200,100,150]);
 			var parent=null;
             
@@ -164,21 +164,42 @@
                         this.children[i].updatePos();
                     } 
 				}
+                this.updateSize=function(){
+                    //this.parent.size=dist2(this.absx,this.absy,this.parent.absx,this.parent.absy)+(this.size)+ddde;
+                    var maxsize = defsize;
+                    var chose=-1;
+                    for(var i =0;i<this.children.length;i++){
+                        this.children[i].updateSize();
+                        var c = this.children[i];
+                        if(dist2(this.absx,this.absy,c.absx,c.absy)+(c.size)+ddde>maxsize){
+                           maxsize=dist2(this.absx,this.absy,c.absx,c.absy)+(c.size)+ddde;
+                            
+                           }
+                    } 
+                    this.size=maxsize;
+                    
+                }
+                this.updateChildSize = function(){
+                    for(var i =0;i<this.children.length;i++){
+                        this.children[i].updateSize();
+                    } 
+                }
 				this.findParent = function(e){
 					parent=null;
 					e.recFindParent(this);
 					if(parent!=null){
 						this.parent = parent;
 						parent.children.push(this);
-						if(dist(this.absx,this.absy,parent.absx,parent.absy,(this.size+parent.size)))//TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-						this.parent.size=dist2(this.absx,this.absy,parent.absx,parent.absy)+
+						/*if(!dist(this.absx,this.absy,parent.absx,parent.absy,(parent.size-this.size))){
+                         this.parent.size=dist2(this.absx,this.absy,parent.absx,parent.absy)+(this.size)+ddde;   
+                        }*/
 						this.x = -this.parent.absx+this.absx;
 						this.y = -this.parent.absy+this.absy;
 					}
 				}
 				this.recFindParent = function(c){
 					if(this!=c)
-					   if(dist(this.absx,this.absy,c.absx,c.absy,(this.size+c.size))){
+					   if(dist(this.absx,this.absy,mousex,mousey,(this.size))){
 					   parent = this;
 						for(var i =0;i<this.children.length;i++){
                         this.children[i].recFindParent(c);
@@ -215,7 +236,7 @@
                 maine.render();
 				//selected= maine;
 				dragger();
-				
+				maine.updateChildSize();
 				
                 
             }
