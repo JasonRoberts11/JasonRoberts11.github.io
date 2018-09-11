@@ -27,8 +27,9 @@
             var output = document.getElementById("output");
             var testButton = document.getElementById("test");
             testButton.onclick = function test(){
-                addElement(1,200,200);
-                updateMaxLayer();
+                //addElement(1,200,200);
+                //updateMaxLayer();
+                addElement(main,1,1,0,0);
             }
             icond=1;
             var iconchanger=setInterval(function(){
@@ -51,17 +52,16 @@
                 mousey = event.layerY;
                 //if(mousepressed==1||upmos<10){
                 if(picked==-1){
-                    setSelection();
+                    //setSelection();
                 }else{
-                    setOver();
+                    //setOver();
                 }
                 output.innerHTML="Mouse: " +mousex+ " "+mousey+"   Selected: "+ selected;
-                if(selected!=-1){
+                /*if(selected!=-1){
                    output.innerHTML+=" Parent: "+ elements[selected][1];
                     output.innerHTML+=" Children: " +elements[selected][2];
                     output.innerHTML+=" Layer: "+ elements[selected][8];
-                }
-                
+                }*/
                 update();
                 title.innerHTML= Math.floor(Math.random()*1000)+" Ways to Fail"
                 //}
@@ -90,7 +90,6 @@
             }
             function rendChild(i){
                 p=elements[i][1];
-
                 for(var k = 0;k<elements[i][2].length;k++){
                     rendChild(elements[i][2][k]);   
                 }
@@ -99,13 +98,13 @@
             
             var elements = new Array(0);
             var maxlayer = 0;
-            var selected = -1;
-            var picked = -1;
-            var over = -1;
+            var selected;
+            var picked;
+            var over;
             var seldat =-1;
             var selrad = 10;
             var defsize = 25;
-            var colorblocks = new Array(new Array(0,150,200));
+            var colorblocks = new Array([100,150,200],[200,100,150]);
             
             //THE STRUCTURE FOR THE Element OBject
             //Absolutes then the easily changed...
@@ -117,30 +116,39 @@
             function element(i,type,xpos,ypos){
                 this.x = xpos;
                 this.y = ypos;
+                this.absx = xpos;
+                this.absy = ypos;
                 this.type = type;
-                this.parent = -1;
-                this.children = new Array(0);
+                this.parent = null;
+                this.children = [];
                 this.id = i;
+                this.color = 0;
                 this.layer=0;
                 this.size = defsize;
                 this.open = true;
-                this.connections = new Array(0);
-                
+                this.connections = [];
                 this.render = function(){
-                    ctx.fillStyle= tint(colorblocks[0],t);
-                    ctx.strokeStyle=tint(colorblocks[0],0.6*s);
+                    var t = 1;
+                    var s = 1;
+                    ctx.fillStyle= tint(colorblocks[this.color],t);
+                    ctx.strokeStyle=tint(colorblocks[this.color],0.6*s);
                     ctx.lineWidth = s*2;
                     ctx.beginPath();
-                    ctx.arc(e[6],e[7],e[9],0,2*Math.PI);
+                    ctx.arc(this.absx,this.absy,this.size,0,2*Math.PI);
                     ctx.fill();
                     ctx.stroke();
+                    for(var i =0;i<this.children.length;i++){
+                        this.children[i].render();
+                    }
+                };
+                this.add = function(e){
+                    this.children.push(e);
                 };
             }
-            
-            var bob = new element(1,2,5,6);
-            console.log(bob.type);
-            
-            
+            var maine = new element(0,1,250,250);
+            maine.size = 250;
+            maine.color = 1;
+            //console.log(bob.type);
             
             //TYPE STRUCTURES
             // type: 1 
@@ -160,8 +168,22 @@
             }**/
             //var uptimer = setInterval(function(){update()},100);
             var upmostim = setInterval(function(){upmos++;},100);
-            
             function update(){
+                head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
+                maine.render();
+                
+            }
+            
+            function addElement(parent,i,type,x,y){
+                var e = new element(i,type,x,y);
+                e.absx = maine.absx+x;
+                e.absy = maine.absy+y;
+                maine.add(e);
+            }
+            
+            
+            //ALL THIS CODE IS DEPRICATED
+            /*function update(){
                 head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
                 renderElements();
                 dragger();
@@ -291,6 +313,7 @@
                     ctx.stroke();
                 }
             }
+            
             function updateMaxLayer(){
                 for(i= 0;i<elements.length;i++){
                      if(elements[i][8]>=maxlayer){
@@ -313,7 +336,7 @@
                     upabspos(elements[i][2][k]);   
                 }
             }
-
+*/
             function dist(x,y,x2,y2,r){
                 if(Math.pow((x-x2),2)+Math.pow((y-y2),2)<Math.pow(r,2)){
                     return true;
