@@ -29,16 +29,13 @@
             testButton.onclick = function test(){
                 //addElement(1,200,200);
                 //updateMaxLayer();
-                addElement(main,1,1,0,0);
+                addElement(maine,1,1,0,0);
             }
             icond=1;
             var iconchanger=setInterval(function(){
                 icon.getAttributeNode("href").value = "icon"+icond+".png";
                 icond=(icond%2)+1;
             },1000)
-            
-            
-            
             var mousex;
             var mousey;
             var mdx = 0;
@@ -56,7 +53,7 @@
                 }else{
                     //setOver();
                 }
-                output.innerHTML="Mouse: " +mousex+ " "+mousey+"   Selected: "+ selected;
+                output.innerHTML="Mouse: " +mousex+ " "+mousey+"   Selected: "+ selected.children;
                 /*if(selected!=-1){
                    output.innerHTML+=" Parent: "+ elements[selected][1];
                     output.innerHTML+=" Children: " +elements[selected][2];
@@ -78,22 +75,21 @@
             main.addEventListener('mousemove',setMouse);
             main.addEventListener('mousedown',click);
             main.addEventListener('mouseup',cluck)
-            
             offcan = document.createElement('canvas');
             offcan.width = scrwid;
             offcan.height= scrhig;
             offctx = offcan.getContext('2d');
-            function renderOffCan(i){
+            /*function renderOffCan(i){
                 for(k=0;k<elements[i][2].length;k++){
                     rendChild(i);
                 }
-            }
-            function rendChild(i){
+            }*/
+            /*function rendChild(i){
                 p=elements[i][1];
                 for(var k = 0;k<elements[i][2].length;k++){
                     rendChild(elements[i][2][k]);   
                 }
-            }
+            }*/
             
             
             var elements = new Array(0);
@@ -105,6 +101,7 @@
             var selrad = 10;
             var defsize = 25;
             var colorblocks = new Array([100,150,200],[200,100,150]);
+			var parent=null;
             
             //THE STRUCTURE FOR THE Element OBject
             //Absolutes then the easily changed...
@@ -144,6 +141,54 @@
                 this.add = function(e){
                     this.children.push(e);
                 };
+				this.getSelection = function(){
+					if(dist(this.absx,this.absy,mousex,mousey,this.size)){
+						selected=this;
+					}
+					for(i = 0;i<this.children.length;i++){
+						this.children[i].getSelection();
+					}
+				}
+				this.move = function(dx,dy){
+					this.absx += dx;
+					this.absy += dy;
+					
+					for(var i =0;i<this.children.length;i++){
+                        this.children[i].updatePos();
+                    } 
+				}
+				this.updatePos = function(){
+					this.absx = this.parent.absx + this.x;
+					this.absy = this.parent.absy + this.y;
+					for(var i =0;i<this.children.length;i++){
+                        this.children[i].updatePos();
+                    } 
+				}
+				this.findParent = function(e){
+					parent=null;
+					e.recFindParent(this);
+					if(parent!=null){
+						this.parent = parent;
+						parent.children.push(this);
+						if(dist(this.absx,this.absy,parent.absx,parent.absy,(this.size+parent.size)))//TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+						this.parent.size=dist2(this.absx,this.absy,parent.absx,parent.absy)+
+						this.x = -this.parent.absx+this.absx;
+						this.y = -this.parent.absy+this.absy;
+					}
+				}
+				this.recFindParent = function(c){
+					if(this!=c)
+					   if(dist(this.absx,this.absy,c.absx,c.absy,(this.size+c.size))){
+					   parent = this;
+						for(var i =0;i<this.children.length;i++){
+                        this.children[i].recFindParent(c);
+                    	} 
+					}
+				}
+				this.removeParent = function(){
+					this.parent.children.splice(this.parent.children.indexOf(this),1);
+					this.parent = null;
+				}
             }
             var maine = new element(0,1,250,250);
             maine.size = 250;
@@ -153,9 +198,6 @@
             //TYPE STRUCTURES
             // type: 1 
             //  A basic circle
-            
-            
-            
             /**for(var i = 0; i < 100; i++){
                 elements[i] = new Array(Math.random()*100,Math.random()*100);
             }
@@ -171,6 +213,10 @@
             function update(){
                 head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
                 maine.render();
+				//selected= maine;
+				dragger();
+				
+				
                 
             }
             
@@ -178,8 +224,30 @@
                 var e = new element(i,type,x,y);
                 e.absx = maine.absx+x;
                 e.absy = maine.absy+y;
+				e.parent = parent;
                 maine.add(e);
             }
+			function dragElement(e){
+				e.move(mdx,mdy);
+			}
+			dragged = null;
+			function dragger(){
+				if(mousepressed==1&&dragged==null){
+				maine.getSelection();
+				if(selected != maine){
+				dragged=selected;
+				dragged.removeParent();}
+				}
+				if(mousepressed==1&&dragged!=null){
+				   dragElement(dragged);
+				dragged.render();
+				   }
+				if(mousepressed==2&&dragged!=null){
+					dragged.findParent(maine);
+					dragged=null;
+				}
+				//console.log(mousepressed)
+			}
             
             
             //ALL THIS CODE IS DEPRICATED
