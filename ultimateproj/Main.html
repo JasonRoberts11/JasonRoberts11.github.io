@@ -113,6 +113,9 @@
             function element(i,type,xpos,ypos){
                 this.x = xpos;
                 this.y = ypos;
+				this.close = false;
+				this.xv =0;
+				this.yv=0;
                 this.absx = xpos;
                 this.absy = ypos;
                 this.type = type;
@@ -134,9 +137,12 @@
                     ctx.arc(this.absx,this.absy,this.size,0,2*Math.PI);
                     ctx.fill();
                     ctx.stroke();
+					if(!this.close){
                     for(var i =0;i<this.children.length;i++){
                         this.children[i].render();
-                    }
+                    }}else{
+						ctx.fillText(this.children.length,this.absx,this.absy);
+					}
                 };
                 this.add = function(e){
                     this.children.push(e);
@@ -152,9 +158,13 @@
 				this.move = function(dx,dy){
 					this.absx += dx;
 					this.absy += dy;
-					
 					for(var i =0;i<this.children.length;i++){
                         this.children[i].updatePos();
+                    } 
+				}
+				this.shrinkWrap=function(){
+					for(var i =0;i<this.children.length;i++){
+                        this.children[i].shrinkWrap();
                     } 
 				}
 				this.updatePos = function(){
@@ -238,9 +248,18 @@
 				dragger();
 				maine.updateChildSize();
 				
+				
+				if(keypr)
+				
+				
                 
             }
             
+			
+			
+			
+			
+			
             function addElement(parent,i,type,x,y){
                 var e = new element(i,type,x,y);
                 e.absx = maine.absx+x;
@@ -254,8 +273,9 @@
 			dragged = null;
 			function dragger(){
 				if(mousepressed==1&&dragged==null){
+				selected=null;
 				maine.getSelection();
-				if(selected != maine){
+				if(selected != maine&&selected!=null){
 				dragged=selected;
 				dragged.removeParent();}
 				}
@@ -265,9 +285,9 @@
 				   }
 				if(mousepressed==2&&dragged!=null){
 					dragged.findParent(maine);
+					dragged.render();
 					dragged=null;
 				}
-				//console.log(mousepressed)
 			}
             
             
