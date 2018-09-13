@@ -1,0 +1,13 @@
+var d_html= `{
+"name":"HTML",
+"array":[
+{"name":"Main","set":[
+	{"name":"html","start":"<html>","end":"</html>"},
+	{"name":"head","start":"<head>","end":"</head>"},{"name":"body","start":"<body>","end":"</body>"}
+]},
+{"name":"Text","set":[
+	{"name":"p","start":"<p>","end":"</p>"},
+	{"name":"header","start":"<h1>","end":"</h1>"},{"name":"strong","start":"<strong>","end":"</strong>"}
+]}
+]
+}`

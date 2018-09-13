@@ -6,37 +6,48 @@
         <meta name="viewport" content="width=device-width,user-scalable=no">
 
     </head>
-    <body>
-        <h1 id="head">JASN 188</h1>
+    <body style="margin:0;padding:0;" onresize="upScr()">
+        <!--<h1 id="head">JASN 188</h1>
         <p><i>There are some <strong>bugs</strong> in here</i></p>
         <p id = "output"></p>
-        <button id ="test">TEST</button><br/>
-        <canvas id="main" width="500" height="500">
+        <button id ="test">TEST</button><br/>-->
+        <canvas id="main" width="500" height="500" style="margin:0;padding:0;">
         </canvas>
-        
+        <script type="text/javascript" src="d_html.json"></script>
         <script>
             var main = document.getElementById("main");
             var ctx = main.getContext("2d");
-            var scrwid =800;
-            var scrhig=800;
+            var scrwid =window.innerWidth-10;
+            var scrhig=window.innerHeight-10;
             main.getAttributeNode("width").value=scrwid;
             main.getAttributeNode("height").value=scrhig;
             
             var title = document.getElementById("title");
             var icon = document.getElementById("icon");
-            var head = document.getElementById("head");
+            /*var head = document.getElementById("head");
             var output = document.getElementById("output");
             var testButton = document.getElementById("test");
             testButton.onclick = function test(){
                 //addElement(1,200,200);
                 //updateMaxLayer();
                 addElement(maine,1,1,0,0);
-            }
+            }*/
             icond=1;
+			function upScr(){
+				 scrwid =window.innerWidth-10;
+            scrhig=window.innerHeight-10;
+				main.getAttributeNode("width").value=scrwid;
+            main.getAttributeNode("height").value=scrhig;
+				sbhig=scrhig;
+			sbx=scrwid;
+				
+				
+				update();
+			}
             var iconchanger=setInterval(function(){
                 icon.getAttributeNode("href").value = "icon"+icond+".png";
                 icond=(icond%2)+1;
-            },1000)
+            },1000);
             var mousex;
             var mousey;
             var mdx = 0;
@@ -66,7 +77,7 @@
                 }else{
                     //setOver();
                 }
-                output.innerHTML="Mouse: " +mousex+ " "+mousey
+                //output.innerHTML="Mouse: " +mousex+ " "+mousey
                 /*if(selected!=-1){
                    output.innerHTML+=" Parent: "+ elements[selected][1];
                     output.innerHTML+=" Children: " +elements[selected][2];
@@ -101,7 +112,7 @@
                 }else{
                     //setOver();
                 }
-                output.innerHTML="Mouse: " +mousex+ " "+mousey
+                //output.innerHTML="Mouse: " +mousex+ " "+mousey
                 /*if(selected!=-1){
                    output.innerHTML+=" Parent: "+ elements[selected][1];
                     output.innerHTML+=" Children: " +elements[selected][2];
@@ -368,10 +379,14 @@
             }**/
             //var uptimer = setInterval(function(){update()},100);
             var upmostim = setInterval(function(){upmos++;},100);
+			
+			
+			////UPDATE///////////////////////////
             function update(){
-                head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
+                //head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
                 maine.render();
 				//selected= maine;
+				drawSideBar();
 				dragger();
 				maine.updateChildSize();
             }
@@ -435,7 +450,63 @@
 					dragged=null;
 				}
 			}
-            
+			///////SIDE BAR////////////////////
+			var sbsiz = 100;
+			var sbdy=30;
+			var sbhig=scrhig-20;
+			var sbx=scrwid-20;//THe RIGHT SIDE
+			var sby=0;
+			var side=true;
+			var mbar = [];
+			var sbar = 0;
+			mbar.push(JSON.parse(d_html));
+			
+			
+            function drawSideBar(){
+				if(side){
+					ctx.fillStyle="#EEEEEE";
+					ctx.fillRect(sbx-sbsiz,sby,sbsiz,sbhig);
+					ctx.fillStyle="#444444";
+						ctx.textAlign="center";
+						ctx.textBaseline="middle";
+						ctx.font = "20px Arial";
+					for(var i=0;i<mbar.length;i++){
+						ctx.fillStyle="#AAAAAA";
+						ctx.fillRect(sbx-sbsiz,sby+i*sbdy,sbsiz,(1)*sbdy);
+						ctx.fillStyle="#000000";
+						ctx.fillText(mbar[i].name,sbx-sbsiz/2,sby+(i+0.5)*sbdy);
+						if(i==sbar){
+							ctx.beginPath();
+							ctx.moveTo(sbx-sbsiz,sby+i*sbdy);
+							ctx.lineTo(sbx-sbsiz-10,sby+(i+0.5)*sbdy);
+							ctx.lineTo(sbx-sbsiz,sby+(i+1)*sbdy);
+							ctx.closePath();
+						}
+					}
+					var j = 0;
+					for(var i=0;i<mbar[sbar].array.length;i++){
+						var r = mbar[sbar].array[i];
+						ctx.font = "20px Arial";
+						ctx.fillStyle="#CCCCCC";
+						ctx.fillRect(sbx-sbsiz*2,sby+j*sbdy,sbsiz,(1)*sbdy);
+						ctx.fillStyle="#000000";
+						ctx.fillText(r.name,sbx-sbsiz*1.5,sby+(j+0.5)*sbdy);
+						j++;
+						for(var k = 0;k<r.set.length;k++){
+							//r.set[k]
+							ctx.font = "15px Arial";
+							ctx.fillStyle="#EEEEEE";
+
+							ctx.fillRect(sbx-sbsiz*2,sby+j*sbdy,sbsiz,(1)*sbdy);
+							ctx.fillStyle="#000000";
+							ctx.fillText(r.set[k].name,sbx-sbsiz*1.5,sby+(j+0.5)*sbdy);
+							j++;
+						}
+					}
+					ctx.fillStyle="#AAAAAA";
+					ctx.fill();
+				}
+			}
             
             //ALL THIS CODE IS DEPRICATED
             /*function update(){
