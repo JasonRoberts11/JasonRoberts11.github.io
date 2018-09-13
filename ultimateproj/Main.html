@@ -40,7 +40,9 @@
             main.getAttributeNode("height").value=scrhig;
 				sbhig=scrhig;
 			sbx=scrwid;
-				
+				maine.size = scrwid/2;
+				maine.absx = scrwid/2;
+				maine.absy = scrwid/2;
 				
 				update();
 			}
@@ -242,6 +244,7 @@
                 this.id = i;
                 this.color = 0;
                 this.tint =1;
+				this.label="";
                 this.bold = 1;
                 this.layer=0;
                 this.size = defsize;
@@ -257,14 +260,22 @@
                     ctx.arc(this.absx,this.absy,this.size,0,2*Math.PI);
                     ctx.fill();
                     ctx.stroke();
+					 ctx.font="10px Arial";
+						ctx.textAlign="center";
+						ctx.textBaseline="mid";
+                        ctx.fillStyle = tint(colorblocks[this.color],0);
+						ctx.fillText(this.label,this.absx,this.absy+this.size-10);
+					
 					if(!this.close){
                     for(var i =0;i<this.children.length;i++){
                         this.children[i].render();
                     }
                     }else{
                         ctx.font="30px Arial";
+						ctx.textAlign="center";
+						ctx.textBaseline="mid";
                         ctx.fillStyle = tint(colorblocks[this.color],0);
-						ctx.fillText(this.children.length,this.absx-10,this.absy+10);
+						ctx.fillText(this.children.length,this.absx,this.absy);
 					}
                     
                 };
@@ -359,8 +370,8 @@
 					this.parent = null;
 				}
             }
-            var maine = new element(0,1,250,250);
-            maine.size = 250;
+            var maine = new element(null,1,scrwid/2,scrwid/2);
+            maine.size = scrwid/2;
             maine.color = 1;
             //console.log(bob.type);
             
@@ -500,6 +511,11 @@
 							ctx.fillRect(sbx-sbsiz*2,sby+j*sbdy,sbsiz,(1)*sbdy);
 							ctx.fillStyle="#000000";
 							ctx.fillText(r.set[k].name,sbx-sbsiz*1.5,sby+(j+0.5)*sbdy);
+							
+							if(mousepressed==1&&Math.abs(mousex-(sbx-sbsiz*1.5))<sbsiz/2&&Math.abs(mousey-(sby+(j+0.5)*sbdy))<sbdy/2){
+								dragged=new element(0,1,mousex,mousey);
+								dragged.label=r.set[k].name;
+							}
 							j++;
 						}
 					}
