@@ -66,7 +66,42 @@
                 }else{
                     //setOver();
                 }
-                //output.innerHTML="Mouse: " +mousex+ " "+mousey+"   Selected: "+ selected.children;
+                output.innerHTML="Mouse: " +mousex+ " "+mousey
+                /*if(selected!=-1){
+                   output.innerHTML+=" Parent: "+ elements[selected][1];
+                    output.innerHTML+=" Children: " +elements[selected][2];
+                    output.innerHTML+=" Layer: "+ elements[selected][8];
+                }*/
+                update();
+                title.innerHTML= Math.floor(Math.random()*1000)+" Ways to Fail"
+                //}
+            }
+            function setTouch(event){
+                event.preventDefault();
+                var dt = new Date().getTime()-time;
+                if(mousepressed==1&&dt>cdlay){
+                mousepressed=2;
+                    //console.log(mousepressed+" "+dt);
+                }
+                if(mousepressed==3&&dt>cdlay){
+                mousepressed=4;
+                    //console.log(mousepressed+" "+dt);
+                }
+                var tou = event.changedTouches;
+                if(tou.length==1){
+                    var e = main.getBoundingClientRect();
+                mdx = tou[0].pageX-e.left-mousex;
+                mdy = tou[0].pageY-e.top-mousey;
+                mousex = tou[0].pageX-e.left;
+                mousey = tou[0].pageY-e.top;
+                }
+                //if(mousepressed==1||upmos<10){
+                if(picked==-1){
+                    //setSelection();
+                }else{
+                    //setOver();
+                }
+                output.innerHTML="Mouse: " +mousex+ " "+mousey
                 /*if(selected!=-1){
                    output.innerHTML+=" Parent: "+ elements[selected][1];
                     output.innerHTML+=" Children: " +elements[selected][2];
@@ -88,6 +123,7 @@
                 
                 time=new Date().getTime();
                 //console.log(mousepressed+" "+dt);
+                //console.log("click")
             }
             ///MOUSEPRESSED AS FOLLOWS:
             ///0: Not pressed
@@ -106,14 +142,45 @@
                 //mousepressed=0;
                 //}
                 update();
-                time=new Date().getTime()
+                time=new Date().getTime();
+                //console.log("cluck")
+            }
+            function tap(event){
+                var tou = event.changedTouches;
+                if(tou.length==1){
+                    var e = main.getBoundingClientRect();
+                mdx = tou[0].pageX-e.left-mousex;
+                mdy = tou[0].pageY-e.top-mousey;
+                mousex = tou[0].pageX-e.left;
+                mousey = tou[0].pageY-e.top;
+                }
+                event.preventDefault();
+                var dt = new Date().getTime()-time;
+                if(mousepressed==0){
+                mousepressed=1;
+                }
+                if(dt<cdlay){
+                mousepressed=3;
+                }
+                update();  
+                time=new Date().getTime();
+            }
+            function untap(event){
+                event.preventDefault();
+                var dt = time-dat.getTime();
+                upmos=0;
+                mousepressed=0;
+                time=new Date().getTime();
+                update();
+                update();
+                //console.log("cluck")
             }
             main.addEventListener('mousemove',setMouse);
             main.addEventListener('mousedown',click);
             main.addEventListener('mouseup',cluck)
-            main.addEventListener('touchmove',setMouse);
-            main.addEventListener('touchstart',click);
-            main.addEventListener('touchend',cluck)
+            main.addEventListener('touchmove',setTouch,false);
+            main.addEventListener('touchstart',tap,false);
+            main.addEventListener('touchend',untap,false)
             offcan = document.createElement('canvas');
             offcan.width = scrwid;
             offcan.height= scrhig;
