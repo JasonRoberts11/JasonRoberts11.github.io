@@ -448,7 +448,7 @@
                         this.children[i].deOrphanize();
                     } 
 				}
-				this.parseToJSON(){
+				this.parseToJSON=function(){
 				//HELLO
 				}
 				
@@ -593,6 +593,7 @@
 					upar=text;
 					if(upar.charAt(0)=='{'){
 					maine = JSON.parse(upar);
+						maine.orphanize;
 					}else{
 						console.log("failed");
 					}
@@ -634,7 +635,9 @@
 							if(i==0&&sele==-1){
 					mousepressed=-1;
 					if(confirm("areyousure?")){
+						maine.orphanize();
 					download("HEHE",JSON.stringify(maine));
+						maine.deOrphanize();
 					}
 					sele=1;
 				}
