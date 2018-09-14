@@ -42,19 +42,20 @@
 			function upScr(){
                 scrwid =window.innerWidth-5;
                 scrhig=window.innerHeight-5;
-                if(scrwid >scrhig){
-                        maine.size = scrhig/2;
-				maine.absx = scrhig/2;
-				maine.absy = scrhig/2;
+                if(scrwid <scrhig){
+                     maine.size = scrwid/2;
+				maine.absx = scrwid/2;
+				maine.absy = scrwid/2;
+                       
                    sbhig=scrhig;
 			         sbx=0;
                     side=false;
                     main.getAttributeNode("width").value=scrhig;
             main.getAttributeNode("height").value=scrhig;
                 }else{
-                   maine.size = scrwid/2;
-				maine.absx = scrwid/2;
-				maine.absy = scrwid/2;
+     maine.size = scrhig/2;
+				maine.absx = scrhig/2;
+				maine.absy = scrhig/2;
                     sbhig=scrhig;
 			sbx=scrwid;
                     
