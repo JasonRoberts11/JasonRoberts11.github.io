@@ -27,3 +27,16 @@ var d_javascript= `{
 ]}
 ]
 }`
+var d_zubble= `{
+"name":"ZBL",
+"array":[
+{"name":"Main","open":false,"set":[
+    {"name":"Function","start":"<head>","end":"</head>","color":4},
+	{"name":"Initialize","start":"<!DOCTYPE html><html>","end":"</html>","color":4},
+    {"name":"Close","color":4}
+]},
+{"name":"Math","open":false,"set":[
+	{"name":"=","color":6}
+]}
+]
+}`
