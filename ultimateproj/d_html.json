@@ -1,13 +1,29 @@
 var d_html= `{
 "name":"HTML",
 "array":[
-{"name":"Main","set":[
-	{"name":"html","start":"<html>","end":"</html>"},
-	{"name":"head","start":"<head>","end":"</head>"},{"name":"body","start":"<body>","end":"</body>"}
+{"name":"Main","open":false,"set":[
+	{"name":"html","start":"<!DOCTYPE html><html>","end":"</html>","color":2},
+	{"name":"head","start":"<head>","end":"</head>","color":1},
+    {"name":"body","start":"<body>","end":"</body>","color":1}
 ]},
-{"name":"Text","set":[
-	{"name":"p","start":"<p>","end":"</p>"},
-	{"name":"header","start":"<h1>","end":"</h1>"},{"name":"strong","start":"<strong>","end":"</strong>"}
+{"name":"Text","open":false,"set":[
+	{"name":"p","start":"<p>","end":"</p>","color":1},
+	{"name":"header","start":"<h1>","end":"</h1>","color":1},
+    {"name":"strong","start":"<strong>","end":"</strong>","color":1},
+    {"name":"raw","start":"","end":"","color":3,"text":"hello world"}
+]}
+]
+}`
+var d_javascript= `{
+"name":"JS",
+"array":[
+{"name":"Main","open":false,"set":[
+    {"name":"Script","start":"<head>","end":"</head>","color":4},
+	{"name":"var","start":"<!DOCTYPE html><html>","end":"</html>","color":5},
+    {"name":"=","color":6}
+]},
+{"name":"Math","open":false,"set":[
+	{"name":"=","color":6}
 ]}
 ]
 }`
