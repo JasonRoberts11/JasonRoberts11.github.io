@@ -39,13 +39,14 @@
                 addElement(maine,1,1,0,0);
             }*/
             icond=1;
+			var tby =30;
 			function upScr(){
                 scrwid =window.innerWidth-5;
                 scrhig=window.innerHeight-5;
                 if(scrwid <scrhig){
                      maine.size = scrwid/2;
 				maine.absx = scrwid/2;
-				maine.absy = scrwid/2;
+				maine.absy = scrwid/2+tby;
                        
                    sbhig=scrhig;
 			         sbx=0;
@@ -53,9 +54,9 @@
                     main.getAttributeNode("width").value=scrhig;
             main.getAttributeNode("height").value=scrhig;
                 }else{
-     maine.size = scrhig/2;
-				maine.absx = scrhig/2;
-				maine.absy = scrhig/2;
+     maine.size = (scrhig-2*tby)/2;
+				maine.absx = (scrhig-tby*2)/2;
+				maine.absy = (scrhig-2*tby)/2+tby;
                     sbhig=scrhig;
 			sbx=scrwid;
                     
@@ -416,9 +417,6 @@
 					if(parent!=null){
 						this.parent = parent;
 						parent.children.push(this);
-						/*if(!dist(this.absx,this.absy,parent.absx,parent.absy,(parent.size-this.size))){
-                         this.parent.size=dist2(this.absx,this.absy,parent.absx,parent.absy)+(this.size)+ddde;   
-                        }*/
 						this.x = -this.parent.absx+this.absx;
 						this.y = -this.parent.absy+this.absy;
 					}
@@ -437,6 +435,23 @@
 					this.parent.children.splice(this.parent.children.indexOf(this),1);
 					this.parent = null;
 				}
+				this.orphanize=function(){
+					this.parent=null;
+					for(var i =0;i<this.children.length;i++){
+                        this.children[i].orphanize();
+                    } 
+				}
+				this.deOrphanize=function(){
+					
+					for(var i =0;i<this.children.length;i++){
+						this.children[i].parent = this;
+                        this.children[i].deOrphanize();
+                    } 
+				}
+				this.parseToJSON(){
+				//HELLO
+				}
+				
             }
             var maine = new element(null,1,scrwid/2,scrwid/2);
             maine.size = scrwid/2;
@@ -467,6 +482,7 @@
                 maine.render();
 				//selected= maine;
 				drawSideBar();
+				drawTopBar();
 				dragger();
 				maine.updateChildSize();
             }
@@ -549,19 +565,89 @@
 			var sbdy=30;
 			var sbhig=scrhig;
 			var sbx=scrwid;//THe RIGHT SIDE
-			var sby=0;
+			var tbs = 30;
+			var sby=0+tbs;
 			var side=true;
 			var mbar = [];
 			var sbar = 0;
 			mbar.push(JSON.parse(d_html));
             mbar.push(JSON.parse(d_javascript));
 			var par="";
+			var upar="";
 			function parseHtml(el){
                 par="";
                 el.parseChildren();
                 //console.log(par);
                 preview.innerHTML=par;
             }
+			const rb=document.createElement('INPUT');
+			rb.setAttribute("type","file");
+			rb.style.display='none';
+			document.body.appendChild(rb);
+			function upload(){
+				rb.click();
+			}
+			rb.addEventListener("change",()=>{
+				const file = rb.files.item(0);
+				fileToText(file,(text)=>{
+					upar=text;
+					if(upar.charAt(0)=='{'){
+					maine = JSON.parse(upar);
+					}else{
+						console.log("failed");
+					}
+				});
+				
+			});
+			function fileToText(file,callback){
+				const reader = new FileReader();
+				reader.readAsText(file);
+				reader.onload = () =>{
+					callback(reader.result);
+				}
+			}
+			function download(name, string){
+				var ra = document.createElement('a');
+				ra.setAttribute('href','data:text/plain;charset=utf-8,'+encodeURIComponent(string));
+				ra.setAttribute('download',name);
+				ra.style.display='none';
+				document.body.appendChild(ra);
+				ra.click();
+				document.body.removeChild(ra);
+			}
+			tbx=100;
+			function drawTopBar(){
+					ctx.fillStyle="#EEEEEE";
+					ctx.fillRect(0,0,scrwid,tby);
+					ctx.fillStyle="#444444";
+				var sele=-1;
+				var tes=["Save","Load"]
+				for(var i =0;i<2;i++){
+					ctx.fillStyle="#AAAAAA";
+						ctx.fillRect(1+i*tbx,1,tbx-2,tby-2);
+						ctx.fillStyle="#000000";
+					ctx.textAlign="center";
+						ctx.textBaseline="middle";
+						ctx.font = "20px Arial";
+						ctx.fillText(tes[i],i*tbx+0.5*tbx,tby/2);
+					if(mousepressed==1&&Math.abs(mousex-(i*tbx+0.5*tbx))<tbx/2&&Math.abs(mousey-(tby/2))<tby/2){
+							if(i==0&&sele==-1){
+					mousepressed=-1;
+					if(confirm("areyousure?")){
+					download("HEHE",JSON.stringify(maine));
+					}
+					sele=1;
+				}
+						if(i==1&&sele==-1){
+					mousepressed=-1;
+					if(confirm("R U SURE?")){
+						upload();
+					}
+					sele=1;
+				}
+							}
+				}
+			}
             function drawSideBar(){
 				if(side){
 					ctx.fillStyle="#EEEEEE";
@@ -626,7 +712,7 @@
 					ctx.fill();
 				}
 			}
-            
+            upScr();
             //ALL THIS CODE IS DEPRICATED
             /*function update(){
                 head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
