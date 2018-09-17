@@ -30,13 +30,18 @@ var d_javascript= `{
 var d_zubble= `{
 "name":"ZBL",
 "array":[
-{"name":"Main","open":false,"set":[
-    {"name":"Function","start":"<head>","end":"</head>","color":4},
-	{"name":"Initialize","start":"<!DOCTYPE html><html>","end":"</html>","color":4},
-    {"name":"Close","color":4}
+	{"name":"Main","open":false,"set":[
+    {"name":"Function","jstart":"ree","jend":"ree","color":4},
+	{"name":"Initialize","jstart":"<!DOCTYPE html><html>","jend":"</html>","color":4},
+    {"name":"Close","color":4},
+	{"name":"Print","color":2}
 ]},
 {"name":"Math","open":false,"set":[
-	{"name":"=","color":6}
+	{"name":"raw","color":3,"text":"hello world"},
+	{"name":"+","color":6},
+	{"name":"*","color":6},
+	{"name":"-","color":6,"function":"t-b"},
+	{"name":"/","color":6,"function":"t/b"}
 ]}
 ]
 }`

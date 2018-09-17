@@ -14,12 +14,15 @@
         <div>
         <canvas id="main" width="500" height="500" style="margin:0;padding:0;position:fixed;top:0;left:0;">
             </canvas></div>
-        <div style="position:fixed;bottom:0;border:1px solid black;max-height: 200px;margin:auto;">
+        <!--<div style="position:fixed;bottom:0;border:1px solid black;max-height: 200px;margin:auto;">
         <div id="preview">
             </div>
-            </div>
+            </div>-->
         <script type="text/javascript" src="d_html.json"></script>
         <script>
+					var mode = "zubble";
+			
+			
             var main = document.getElementById("main");
             var preview = document.getElementById("preview");
             var ctx = main.getContext("2d");
@@ -243,7 +246,7 @@
             var over;
             var seldat =-1;
             var selrad = 10;
-            var defsize = 35;
+            var defsize = 25;
             var ddde=10;
             var colorblocks = new Array([200,100,150],[100,150,200],[150,200,150],[230,230,230],[230,100,230],[230,220,23],[0,230,230]);
 			var parent=null;
@@ -346,8 +349,9 @@
                     } 
 				}
 				this.updatePos = function(){
+					if(this.parent!=null){
 					this.absx = this.parent.absx + this.x;
-					this.absy = this.parent.absy + this.y;
+					this.absy = this.parent.absy + this.y;}
 					for(var i =0;i<this.children.length;i++){
                         this.children[i].updatePos();
                     } 
@@ -435,6 +439,7 @@
 					this.parent.children.splice(this.parent.children.indexOf(this),1);
 					this.parent = null;
 				}
+				
 				this.orphanize=function(){
 					this.parent=null;
 					for(var i =0;i<this.children.length;i++){
@@ -449,10 +454,101 @@
                     } 
 				}
 				this.parseToJSON=function(){
-				//HELLO
+					var robj=this.makeJson();
+					for(var i =0;i<this.children.length;i++){
+						robj.children.push(this.children[i].parseToJSON());
+                    }
+					//prev.children.push(robj);
+					console.log(JSON.stringify(robj));
+					return robj;
+				}
+				this.makeJson= function(){
+					var obj = new jsobj();
+					obj.x=this.x;
+					obj.y=this.y;
+					obj.size=this.size;
+					obj.js=this.js;
+					obj.color =this.color;
+					obj.label =this.label;
+					obj.close = this.close;
+					return obj;
+				}
+				this.readJson = function(obj){
+					this.x = obj.x;
+					this.y = obj.y;
+					this.size = obj.size;
+					this.js = obj.js;
+					this.color=obj.color;
+					this.label=obj.label;
+					this.close = obj.close;
+					for(var i =0;i<obj.children.length;i++){
+						var ch = new element(null,1,1,1);
+						ch.readJson(obj.children[i]);
+						this.children.push(ch);
+                    }
+				}
+				this.run = function(){
+					//console.log("label:"+this.label);
+					if(this.label == "Print"){
+						if(this.children.length>0){
+							var aaa=this.children[0].eval();
+							for(var i =1;i<this.children.length;i++){
+								aaa+=this.children[i].eval();
+                    		}
+							console.log(aaa);
+						}
+					}else{
+						for(var i =0;i<this.children.length;i++){
+							this.children[i].run();
+                    	}
+					}
+				}
+				this.eval = function(obj){
+					var out;
+					if(this.label == "raw"){
+					   out = this.js.text;
+					}
+					if(this.label == "+"){
+					   out=0;
+					for(var i =0;i<this.children.length;i++){
+							out+=parseFloat(this.children[i].eval());
+                    	}
+					}if(this.label == "*"){
+					   out=1;
+					for(var i =0;i<this.children.length;i++){
+							out*=parseFloat(this.children[i].eval());
+                    	}
+					}
+					if(this.label == "-"){
+					   out=0;
+						for(var i =0;i<Math.floor(this.children.length/2);i++){
+							out+=parseFloat(this.children[i].eval());
+                    	}
+						for(var i =Math.floor(this.children.length/2);i<this.children.length;i++){
+							out-=parseFloat(this.children[i].eval());
+                    	}
+					}
+					if(this.label == "/"){
+					   out=1;
+					for(var i =0;i<Math.floor(this.children.length/2);i++){
+							out*=parseFloat(this.children[i].eval());
+                    	}
+						for(var i = Math.floor(this.children.length/2);i<this.children.length;i++){
+							out/=parseFloat(this.children[i].eval());
+                    	}
+					}
+					return out;
 				}
 				
             }
+			function jsobj(){
+				this.x;
+				this.y;
+				this.size;
+				this.children = [];
+				this.js;
+				this.color;
+			}
             var maine = new element(null,1,scrwid/2,scrwid/2);
             maine.size = scrwid/2;
             maine.color = 0;
@@ -560,7 +656,23 @@
 					dragged=null;
 				}
 			}
-			///////SIDE BAR////////////////////
+				
+			
+			
+			
+			function runZubble(){
+				for(var i =0;i<maine.children.length;i++){
+						var cr = maine.children[i];	
+					//console.log(cr.label);
+						if (cr.label=="Initialize"){
+							cr.run();
+							//console.log("Initialized");
+						}
+                    }
+			}
+				
+				
+			///////SIDE BAR////////////////////////////////////////////
 			var sbsiz = 100;
 			var sbdy=30;
 			var sbhig=scrhig;
@@ -570,8 +682,11 @@
 			var side=true;
 			var mbar = [];
 			var sbar = 0;
+			if(mode=="html"){
 			mbar.push(JSON.parse(d_html));
             mbar.push(JSON.parse(d_javascript));
+			}
+			mbar.push(JSON.parse(d_zubble));
 			var par="";
 			var upar="";
 			function parseHtml(el){
@@ -592,8 +707,13 @@
 				fileToText(file,(text)=>{
 					upar=text;
 					if(upar.charAt(0)=='{'){
-					maine = JSON.parse(upar);
-						maine.orphanize;
+						maine = new element(null,1,0,0);
+						maine.readJson(JSON.parse(upar));
+						upScr();
+						maine.deOrphanize();
+						maine.updatePos();
+					//maine = JSON.parse(upar);
+						//maine.eorphanize();
 					}else{
 						console.log("failed");
 					}
@@ -622,8 +742,8 @@
 					ctx.fillRect(0,0,scrwid,tby);
 					ctx.fillStyle="#444444";
 				var sele=-1;
-				var tes=["Save","Load"]
-				for(var i =0;i<2;i++){
+				var tes=["Save","Load","Run"]
+				for(var i =0;i<3;i++){
 					ctx.fillStyle="#AAAAAA";
 						ctx.fillRect(1+i*tbx,1,tbx-2,tby-2);
 						ctx.fillStyle="#000000";
@@ -632,12 +752,14 @@
 						ctx.font = "20px Arial";
 						ctx.fillText(tes[i],i*tbx+0.5*tbx,tby/2);
 					if(mousepressed==1&&Math.abs(mousex-(i*tbx+0.5*tbx))<tbx/2&&Math.abs(mousey-(tby/2))<tby/2){
-							if(i==0&&sele==-1){
-					mousepressed=-1;
-					if(confirm("areyousure?")){
-						maine.orphanize();
-					download("HEHE",JSON.stringify(maine));
-						maine.deOrphanize();
+					if(i==0&&sele==-1){
+						mousepressed=-1;
+						if(confirm("areyousure?")){
+						//maine.orphanize();
+						reeero = maine.parseToJSON();
+							var r = prompt("Name?","Untitled");
+						download(r,JSON.stringify(reeero));
+						//maine.deOrphanize();
 					}
 					sele=1;
 				}
@@ -646,6 +768,11 @@
 					if(confirm("R U SURE?")){
 						upload();
 					}
+					sele=1;
+				}
+						if(i==2&&sele==-1){
+					mousepressed=-1;
+					runZubble();
 					sele=1;
 				}
 							}
@@ -689,6 +816,7 @@
                             }else{
                                 r.open=true;
                             }
+							mousepressed=2;
 							}
 						j++;
                         if(r.open){
