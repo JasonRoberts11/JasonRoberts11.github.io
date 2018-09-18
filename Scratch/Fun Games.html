@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Fun Scratch Games</title>
+       
+         <link rel="stylesheet" href="robstyle.css">
+		 <style>
+             body{
+                 font-family: Arial, Helvetica, sans-serif	;
+                    padding: 0px 0px;
+                 background: linear-gradient(to right, #edf0ff,#ffedfc);
+                 perspective: 1000px;
+                 perspective-origin: top;
+             }
+             
+             canvas{
+                 transition: transform 2s;
+             }
+             .button {
+            background: linear-gradient(to right, #e0e0ff, #e0f2ff);
+            border: none;
+            color: black;
+            padding: 15px 32px;
+            text-align: center;
+            display: inline-block;
+            font-size: 20px;
+            transition: padding 2s;
+             }
+             h1{
+                color: whitesmoke;
+                 text-align: center;
+                 font-size: 80px;
+                 background: linear-gradient(to right, #101050, #202030);
+                 padding: 30px 30px;
+                 margin: 0px 0px;
+             }
+             button:hover{
+                padding: 15px 72px;
+             }
+             canvas:hover{
+                 transform: rotate3d(1,1,0.5,360deg);
+             }
+             div{
+                  text-align: center;
+             }
+             .cent{
+                 
+                 text-align: center;
+                 padding:15px 15px;
+                 background: linear-gradient(to right, #e0e0ff, #e0f2ff);
+             }
+             p{
+                 font-size: 20px;
+             }
+             #sos{
+                 animation: anime 2s ease infinite normal;
+             }
+             @keyframes anime{
+                 0% {transform: rotateY(-20deg)}
+                 50% {transform: rotateY(20deg)}
+                 100%   {transform: rotateY(-20deg)}
+             }
+             
+        </style>
+    </head>
+    <body>
+        <div>
+			<div id="topnav" class="topnav">
+				<a href="index.html">Main</a>
+                <a href="neuralnetwork.html">NeuralNetwork</a>
+			</div>
+		
+            <h1>Random Graphing</h1>
+            <div><p id = "sos">OVER 2 UNITS SOLD</p>
+            </div>
+            <div class="cent"><p> Size:<input type="text" id="insize" value="100"> Square Size:<input type="text" id="insqsize" value="4"></p>
+                <p> Number:<input type="text" id="innum" value="15"> Multiplier:<input type="text" id="mult" value="1"></p></div>
+            <p><button class="button" id = "b1">RESET</button>
+            <button class="button" id = "b2">REMAKE</button></p>
+            
+            <canvas id = "can1"></canvas>
+        
+            <script>
+                var csize=400;
+                var mult = 1;
+                var num = 15;
+                var sqrsize = 1;
+                var par= document.getElementById("sos");
+                var randeq = new Array(num);
+                var canvas = document.getElementById("can1");
+                var ctx = canvas.getContext("2d");
+                canvas.setAttribute("width",csize);
+                canvas.setAttribute("height",csize);
+                var val =0.1;
+                var color="#000000";
+                
+                var units=2;
+                function upd(){
+                    units = units*1.001;
+                    document.getElementById("sos").innerHTML="OVER "+Math.floor(units)+" UNITS SOLD";
+                }
+                setInterval(upd,10);
+                
+                
+                
+                var b1 = document.getElementById("b1");
+                b1.onclick = function rebut(){
+                    csize = document.getElementById("insize").value;
+                    sqrsize = document.getElementById("insqsize").value;
+                    mult = document.getElementById("mult").value;
+                    canvas.setAttribute("width",csize*sqrsize);
+                    canvas.setAttribute("height",csize*sqrsize);
+                    num = document.getElementById("innum").value;
+                    randeq = new Array(num);
+                    
+                    newar();
+                    reset();   
+                }
+                
+                var b2 = document.getElementById("b2");
+                b2.onclick = function renin(){
+                    csize = document.getElementById("insize").value;
+                    sqrsize = document.getElementById("insqsize").value;
+                    mult = document.getElementById("mult").value;
+                    canvas.setAttribute("width",csize*sqrsize);
+                    canvas.setAttribute("height",csize*sqrsize);
+                     reset();   
+                    
+                }
+                
+                
+                //reset();
+                val = 0;
+                //setfun(0,10,10);
+                
+                function reset(){
+                    ctx.clearRect
+                    ctx.fillStyle = "#000000";
+                    ctx.fillRect(0,0,csize*sqrsize,csize*sqrsize);
+                    for(var x = 0;x<csize;x++){
+                        for(var y = 0;y<csize;y++){
+                            val =0.1;
+                            for(var i = 0;i < num;i++){
+                                setfun(randeq[i],x-Math.floor(csize/2),y-Math.floor(csize/2));
+                            }
+                            setcolor(val*5*mult,val*mult);
+                            ctx.fillStyle = color;
+                            ctx.fillRect(x*sqrsize,y*sqrsize,sqrsize,sqrsize);
+                    }
+                    }
+                }
+                
+                function newar(){
+                    for(var i = 0;i < num;i++){
+                        randeq[i] = Math.floor(Math.random() * (5+ Math.floor(Math.random() * 5)));
+                    }
+                }
+                function setcolor(col,sha){
+                   var ha = 0+(100*Math.sin(sha/180*3.14)); 
+                    var mult = (100-0.8*Math.abs(ha));
+                    color=rgbToHex(
+                    Math.floor(127+ha+mult*Math.sin(col/180*3.14)),
+                    Math.floor(127+ha+mult*Math.sin((col+120)/180*3.14)),
+                    Math.floor(127+ha+mult*Math.sin((col+240)/180*3.14)));
+                }
+                function setfun(i,x,y){
+                    if(i==0){
+                        val=val+y;
+                    }
+                    if(i==1){
+                        val=val+x;
+                    }
+                    if(i==2){
+                        val=val*y;
+                    }
+                    if(i==3){
+                        val=val*y;
+                    }
+                    if(i==4){
+                        val=10* Math.cos(val/180*3.14);
+                    }
+                    if(i==5){
+                        val=10* Math.sin(val/180*3.14);
+                    }
+                    if(i==6){
+                        val = Math.log(Math.abs(val));  
+                    }
+                    if(i==7){
+                        val=Math.floor(val/10)*10;
+                    }
+                    if(i==8){
+                        val=Math.atan(1/val);
+                    }
+                    if(i==9){
+                        val = val*Math.sin((y/x));
+                    }
+                    
+                }
+                
+                function rgbToHex(r, g, b) {
+                        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+                }
+            </script>
+        
+        
+        
+        </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    </body>
+    
+    
+    
+     <script src="navbar.js"></script>
+</html>
