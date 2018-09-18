@@ -300,6 +300,9 @@
 					if(this.js!=null&&this.js.name=="raw"){
                         ctx.fillText(this.js.text,this.absx,this.absy);
                     }
+					if(this.js!=null&&this.js.name=="Function"){
+                        ctx.fillText(this.js.fname,this.absx,this.absy-this.size+10);
+                    }
 					if(!this.close){
                     for(var i =0;i<this.children.length;i++){
                         if(this.children[i].close)
@@ -557,6 +560,8 @@
 							console.log(aaa);
 							log(aaa);
 						}
+					}else if(this.js.name=="Function"){
+					
 					}else{
 						for(var i =0;i<this.children.length;i++){
 							this.children[i].run();
@@ -682,7 +687,12 @@
                     selected=null;
 				    maine.getSelection();
 				    if(selected != maine&&selected!=null){
-                        if(selected.js!=null&&selected.js.name=="raw"){
+						if(selected.js!=null&&selected.js.name=="Function"&&mousey<selected.absy){
+						var r=prompt("Name?",selected.js.fname)
+						if(r!=null)
+						selected.js.fname=r;
+						mousepressed=4;
+				}else if(selected.js!=null&&selected.js.name=="raw"){
                            var r = "";
                             r = prompt("Text?",selected.js.text);
 							if(r!=null)
@@ -732,6 +742,13 @@
                     selected.bold=1;
 					dragged.findParent(maine);
 					dragged.render();
+					if(dragged.js.name=="Function"){
+					if(dragged.js.fname==null){
+					dragged.js.fname="Function_1";
+					var r=prompt("Name?",dragged.js.fname)
+					if(r!=null)
+					dragged.js.fname=r;
+					}}
 					dragged=null;
 				}
 			}
