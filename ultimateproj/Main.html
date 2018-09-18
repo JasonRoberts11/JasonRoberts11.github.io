@@ -73,6 +73,7 @@
                 icon.getAttributeNode("href").value = "icon"+icond+".png";
                 icond=(icond%2)+1;
             },1000);
+			var consolet="Start";
             var mousex;
             var mousey;
             var mdx = 0;
@@ -554,6 +555,7 @@
 								aaa+=this.children[i].eval();
                     		}
 							console.log(aaa);
+							log(aaa);
 						}
 					}else{
 						for(var i =0;i<this.children.length;i++){
@@ -637,6 +639,7 @@
 				//selected= maine;
 				drawSideBar();
 				drawTopBar();
+				drawConsole();
 				dragger();
 				maine.updateChildSize();
             }
@@ -645,6 +648,7 @@
 				maine.render();
 				drawSideBar();
 				drawTopBar();
+				drawConsole();
 				if(dragged!=null){
 				    dragged.render();
                     if(selected!=null)
@@ -791,6 +795,7 @@
 						//maine.eorphanize();
 					}else{
 						console.log("failed");
+						log("failed");
 					}
 				});
 				
@@ -847,11 +852,24 @@
 				}
 						if(i==2&&sele==-1){
 					mousepressed=-1;
+							consolet="";
 					runZubble();
 					sele=1;
 				}
 							}
 				}
+			}
+			function log(string){
+				consolet=string+",\n"+consolet;
+			}
+			function drawConsole(){
+				ctx.fillStyle="#000000";
+				ctx.fillRect(scrwid-300,scrhig-50,300,50);
+				ctx.fillStyle="#FFFFFF";
+				ctx.textAlign="left";
+				ctx.textBaseline="middle";
+				ctx.font = "10px Arial";
+				ctx.fillText(consolet,scrwid-290,scrhig-40);
 			}
             function drawSideBar(){
 				if(side){
