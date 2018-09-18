@@ -332,12 +332,12 @@
 				this.phys=function(){
 					var p=this.parent;
 					//If collides with parent
-					if(dist2(this.absx,this.absy,p.absx,p.absy)+(this.size)+ddde>p.size){
+					if(dist2(this.absx,this.absy,p.absx,p.absy)+(this.size)+ddde*0.5>p.size){
 						//var r=Math.atan2(this.yv,this.xv);
 						var b=Math.atan2((this.absy-p.absy),(this.absx-p.absx));
 						//var g=r-b;
-						this.xv -= Math.cos(b);
-						this.yv -= Math.sin(b);
+						this.xv -= Math.cos(b)*0.1;
+						this.yv -= Math.sin(b)*0.1;
 					}
 					//If collides with others
 					for(var i=0;i<p.children.length-1;i++){
@@ -354,6 +354,7 @@
 						c.yv -= Math.sin(b)*0.1;
 					}}
 					}
+					this.fakeMoveChild(this.xv,this.yv);
 					
 					this.absx+=this.xv;
 					this.absy+=this.yv;
@@ -361,12 +362,19 @@
 					this.yv+=(this.absy-this.ly)*-0.001;
 					this.xv*=0.9;
 					this.yv*=0.9;
-					for(var i=0;i<this.children.length;i++){
-					this.children[i].updatePos();
-					}
+					
 					this.childPhys();
 					this.updateSize();
 					
+				}
+				this.fakeMoveChild=function(xv,yv){
+					for(var i=0;i<this.children.length;i++){
+					this.children[i].absx+=xv;
+					this.children[i].absy+=yv;
+					this.children[i].lx+=xv;
+					this.children[i].ly+=yv;
+					this.children[i].fakeMoveChild(xv,yv);
+					}
 				}
 				this.childPhys=function(){
 					for(i = 0;i<this.children.length;i++){
@@ -637,6 +645,15 @@
 				maine.render();
 				drawSideBar();
 				drawTopBar();
+				if(dragged!=null){
+				    dragged.render();
+                    if(selected!=null)
+                    selected.bold=1;
+                    selected=null;
+                    maine.getSelection();
+                    if(selected!=null)
+                    selected.bold=2;
+				}
 				//dragger();
 			},10);
             
@@ -664,6 +681,7 @@
                         if(selected.js!=null&&selected.js.name=="raw"){
                            var r = "";
                             r = prompt("Text?",selected.js.text);
+							if(r!=null)
                             selected.js.text=r;
                             selected=null;
                             mousepressed=4;
