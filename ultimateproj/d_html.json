@@ -32,6 +32,7 @@ var d_zubble= `{
 "array":[
 	{"name":"Main","open":false,"set":[
     {"name":"Function","jstart":"ree","jend":"ree","color":4},
+ {"name":"return","jstart":"ree","jend":"ree","color":1},
 	{"name":"Initialize","jstart":"<!DOCTYPE html><html>","jend":"</html>","color":4},
     {"name":"Close","color":4},
 	{"name":"Print","color":2}
