@@ -6,6 +6,8 @@
 				this.ly=ypos;
 				this.xv=2;
 				this.yv=0;
+				this.enabled=true;
+				this.skip=false;
                 this.absx = xpos;
                 this.absy = ypos;
                 this.type = type;
@@ -24,6 +26,12 @@
                 this.render = function(){
                     var t = this.tint;
                     var s = this.bold;
+					if(this.skip){
+						t-=0.4;
+					}
+					if(!this.enable){
+						s-=0.4;
+					}
                     ctx.fillStyle= tint(colorblocks[this.color],t);
                     ctx.strokeStyle=tint(colorblocks[this.color],0.6*s);
                     ctx.lineWidth = s*2;
@@ -31,11 +39,11 @@
                     ctx.arc(this.absx,this.absy,this.size,0,2*Math.PI);
                     ctx.fill();
                     ctx.stroke();
-					 ctx.font="10px Arial";
-						ctx.textAlign="center";
-						ctx.textBaseline="mid";
-                        ctx.fillStyle = tint(colorblocks[this.color],0);
-						ctx.fillText(this.label,this.absx,this.absy+this.size-10);
+					ctx.font="10px Arial";
+					ctx.textAlign="center";
+					ctx.textBaseline="mid";
+                    ctx.fillStyle = tint(colorblocks[this.color],0);
+					ctx.fillText(this.label,this.absx,this.absy+this.size-10);
 					if(this.js!=null&&this.js.name=="raw"){
                         ctx.fillText(this.js.text,this.absx,this.absy);
                     }
@@ -270,6 +278,34 @@
                         this.children[i].orphanize();
                     } 
 				}
+				this.setSkips=function(){
+					this.skip=!this.enabled;
+					//console.log(this.enabled);
+					this.enabled=false;
+					for(var i =0;i<this.children.length;i++){
+                        this.children[i].setSkips();
+                    } 
+				}
+				this.undoSkips=function(){
+					//console.log(this.skip);
+					this.enabled=!this.skip;
+					this.skip=false;
+					for(var i =0;i<this.children.length;i++){
+                        this.children[i].undoSkips();
+                    } 
+				}
+				this.setEnable=function(){
+					this.enabled=true;
+					for(var i =0;i<this.children.length;i++){
+                        this.children[i].setEnable();
+                    } 
+				}
+				this.setSkip=function(){
+					this.enabled=false;
+					for(var i =0;i<this.children.length;i++){
+                        this.children[i].setSkip();
+                    } 
+				}
 				this.deOrphanize=function(){
 					for(var i =0;i<this.children.length;i++){
 						this.children[i].parent = this;
@@ -313,7 +349,7 @@
 				this.run = function(){
 					//console.log("label:"+this.label);
                     ///TODO//////////////////////////////////////////////////////////////////////
-                    if(true){
+                    if(this.enabled == true){
 					if(this.label == "Print"){
 						if(this.children.length>0){
 							var aaa=this.children[0].eval();
@@ -342,15 +378,19 @@
 						}}
 					}else if(this.label=="Sleep"){
                         sleep=true;
-                        var b = setTimeout(function(){sleep=false;},1);
-                        while(sleep){
-                            console.log("sleeping"+1837834758263*12347127467*1234);
-                        }
+						this.enabled=false;
+                        maine.setSkips();
+                        var r = setTimeout(function(){
+							//console.log("sleeip");
+							maine.undoSkips();
+							runZubble();
+						},1000);
                     }else{
 						for(var i =0;i<this.children.length;i++){
 							this.children[i].run();
                     	}
-					}
+					}					this.enabled=false;
+
                     }
 				}
 				this.eval = function(obj){

@@ -40,6 +40,7 @@ var d_zubble= `{
 ]},
 {"name":"Math","open":false,"set":[
 	{"name":"raw","color":3,"text":"hello world"},
+	{"name":"var","color":5,"text":"i"},
 	{"name":"+","color":6},
 	{"name":"*","color":6},
 	{"name":"-","color":6,"function":"t-b"},

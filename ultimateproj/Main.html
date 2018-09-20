@@ -80,7 +80,7 @@
             var mdx = 0;
             var mdy = 0;
             
-            var sleeping[];
+            var sleeping = [];
             var sleep=false;
             
             var mousepressed=0;
@@ -300,6 +300,7 @@
 				maine.updateChildSize();
             }
 			var startphys= window.setInterval(function(){
+				maine.setEnable();
 				maine.childPhys();
 				maine.render();
 				drawSideBar();
@@ -406,8 +407,13 @@
 				
 			
 			
-			
+			function resetZubble(){
+			maine.setSkip();
+			maine.setEnable();
+			}
 			function runZubble(){
+			//maine.setSkip();
+				//maine.setEnable();
 				for(var i =0;i<maine.children.length;i++){
 						var cr = maine.children[i];	
 					//console.log(cr.label);
@@ -527,6 +533,7 @@ var refunout;
 						if(i==2&&sele==-1){
 					mousepressed=-1;
 							consolet="";
+							resetZubble();
 					runZubble();
 					sele=1;
 				}
