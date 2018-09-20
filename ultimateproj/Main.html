@@ -79,6 +79,10 @@
             var mousey;
             var mdx = 0;
             var mdy = 0;
+            
+            var sleeping[];
+            var sleep=false;
+            
             var mousepressed=0;
             var upmos=0;
              var cdlay = 100;
@@ -645,165 +649,9 @@ var refunout;
 					ctx.fillStyle="#AAAAAA";
 					ctx.fill();
                 }
-            
-                
 			}
             upScr();
-            //ALL THIS CODE IS DEPRICATED
-            /*function update(){
-                head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
-                renderElements();
-                dragger();
-            }
-            function addElement(type,xpos,ypos){
-                elements.push(new Array(type,-1,new Array(),xpos,ypos,new Array(),xpos,ypos,maxlayer,defsize,true));
-            }
-            function renderElements(){
-                ctx.clearRect(0,0,scrwid,scrhig);
-                for(var layer = 0;layer<maxlayer+1;layer++){
-                    for(i= 0;i<elements.length;i++){
-                        if(elements[i][8]==layer){
-                        if(i==selected){
-                            if(seldat==1){
-                                displayElement(elements[i],1.2,1);
-                            }else{
-                                displayElement(elements[i],1,2)
-                            }
-                        }else if(over==i){
-                            displayElement(elements[i],0.8,1);   
-                        }else{
-                            displayElement(elements[i],1,1);
-                        }
-                        }
-                    }
-                }
-            }
-            function setSelection(){
-                selected=-1;
-                for(var layer = 0;layer<maxlayer;layer++){
-                    for(i= 0;i<elements.length;i++){
-                        if(elements[i][8]==layer){
-                            e=elements[i];
-                            if(dist(e[6],e[7],mousex,mousey,e[9])){
-                                if(dist(e[6],e[7],mousex,mousey,e[9]-selrad)){
-                                    seldat=1;
-                                }else{
-                                    seldat=-1;
-                                }
-                                selected=i;
-                            }
-                        }
-                    }
-                }
-            }
-            function setOver(){
-                over=-1;
-                for(var layer = 0;layer<maxlayer;layer++){
-                    for(i= 0;i<elements.length;i++){
-                        if(elements[i][8]==layer){
-                            e=elements[i];
-                            if(i!=picked){
-                                if(dist(e[6],e[7],mousex,mousey,e[9])){
-                                    over=i;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            function drop(p,c){
-                elements[p][2].push(c);
-                elements[c][1]=p;
-                elements[c][3]=-elements[p][6]+elements[c][6];
-                elements[c][4]=-elements[p][7]+elements[c][7];
-                elements[c][8]=elements[p][8]+1;
-                d=dist2(elements[p][6],elements[p][7],elements[c][6],elements[c][7]);
-                    if(elements[p][9]<d+elements[c][9]){
-                    elements[p][9] = d+elements[c][9];
-                }
-            }
-            var pik=0;
-            function dragger(){
-                if(selected!=-1){
-                    if(seldat==1){
-                        if(mousepressed==1){
-                            picked=selected;
-                        }
-                    }
-                }
-                if(picked!=-1){
-                    if(pik==0){
-                        elements[picked][8]=maxlayer;
-                        p=elements[picked][1];
-                        if(p!=-1){
-                            arr = elements[p][2];
-                            index = arr.indexOf(picked);
-                            if(index>-1){
-                                elements[p][2].splice(index,1)
-                            }
-                            elements[picked][1]=-1;
-                        }
-                        //updatelayers();
-                        pik=1;
-                    }
-                    if(mousepressed==1){
-                        elements[picked][6]+=mdx;
-                        elements[picked][7]+=mdy;
-                        elements[picked][3]+=mdx;
-                        elements[picked][4]+=mdy;
-                        updateAbsPos(picked);
-                    }
-                    if(mousepressed==2){
-                        if(over!=-1){
-                           drop(over,picked);
-                            updateMaxLayer();    
-                        }else{
-                           elements[picked][8]=0;
-                            elements[picked][1]=-1;
-                           }
-                        if(pik == 1){
-                            updateAbsPos(picked);
-                            pik=0;
-                        }
-                        picked=-1;
-                    }
-                }
-            }
-            function displayElement(e,t,s){
-                if(e[0] == 1){
-                    ctx.fillStyle= tint(colorblocks[0],t);
-                    ctx.strokeStyle=tint(colorblocks[0],0.6*s);
-                    ctx.lineWidth = s*2;
-                    ctx.beginPath();
-                    ctx.arc(e[6],e[7],e[9],0,2*Math.PI);
-                    ctx.fill();
-                    ctx.stroke();
-                }
-            }
             
-            function updateMaxLayer(){
-                for(i= 0;i<elements.length;i++){
-                     if(elements[i][8]>=maxlayer){
-                         maxlayer=elements[i][8]+1;
-                     }   
-                }
-            }
-            function updateAbsPos(i){
-                    //if(elements[i][8]==0){
-                        for(k = 0;k<elements[i][2].length;k++){
-                            upabspos(elements[i][2][k]);
-                        }       
-                    //}
-            }
-            function upabspos(i){
-                p=elements[i][1];
-                elements[i][6]=elements[p][6]+elements[i][3];
-                elements[i][7]=elements[p][7]+elements[i][4];
-                for(var k = 0;k<elements[i][2].length;k++){
-                    upabspos(elements[i][2][k]);   
-                }
-            }
-*/
             function dist(x,y,x2,y2,r){
                 if(Math.pow((x-x2),2)+Math.pow((y-y2),2)<Math.pow(r,2)){
                     return true;

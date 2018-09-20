@@ -182,7 +182,7 @@
                     var e = [];
                     for(var i =0;i<this.children.length;i++){
                         c = this.children[i];
-                        e.push([c,Math.atan2(c.y,c.x)]);
+                    e.push([c,Math.atan2(c.y,c.x)]);
                     }
                     e.sort(sf);
                     var d = [];
@@ -271,7 +271,6 @@
                     } 
 				}
 				this.deOrphanize=function(){
-					
 					for(var i =0;i<this.children.length;i++){
 						this.children[i].parent = this;
                         this.children[i].deOrphanize();
@@ -313,6 +312,8 @@
 				}
 				this.run = function(){
 					//console.log("label:"+this.label);
+                    ///TODO//////////////////////////////////////////////////////////////////////
+                    if(true){
 					if(this.label == "Print"){
 						if(this.children.length>0){
 							var aaa=this.children[0].eval();
@@ -327,34 +328,43 @@
 						ffunction.run();
 						
 					}else if(this.label == "return"){
-						if(this.parent.js!=null&&this.parent.js.fun==true){
+                        var p = this.parent;
+						//console.log((p.call));
+                        if(p.js!=null){
+                        //console.log("yes");
 						if(this.children.length>0){
 							var aaa=this.children[0].eval();
 							for(var i =1;i<this.children.length;i++){
 								aaa+=this.children[i].eval();
                     		}
-							this.parent.call.js.callbac="aaa";
-							console.log(JSON.stringify(this.parent.js));
+							p.call.callbac=aaa;
+							//console.log(p.call);
 						}}
-					}else{
+					}else if(this.label=="Sleep"){
+                        sleep=true;
+                        var b = setTimeout(function(){sleep=false;},1);
+                        while(sleep){
+                            console.log("sleeping"+1837834758263*12347127467*1234);
+                        }
+                    }else{
 						for(var i =0;i<this.children.length;i++){
 							this.children[i].run();
                     	}
 					}
+                    }
 				}
 				this.eval = function(obj){
 					var out;
 					if(this.js.fun == true){
 					   	maine.findFunctionByName(this.label);
 						var re = ffunction;
-						this.js.callbac=null;
-						re.call=this.js;
+						this.callbac=null;
+						re.call=this;
 						//console.log(JSON.stringify(re.js));
 						re.run();
-						re.js.call=null;
-						out = this.js.callbac;
-						out= JSON.stringify(this.js);
-						this.js.callbac=null;
+						re.call=null;
+						out = this.callbac;
+						this.callbac=null;
 					}
 					if(this.label == "raw"){
 					   out = this.js.text;
