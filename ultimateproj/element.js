@@ -373,26 +373,30 @@
 				this.run = function(){
 					//console.log("label:"+this.label);
                     ///TODO//////////////////////////////////////////////////////////////////////
-                    if(this.enabled == true){
+                    //if(this.enabled == true){
+					this.ret = null;
+					var cont = true;
 					if(this.label == "Print"){
 						if(this.children.length>0){
-							var aaa=this.children[0].eval();
+							var aaa=this.children[0].run();
 							for(var i =1;i<this.children.length;i++){
-								aaa+=this.children[i].eval();
+								aaa+=this.children[i].run();
                     		}
 							console.log(aaa);
 							log(aaa);
 						}
 					}else if(this.js.fun==true){
 						maine.findFunctionByName(this.label);
-                        
+                        cont = false;
+						ffunction.call=this;
+						//console.log(ffunction.call);
 						ffunction.run();
-                        ffunction.setEnable();
+                        //ffunction.setEnable();
 						
 					}else if(this.label=="pitch"){
                         var c=[0,0]
                         for(var i =0;i<this.children.length;i++){
-								c[i]=this.children[i].eval();
+								c[i]=this.children[i].run();
                     		}
                         freq = 440*Math.pow((2),(c[0]-60-9)/12);
                         //console.log(freq);
@@ -403,9 +407,9 @@
                         if(p.js!=null){
                         //console.log("yes");
 						if(this.children.length>0){
-							var aaa=this.children[0].eval();
+							var aaa=this.children[0].run();
 							for(var i =1;i<this.children.length;i++){
-								aaa+=this.children[i].eval();
+								aaa+=this.children[i].run();
                     		}
 							p.call.callbac=aaa;
 							//console.log(p.call);
@@ -414,25 +418,65 @@
                         sleep=true;
                         var teim = 1;
                         if (this.children.length>0)
-                        teim = this.children[0].eval();
-						this.enabled=false;
-                        maine.setSkips();
+                        teim = this.children[0].run();
+						////this.enabled=false;
+                        //maine.setSkips();
                         this.sleept = setTimeout(function(){
-							//console.log("sleeip");
-							maine.undoSkips();
+							console.log("sleeip");
+							//maine.undoSkips();
 							runZubble();
 						},teim*1000);
+						cont=false;
                     }else{
-						for(var i =0;i<this.children.length;i++){
+						/*for(var i =0;i<this.children.length;i++){
 							this.children[i].run();
-                    	}
-					}					this.enabled=false;
+                    	}*/
+						cont = true;
+						this.reval();
+					
+					}					
+						if(cont==true){
+							if(this.children.length>0){
+								this.children[0].run();
+							}else{
+								//console.log(this.children.length);
+								this.goBack(this.ret);
+								
+							}
+						}else{
+							
+						}
+						//this.enabled=false;
 
-                    }
+                    //}
+					return this.ret;
+					
 				}
-				this.eval = function(obj){
-					var out;
-					if(this.js.fun == true){
+				this.goNext = function(index){
+					//console.log(this.children.length);
+					//console.log(index);
+					if(index<this.children.length-1){
+						//console.log(index+1);
+						this.children[index+1].run();
+					}else{
+						this.goBack();
+					}
+					
+				}
+				this.goBack = function(ret){
+					if(this.js.fname!=null){
+									//console.log("backup");
+									//console.log(this.call);
+									this.call.parent.goNext(this.call.parent.children.indexOf(this.call));
+								}else if(this.label=="Initialize"){
+									
+								}else{this.parent.goNext(this.parent.children.indexOf(this));
+								}
+				}
+				/////////TODO/////////////////////////////////////////////////////////////////////////////
+				this.reval = function(element){
+					this.ret = null;
+					/*if(this.js.fun == true){
 					   	maine.findFunctionByName(this.label);
 						var re = ffunction;
 						this.callbac=null;
@@ -440,42 +484,46 @@
 						//console.log(JSON.stringify(re.js));
 						re.run();
 						re.call=null;
-						out = this.callbac;
+						this.ret = this.callbac;
 						this.callbac=null;
-					}
+					}*/
 					if(this.label == "raw"){
-					   out = this.js.text;
+					   this.ret = this.js.text;
+					}
+					if(this.label == "randi"){
+						var min = parseFloat(this.children[0].run());
+						var max = this.children[1].run();
+					   this.ret = min+Math.floor(Math.random()*(max-min+1))
 					}
 					if(this.label == "+"){
-					   out=0;
+					   this.ret=0;
 					for(var i =0;i<this.children.length;i++){
-							out+=parseFloat(this.children[i].eval());
+							this.ret+=parseFloat(this.children[i].run());
                     	}
 					}if(this.label == "*"){
-					   out=1;
+					   this.ret=1;
 					for(var i =0;i<this.children.length;i++){
-							out*=parseFloat(this.children[i].eval());
+							this.ret*=parseFloat(this.children[i].run());
                     	}
 					}
 					if(this.label == "-"){
-					   out=0;
+					   this.ret=0;
 						for(var i =0;i<Math.floor(this.children.length/2);i++){
-							out+=parseFloat(this.children[i].eval());
+							this.ret+=parseFloat(this.children[i].run());
                     	}
 						for(var i =Math.floor(this.children.length/2);i<this.children.length;i++){
-							out-=parseFloat(this.children[i].eval());
+							this.ret-=parseFloat(this.children[i].run());
                     	}
 					}
 					if(this.label == "/"){
-					   out=1;
+					   this.ret=1;
 					for(var i =0;i<Math.floor(this.children.length/2);i++){
-							out*=parseFloat(this.children[i].eval());
+							this.ret*=parseFloat(this.children[i].run());
                     	}
 						for(var i = Math.floor(this.children.length/2);i<this.children.length;i++){
-							out/=parseFloat(this.children[i].eval());
+							this.ret/=parseFloat(this.children[i].run());
                     	}
 					}
-					return out;
 				}
 				
             }
