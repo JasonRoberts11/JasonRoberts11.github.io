@@ -36,15 +36,18 @@ var d_zubble= `{
 	{"name":"Initialize","jstart":"<!DOCTYPE html><html>","jend":"</html>","color":4},
     {"name":"Close","color":4},
 	{"name":"Print","color":2},
-    {"name":"Sleep","color":2}
+    {"name":"Sleep","color":2,"time":1,"gen":["1"]}
 ]},
 {"name":"Math","open":false,"set":[
 	{"name":"raw","color":3,"text":"hello world"},
 	{"name":"var","color":5,"text":"i"},
 	{"name":"+","color":6},
 	{"name":"*","color":6},
-	{"name":"-","color":6,"function":"t-b"},
-	{"name":"/","color":6,"function":"t/b"}
+	{"name":"-","color":6,"function":"t-b","args":2},
+	{"name":"/","color":6,"function":"t/b","args":2}
+]},
+{"name":"Sound","open":false,"set":[
+	{"name":"pitch","color":7,"pitch":60,"time":1,"args":2,"gen":["60","1"]}
 ]}
 ]
 }`

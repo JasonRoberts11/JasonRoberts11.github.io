@@ -22,7 +22,24 @@
                 this.layer=0;
                 this.size = defsize;
                 this.open = true;
+     this.sleept = null;
                 this.connections = [];
+     this.create=function(){
+         if(this.js!=null&&this.js.gen!=null){
+             var res=this.js.gen;
+             for(var i = 0;i<res.length;i++){
+                 k = new element(0,1,mousex,mousey);
+                 k.label="raw";
+                 k.color="3";
+                 k.js = JSON.parse('{"name":"raw","color":3,"text":"'+res[i]+'"}');
+                 k.x=Math.sin(2*3.1415*i/res.length-0.2)*10;
+                 k.y=-Math.cos(2*3.1415*i/res.length-0.2)*10;
+                 k.parent=this;
+                 this.children.push(k);
+             }
+             this.close=true;
+         }
+     }
                 this.render = function(){
                     var t = this.tint;
                     var s = this.bold;
@@ -164,6 +181,13 @@
                     }
                     
                 }
+                this.dofntoall=function(fn){
+                    eval(fn);
+                    for(var i =0;i<this.children.length;i++){
+                        this.children[i].dofntoall(fn);
+                    } 
+                }
+                
 				this.findFunctionByName=function(name){
 					ffunction=(null);
                     for(var i =0;i<this.children.length;i++){
@@ -301,7 +325,7 @@
                     } 
 				}
 				this.setSkip=function(){
-					this.enabled=false;
+					this.skip=false;
 					for(var i =0;i<this.children.length;i++){
                         this.children[i].setSkip();
                     } 
@@ -361,9 +385,19 @@
 						}
 					}else if(this.js.fun==true){
 						maine.findFunctionByName(this.label);
+                        
 						ffunction.run();
+                        ffunction.setEnable();
 						
-					}else if(this.label == "return"){
+					}else if(this.label=="pitch"){
+                        var c=[0,0]
+                        for(var i =0;i<this.children.length;i++){
+								c[i]=this.children[i].eval();
+                    		}
+                        freq = 440*Math.pow((2),(c[0]-60-9)/12);
+                        //console.log(freq);
+                             playPitch(freq,c[1],'square');
+                    }else if(this.label == "return"){
                         var p = this.parent;
 						//console.log((p.call));
                         if(p.js!=null){
@@ -378,13 +412,16 @@
 						}}
 					}else if(this.label=="Sleep"){
                         sleep=true;
+                        var teim = 1;
+                        if (this.children.length>0)
+                        teim = this.children[0].eval();
 						this.enabled=false;
                         maine.setSkips();
-                        var r = setTimeout(function(){
+                        this.sleept = setTimeout(function(){
 							//console.log("sleeip");
 							maine.undoSkips();
 							runZubble();
-						},1000);
+						},teim*1000);
                     }else{
 						for(var i =0;i<this.children.length;i++){
 							this.children[i].run();

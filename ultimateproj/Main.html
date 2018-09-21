@@ -13,14 +13,16 @@
         <button id ="test">TEST</button><br/>-->
         <div>
         <canvas id="main" width="500" height="500" style="margin:0;padding:0;position:fixed;top:0;left:0;">
-            </canvas></div>
+            </canvas></div><button id="Load" style="margin:20;padding:20;position:fixed;top:0;left:0;z-index:999;display:none;height:60px;width:120px">LOAD</button>
         <!--<div style="position:fixed;bottom:0;border:1px solid black;max-height: 200px;margin:auto;">
         <div id="preview">
             </div>
             </div>-->
         <script type="text/javascript" src="d_html.json"></script>
 		<script type="text/javascript" src="element.js"></script>
+        <script type="text/javascript" src="sound.js"></script>
         <script>
+           // playPitch(400,0.1,'square');
 					var mode = "zubble";
 			
 			
@@ -41,7 +43,18 @@
                 //addElement(1,200,200);
                 //updateMaxLayer();
                 addElement(maine,1,1,0,0);
+                
+                
             }*/
+            
+            
+            
+            
+            
+            
+            
+            
+            
             icond=1;
 			var tby =30;
 			function upScr(){
@@ -254,7 +267,7 @@
             var selrad = 10;
             var defsize = 25;
             var ddde=10;
-            var colorblocks = new Array([200,100,150],[100,150,200],[150,200,150],[230,230,230],[230,100,230],[230,220,23],[0,230,230]);
+            var colorblocks = new Array([200,100,150],[100,150,200],[150,200,150],[230,230,230],[230,100,230],[230,220,23],[0,230,230],[234,124,30]);
 			var parent=null;
             
             //THE STRUCTURE FOR THE Element OBject
@@ -410,6 +423,9 @@
 			function resetZubble(){
 			maine.setSkip();
 			maine.setEnable();
+                 maine.dofntoall(
+                'clearTimeout(this.sleept);'
+            );
 			}
 			function runZubble(){
 			//maine.setSkip();
@@ -423,7 +439,7 @@
 						}
                     }
 			}
-var refunout;
+//var refunout;
             var ffunction;
             var functions=[];
             function findFunctions(){
@@ -454,14 +470,26 @@ var refunout;
                 //console.log(par);
                 preview.innerHTML=par;
             }
-			const rb=document.createElement('INPUT');
+ const rb=document.createElement('INPUT');
+            rb.innerHTML=("LOAD");
 			rb.setAttribute("type","file");
+            //rb.setAttribute("onchange","changee()");
+            rb.addEventListener("change",changee);
 			rb.style.display='none';
 			document.body.appendChild(rb);
+            var loadb = document.getElementById("Load");
+            loadb.addEventListener("click",function(){
+                    rb.click();
+                });
 			function upload(){
-				rb.click();
+                
+                loadb.style.display='inline';
+                rb.click();
 			}
-			rb.addEventListener("change",()=>{
+			function changee(event){
+                loadb.style.display='none';
+                                event.preventDefault();
+
 				const file = rb.files.item(0);
 				fileToText(file,(text)=>{
 					upar=text;
@@ -479,7 +507,7 @@ var refunout;
 					}
 				});
 				
-			});
+			}
 			function fileToText(file,callback){
 				const reader = new FileReader();
 				reader.readAsText(file);
@@ -518,6 +546,7 @@ var refunout;
 						//maine.orphanize();
 						reeero = maine.parseToJSON();
 							var r = prompt("Name?","Untitled");
+                            if (r!=null)
 						download(r,JSON.stringify(reeero));
 						//maine.deOrphanize();
 					}
@@ -525,9 +554,9 @@ var refunout;
 				}
 						if(i==1&&sele==-1){
 					mousepressed=-1;
-					if(confirm("R U SURE?")){
-						upload();
-					}
+                            console.log("ree");
+                            
+                            upload();
 					sele=1;
 				}
 						if(i==2&&sele==-1){
@@ -625,6 +654,7 @@ var refunout;
 								dragged.label=r.set[k].name;
                                 dragged.color=r.set[k].color;
                                 dragged.js=JSON.parse(JSON.stringify(r.set[k]));
+                                dragged.create();
 							}
 							j++;
 						}
@@ -647,6 +677,7 @@ var refunout;
                                 dragged.js=JSON.parse('{"name":"test","color":6}');
                                 dragged.js.name=functions[k].js.fname;
                                 dragged.color=5;
+                                dragged.create;
 								dragged.js.fun=true;
 							}
 							j++;
