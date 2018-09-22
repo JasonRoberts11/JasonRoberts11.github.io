@@ -529,6 +529,11 @@
                         //console.log(c[1]);
                              playPitch(freq,c[1],'square');
                     }
+                    if(this.label=="tempo"){
+                        var t = parseFloat(this.children[0].ret);
+                        tempo=t;
+                        this.ret = t;
+                    }
                     if(this.label == "randi"){
 						var min = parseFloat(this.children[0].ret);
 						var max = this.children[1].ret;

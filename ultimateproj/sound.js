@@ -76,10 +76,13 @@ function playPitch(htz,time,type){
     oscillator.frequency.value=htz;
    // oscillator.connect(audioCtx.destination);
     oscillator.start();
-    volume.gain.linearRampToValueAtTime(1,audioCtx.currentTime+0.05);
+    volume.gain.linearRampToValueAtTime(1,audioCtx.currentTime+0.01);
+     setTimeout(function(){
+        volume.gain.linearRampToValueAtTime(0.4,audioCtx.currentTime+0.05);
+    },50);
     setTimeout(function(){
-        volume.gain.linearRampToValueAtTime(0,audioCtx.currentTime+time/4);
-        oscillator.stop(audioCtx.currentTime+time/4);
-    },time*3000/4
+        volume.gain.linearRampToValueAtTime(0,audioCtx.currentTime+time/4*tempo/1000);
+        oscillator.stop(audioCtx.currentTime+time/4*tempo/1000);
+    },time*3/4*tempo
               );
 }

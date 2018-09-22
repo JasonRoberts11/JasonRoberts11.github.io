@@ -47,7 +47,8 @@ var d_zubble= `{
 	{"name":"randi","color":6,"args":2,"gen":["1","10"]}
 ]},
 {"name":"Sound","open":false,"set":[
-	{"name":"pitch","color":7,"pitch":60,"time":1,"args":2,"gen":["60","1"]}
+	{"name":"pitch","color":7,"pitch":60,"time":1,"args":2,"gen":["60","1"]},
+{"name":"tempo","color":7,"gen":["1000"]}
 ]},
 {"name":"VarMath","open":false,"set":[
     {"name":"var","color":5,"text":"i","gen":["0"]},
