@@ -33,9 +33,10 @@
             var scrhig=window.innerHeight-10;
             main.getAttributeNode("width").value=scrwid;
             main.getAttributeNode("height").value=scrhig;
-            
+            var tempo=1000;
             var title = document.getElementById("title");
             var icon = document.getElementById("icon");
+            //var sleepers = [];
             /*var head = document.getElementById("head");
             var output = document.getElementById("output");
             var testButton = document.getElementById("test");
@@ -46,6 +47,10 @@
                 
                 
             }*/
+            function runObjAtTime(ree,time){
+                setTimeout(function(){
+                maine.findGoThis(ree)},time);
+            }
             
             
             
@@ -131,7 +136,7 @@
                     output.innerHTML+=" Layer: "+ elements[selected][8];
                 }*/
                 update();
-                title.innerHTML= Math.floor(Math.random()*1000)+" Ways to Fail"
+                title.innerHTML= Math.floor(Math.random()*1000)+" things to do"
                 //}
             }
             function setTouch(event){
@@ -166,7 +171,7 @@
                     output.innerHTML+=" Layer: "+ elements[selected][8];
                 }*/
                 update();
-                title.innerHTML= Math.floor(Math.random()*1000)+" Ways to Fail"
+                title.innerHTML= Math.floor(Math.random()*1000)+" things to do"
                 //}
             }
             function click(event){
@@ -256,7 +261,7 @@
                     rendChild(elements[i][2][k]);   
                 }
             }*/
-            
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             
             var elements = new Array(0);
             var maxlayer = 0;
@@ -267,7 +272,7 @@
             var selrad = 10;
             var defsize = 25;
             var ddde=10;
-            var colorblocks = new Array([200,100,150],[100,150,200],[150,200,150],[230,230,230],[230,100,230],[230,220,23],[0,230,230],[234,124,30]);
+            var colorblocks = new Array([200,100,150],[100,150,200],[150,200,150],[230,230,230],[230,100,230],[230,220,23],[0,230,230],[234,124,30],[234,30,130]);
 			var parent=null;
             
             //THE STRUCTURE FOR THE Element OBject
@@ -313,7 +318,6 @@
 				maine.updateChildSize();
             }
 			var startphys= window.setInterval(function(){
-				maine.setEnable();
 				maine.childPhys();
 				maine.render();
 				drawSideBar();
@@ -414,6 +418,13 @@
 					if(r!=null)
 					dragged.js.fname=r;
 					}}
+                    if(dragged.js.name=="var"){
+					if(dragged.js.vname==null){
+					dragged.js.vname="var_1";
+					var r=prompt("Name?",dragged.js.vname)
+					if(r!=null)
+					dragged.js.vname=r;
+					}}
 					dragged=null;
 				}
 			}
@@ -421,8 +432,6 @@
 			
 			
 			function resetZubble(){
-			maine.setSkip();
-			maine.setEnable();
                  maine.dofntoall(
                 'clearTimeout(this.sleept);'
             );
@@ -445,6 +454,12 @@
             function findFunctions(){
                 functions=[];
                 maine.findFunctions();
+            }
+            var vvar;
+            var vars=[];
+            function findVars(){
+                vars=[];
+                maine.findVars();
             }
 				
 			///////SIDE BAR////////////////////////////////////////////
@@ -621,6 +636,22 @@
 							sbar=i;
                             findFunctions();
 							}
+                     i ++;
+						ctx.fillStyle="#AAAAAA";
+						ctx.fillRect(sbx-sbsiz,sby+i*sbdy,sbsiz,(1)*sbdy);
+						ctx.fillStyle="#000000";
+						ctx.fillText("Variables",sbx-sbsiz/2,sby+(i+0.5)*sbdy);
+						if(i==sbar){
+							ctx.beginPath();
+							ctx.moveTo(sbx-sbsiz,sby+i*sbdy);
+							ctx.lineTo(sbx-sbsiz-10,sby+(i+0.5)*sbdy);
+							ctx.lineTo(sbx-sbsiz,sby+(i+1)*sbdy);
+							ctx.closePath();
+						}
+                        if(mousepressed==1&&Math.abs(mousex-(sbx-sbsiz*0.5))<sbsiz/2&&Math.abs(mousey-(sby+(i+0.5)*sbdy))<sbdy/2){
+							sbar=i;
+                            findVars();
+							}
 					
 					var j = 0;
                     if(sbar<mbar.length){
@@ -655,6 +686,7 @@
                                 dragged.color=r.set[k].color;
                                 dragged.js=JSON.parse(JSON.stringify(r.set[k]));
                                 dragged.create();
+                                mousepressed=2;
 							}
 							j++;
 						}
@@ -662,7 +694,7 @@
 					}
 					ctx.fillStyle="#AAAAAA";
 					ctx.fill();
-				}else{
+				}else{if(sbar==mbar.length){
 						for(var k = 0;k<functions.length;k++){
 							//r.set[k]
 							ctx.font = "15px Arial";
@@ -679,10 +711,31 @@
                                 dragged.color=5;
                                 dragged.create;
 								dragged.js.fun=true;
+                                mousepressed=2;
 							}
 							j++;
-						}
-                    }
+						}}if(sbar==mbar.length+1){
+                             for(var k = 0;k<vars.length;k++){
+							//r.set[k]
+							ctx.font = "15px Arial";
+							ctx.fillStyle="#EEEEEE";
+							ctx.fillRect(sbx-sbsiz*2,sby+j*sbdy,sbsiz,(1)*sbdy);
+							ctx.fillStyle="#000000";
+							ctx.fillText(vars[k].js.vname,sbx-sbsiz*1.5,sby+(j+0.5)*sbdy);
+							
+							if(mousepressed==1&&Math.abs(mousex-(sbx-sbsiz*1.5))<sbsiz/2&&Math.abs(mousey-(sby+(j+0.5)*sbdy))<sbdy/2){
+								dragged=new element(0,1,mousex,mousey);
+								dragged.label=vars[k].js.vname;
+                                dragged.js=JSON.parse('{"name":"test","color":6}');
+                                dragged.js.name=vars[k].js.vname;
+                                dragged.color=5;
+                                dragged.create;
+								dragged.js.vun=true;
+                                mousepressed=2;
+							}
+                                 j++;
+                             }
+                    }}
 
 					ctx.fillStyle="#AAAAAA";
 					ctx.fill();

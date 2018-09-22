@@ -6,8 +6,7 @@
 				this.ly=ypos;
 				this.xv=2;
 				this.yv=0;
-				this.enabled=true;
-				this.skip=false;
+				this.glow=false;
                 this.absx = xpos;
                 this.absy = ypos;
                 this.type = type;
@@ -36,6 +35,27 @@
                  k.y=-Math.cos(2*3.1415*i/res.length-0.2)*10;
                  k.parent=this;
                  this.children.push(k);
+                 
+             }
+             this.close=true;
+         }
+          if(this.js!=null&&this.js.gent!=null){
+             var res=this.js.gent;
+             for(var i = 0;i<res.length;i++){
+                 var k = new element(0,1,mousex,mousey);
+                 k.label= res[i].name;
+                 k.color= res[i].color;
+                 k.js = res[i];
+                 k.x=Math.sin(2*3.1415*i/res.length-0.2)*10;
+                 k.y=-Math.cos(2*3.1415*i/res.length-0.2)*10;
+                 k.parent=this;
+                
+                 k.create();
+                 findVars();
+                 if(res[i].name=="var"){
+                     k.js.vname="i"+vars.length;
+                 }
+                  this.children.push(k);
              }
              this.close=true;
          }
@@ -43,11 +63,8 @@
                 this.render = function(){
                     var t = this.tint;
                     var s = this.bold;
-					if(this.skip){
-						t-=0.4;
-					}
-					if(!this.enable){
-						s-=0.4;
+					if(this.glow){
+                        t+=1;
 					}
                     ctx.fillStyle= tint(colorblocks[this.color],t);
                     ctx.strokeStyle=tint(colorblocks[this.color],0.6*s);
@@ -66,6 +83,9 @@
                     }
 					if(this.js!=null&&this.js.name=="Function"){
                         ctx.fillText(this.js.fname,this.absx,this.absy-this.size+10);
+                    }
+                    if(this.js!=null&&this.js.name=="var"){
+                        ctx.fillText(this.js.vname,this.absx,this.absy-this.size+10);
                     }
 					if(!this.close){
                     for(var i =0;i<this.children.length;i++){
@@ -181,6 +201,19 @@
                     }
                     
                 }
+                 this.findVars=function(){
+                    for(var i =0;i<this.children.length;i++){
+						var cr = this.children[i];	
+					//console.log(cr.label);
+						if (cr.label=="var"){
+							vars.push(cr);
+							//console.log("Initialized");
+						}else{
+                            cr.findVars();
+                        }
+                    }
+                    
+                }
                 this.dofntoall=function(fn){
                     eval(fn);
                     for(var i =0;i<this.children.length;i++){
@@ -197,6 +230,20 @@
 							ffunction=(cr);
 							//console.log("Initialized");
 						}
+                    }
+                    
+                }
+                this.findVarByName=function(name){
+					
+                    for(var i =0;i<this.children.length;i++){
+						var cr = this.children[i];	
+					//console.log(cr.label);
+						if (cr.js.vname==name){
+							vvar=(cr);
+							//console.log("Initialized");
+						}else{
+                            cr.findVarByName(name);
+                        }
                     }
                     
                 }
@@ -302,34 +349,6 @@
                         this.children[i].orphanize();
                     } 
 				}
-				this.setSkips=function(){
-					this.skip=!this.enabled;
-					//console.log(this.enabled);
-					this.enabled=false;
-					for(var i =0;i<this.children.length;i++){
-                        this.children[i].setSkips();
-                    } 
-				}
-				this.undoSkips=function(){
-					//console.log(this.skip);
-					this.enabled=!this.skip;
-					this.skip=false;
-					for(var i =0;i<this.children.length;i++){
-                        this.children[i].undoSkips();
-                    } 
-				}
-				this.setEnable=function(){
-					this.enabled=true;
-					for(var i =0;i<this.children.length;i++){
-                        this.children[i].setEnable();
-                    } 
-				}
-				this.setSkip=function(){
-					this.skip=false;
-					for(var i =0;i<this.children.length;i++){
-                        this.children[i].setSkip();
-                    } 
-				}
 				this.deOrphanize=function(){
 					for(var i =0;i<this.children.length;i++){
 						this.children[i].parent = this;
@@ -373,19 +392,13 @@
 				this.run = function(){
 					//console.log("label:"+this.label);
                     ///TODO//////////////////////////////////////////////////////////////////////
-                    //if(this.enabled == true){
-					this.ret = null;
+  
+					//this.ret = null;
+                    if(this.label=="raw"){
+                        this.ret = this.js.text;
+                    }
 					var cont = true;
-					if(this.label == "Print"){
-						if(this.children.length>0){
-							var aaa=this.children[0].run();
-							for(var i =1;i<this.children.length;i++){
-								aaa+=this.children[i].run();
-                    		}
-							console.log(aaa);
-							log(aaa);
-						}
-					}else if(this.js.fun==true){
+					if(this.js.fun==true){
 						maine.findFunctionByName(this.label);
                         cont = false;
 						ffunction.call=this;
@@ -393,65 +406,42 @@
 						ffunction.run();
                         //ffunction.setEnable();
 						
-					}else if(this.label=="pitch"){
-                        var c=[0,0]
-                        for(var i =0;i<this.children.length;i++){
-								c[i]=this.children[i].run();
-                    		}
-                        freq = 440*Math.pow((2),(c[0]-60-9)/12);
-                        //console.log(freq);
-                             playPitch(freq,c[1],'square');
-                    }else if(this.label == "return"){
-                        var p = this.parent;
-						//console.log((p.call));
-                        if(p.js!=null){
-                        //console.log("yes");
-						if(this.children.length>0){
-							var aaa=this.children[0].run();
-							for(var i =1;i<this.children.length;i++){
-								aaa+=this.children[i].run();
-                    		}
-							p.call.callbac=aaa;
-							//console.log(p.call);
-						}}
-					}else if(this.label=="Sleep"){
-                        sleep=true;
-                        var teim = 1;
-                        if (this.children.length>0)
-                        teim = this.children[0].run();
-						////this.enabled=false;
-                        //maine.setSkips();
-                        this.sleept = setTimeout(function(){
-							console.log("sleeip");
-							//maine.undoSkips();
-							runZubble();
-						},teim*1000);
-						cont=false;
-                    }else{
+					}else{
 						/*for(var i =0;i<this.children.length;i++){
 							this.children[i].run();
                     	}*/
 						cont = true;
-						this.reval();
+						//this.reval();
 					
 					}					
 						if(cont==true){
 							if(this.children.length>0){
 								this.children[0].run();
 							}else{
-								//console.log(this.children.length);
+                                if(this.runAfter())
 								this.goBack(this.ret);
 								
 							}
 						}else{
 							
 						}
-						//this.enabled=false;
-
+						
                     //}
 					return this.ret;
 					
 				}
+                this.findGoThis = function(reee){
+                    if(this==reee){
+                        //console.log("found"+JSON.stringify(this.js));
+                        this.glow=false;
+                        this.parent.goNext(this.parent.children.indexOf(this));
+                    }else{
+                        //console.log("no");
+                        for(var i=0;i<this.children.length;i++){
+                            this.children[i].findGoThis(reee);       
+                        }
+                    }
+                }
 				this.goNext = function(index){
 					//console.log(this.children.length);
 					//console.log(index);
@@ -459,7 +449,9 @@
 						//console.log(index+1);
 						this.children[index+1].run();
 					}else{
+                       if(this.runAfter()){
 						this.goBack();
+                       }
 					}
 					
 				}
@@ -468,63 +460,141 @@
 									//console.log("backup");
 									//console.log(this.call);
 									this.call.parent.goNext(this.call.parent.children.indexOf(this.call));
-								}else if(this.label=="Initialize"){
+								}else {
+                                    
+                                    if(this.label=="Initialize"){
 									
-								}else{this.parent.goNext(this.parent.children.indexOf(this));
+								}else{
+                                    this.parent.goNext(this.parent.children.indexOf(this));
 								}
-				}
+                                      }}
+				
 				/////////TODO/////////////////////////////////////////////////////////////////////////////
-				this.reval = function(element){
-					this.ret = null;
-					/*if(this.js.fun == true){
-					   	maine.findFunctionByName(this.label);
-						var re = ffunction;
-						this.callbac=null;
-						re.call=this;
-						//console.log(JSON.stringify(re.js));
-						re.run();
-						re.call=null;
-						this.ret = this.callbac;
-						this.callbac=null;
-					}*/
-					if(this.label == "raw"){
-					   this.ret = this.js.text;
+                this.runAfter=function(){
+                    var go = true;
+                    if(this.label=="Print"){
+                        if(this.children.length>0){
+                            var aaa=this.children[0].ret;
+                            for(var i = 1 ;i<this.children.length;i++){
+                                aaa+=this.children[i].ret;
+                            }
+                            console.log(aaa);
+							log(aaa);
+                        }
+                    }
+                    if(this.label=="raw"){
+                        this.ret = this.js.text;
+                    }
+                     if(this.label=="var"){
+                         if(this.children.length>0){
+                        this.ret = this.children[0].ret;}
+                         else{this.ret=null;}
+                    }
+                    //console.log(this.label);
+                    if(this.js.vun==true){
+                        maine.findVarByName(this.label);
+                        
+						//console.log(vvar);
+                         //console.log(this.label);
+                        if(this.children.length==0){
+                            this.ret=vvar.ret;
+                           // console.log("tdree");
+                        }else{
+                            vvar.ret = this.children[0].ret;
+                            this.ret=vvar.ret;
+                        }
+                        
+                    }
+                     if(this.label == "++"){
+                         maine.findVarByName(this.parent.label);
+                         if(this.children.length==0){
+                            vvar.ret++;
+                            }else{
+                                if(parseFloat(vvar.ret)!=NaN){
+                                vvar.ret=parseFloat(this.children[0].ret)+parseFloat(vvar.ret);
+                                }else{
+                                    vvar.ret+=this.children[0].ret;
+                                }
+                            }
+
+                         this.ret=vvar.ret;
 					}
-					if(this.label == "randi"){
-						var min = parseFloat(this.children[0].run());
-						var max = this.children[1].run();
+                    if(this.label=="pitch"){
+                        var c=[0,0];
+                        for(var i =0;i<this.children.length;i++){
+                            if(this.children[i].ret!=null)
+								c[i]=parseFloat(this.children[i].ret);
+                    		}
+                        freq = 440*Math.pow((2),(c[0]-60-9)/12);
+                        //console.log(c[1]);
+                             playPitch(freq,c[1],'square');
+                    }
+                    if(this.label == "randi"){
+						var min = parseFloat(this.children[0].ret);
+						var max = this.children[1].ret;
 					   this.ret = min+Math.floor(Math.random()*(max-min+1))
 					}
-					if(this.label == "+"){
+                    if(this.label == "+"){
 					   this.ret=0;
-					for(var i =0;i<this.children.length;i++){
-							this.ret+=parseFloat(this.children[i].run());
-                    	}
-					}if(this.label == "*"){
-					   this.ret=1;
-					for(var i =0;i<this.children.length;i++){
-							this.ret*=parseFloat(this.children[i].run());
+					   for(var i =0;i<this.children.length;i++){
+							this.ret+=parseFloat(this.children[i].ret);
                     	}
 					}
-					if(this.label == "-"){
+                    if(this.label == "*"){
+					   this.ret=1;
+					   for(var i =0;i<this.children.length;i++){
+							this.ret*=parseFloat(this.children[i].ret);
+                    	}
+					}
+                    if(this.label == "-"){
 					   this.ret=0;
 						for(var i =0;i<Math.floor(this.children.length/2);i++){
-							this.ret+=parseFloat(this.children[i].run());
+							this.ret+=parseFloat(this.children[i].ret);
                     	}
 						for(var i =Math.floor(this.children.length/2);i<this.children.length;i++){
-							this.ret-=parseFloat(this.children[i].run());
+							this.ret-=parseFloat(this.children[i].ret);
                     	}
 					}
-					if(this.label == "/"){
+                    if(this.label == "/"){
 					   this.ret=1;
-					for(var i =0;i<Math.floor(this.children.length/2);i++){
-							this.ret*=parseFloat(this.children[i].run());
+						for(var i =0;i<Math.floor(this.children.length/2);i++){
+							this.ret*=parseFloat(this.children[i].ret);
                     	}
-						for(var i = Math.floor(this.children.length/2);i<this.children.length;i++){
-							this.ret/=parseFloat(this.children[i].run());
+						for(var i =Math.floor(this.children.length/2);i<this.children.length;i++){
+							this.ret/=parseFloat(this.children[i].ret);
                     	}
 					}
-				}
+                    if(this.label=="Sleep"){
+                        go=false;
+                        var teim = 1;
+                        if (this.children.length>0)
+                        teim = this.children[0].ret;
+                        this.glow=true;
+                        //maine.setSkips();
+                        //sleepers.push(this);
+                        
+                       // this.sleept = setTimeout(function(){
+							//console.log("sleeip");
+							//maine.undoSkips();
+							//maine.findGoThis(sleepers[0]);},1000);
+                            runObjAtTime(this,teim*tempo);
+                    }
+                    if(this.label == "return"){
+                        var p = this.parent;
+						//console.log((p.call));
+                        if(p.js!=null){
+                        //console.log("yes");
+						if(this.children.length>0){
+							var aaa=this.children[0].ret;
+							for(var i =1;i<this.children.length;i++){
+								aaa+=this.children[i].ret;
+                    		}
+							p.call.callbac=aaa;
+							//console.log(p.call);
+						}}
+					}
+                    return go;
+                }
 				
             }
 			function jsobj(){

@@ -32,7 +32,7 @@ var d_zubble= `{
 "array":[
 	{"name":"Main","open":false,"set":[
     {"name":"Function","jstart":"ree","jend":"ree","color":4},
- {"name":"return","jstart":"ree","jend":"ree","color":1},
+    {"name":"return","jstart":"ree","jend":"ree","color":1},
 	{"name":"Initialize","jstart":"<!DOCTYPE html><html>","jend":"</html>","color":4},
     {"name":"Close","color":4},
 	{"name":"Print","color":2},
@@ -40,7 +40,6 @@ var d_zubble= `{
 ]},
 {"name":"Math","open":false,"set":[
 	{"name":"raw","color":3,"text":"hello world"},
-	{"name":"var","color":5,"text":"i"},
 	{"name":"+","color":6},
 	{"name":"*","color":6},
 	{"name":"-","color":6,"function":"t-b","args":2},
@@ -49,6 +48,11 @@ var d_zubble= `{
 ]},
 {"name":"Sound","open":false,"set":[
 	{"name":"pitch","color":7,"pitch":60,"time":1,"args":2,"gen":["60","1"]}
+]},
+{"name":"VarMath","open":false,"set":[
+    {"name":"var","color":5,"text":"i","gen":["0"]},
+	{"name":"++","color":8},
+    {"name":"for","color":4,"gent":[{"name":"var","color":5,"gen":["0"],"vname":"i"},{"name":"repeat","color":3,"gen":["5"]},{"name":"do","color":3}]}
 ]}
 ]
 }`
