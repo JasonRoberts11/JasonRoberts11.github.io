@@ -48,10 +48,17 @@
                 
             }*/
             function runObjAtTime(ree,time){
-                setTimeout(function(){
+                setTimeout(
+					function(){
+						//console.log(ree)
                 maine.findGoThis(ree)},time);
             }
-            
+            function FrunObjAtTime(ree,time){
+                setTimeout(
+					function(){
+						//console.log(ree)
+                maine.findGoThat(ree)},time);
+            }
             
             
             
@@ -65,7 +72,7 @@
 			function upScr(){
                 scrwid =window.innerWidth-5;
                 scrhig=window.innerHeight-5;
-                if(scrwid <scrhig){
+                if(/*scrwid <scrhig*/false){
                      maine.size = scrwid/2;
 				maine.absx = scrwid/2;
 				maine.absy = scrwid/2+tby;
@@ -84,7 +91,7 @@
                     
                     side=true;
                     main.getAttributeNode("width").value=scrwid;
-            main.getAttributeNode("height").value=scrwid;
+            main.getAttributeNode("height").value=scrhig;
                 }
 				update();
 			}
@@ -97,7 +104,7 @@
             var mousey;
             var mdx = 0;
             var mdy = 0;
-            
+            var copy=0;
             var sleeping = [];
             var sleep=false;
             
@@ -211,6 +218,8 @@
                 //console.log("cluck")
             }
             function tap(event){
+				mdx=0;
+				mdy=0;
                 var tou = event.changedTouches;
                 if(tou.length==1){
                     var e = main.getBoundingClientRect();
@@ -318,6 +327,7 @@
 				maine.updateChildSize();
             }
 			var startphys= window.setInterval(function(){
+				   ctx.clearRect(0,0,scrwid,scrhig);
 				maine.childPhys();
 				maine.render();
 				drawSideBar();
@@ -388,6 +398,24 @@
                     }
                     
                 }
+				if(copy){
+					if(mousepressed==2&&dragged==null){
+				selected=null;
+				maine.getSelection();
+				if(selected != maine&&selected!=null){
+					var coopy = selected.parseToJSON();
+					dragged=new element(null,1,0,0);
+					dragged.readJson(JSON.parse(JSON.stringify(coopy)));
+						dragged.deOrphanize();
+						dragged.updatePos();
+					dragged.absx=mousex;
+					dragged.absy=mousey;
+                    dragged.tint=1.1;
+				//dragged.removeParent();
+				copy=false;}}
+					
+					
+				}else{
 				if(mousepressed==2&&dragged==null){
 				selected=null;
 				maine.getSelection();
@@ -395,7 +423,7 @@
 				dragged=selected;
                     dragged.tint=1.1;
 				dragged.removeParent();}
-				}
+				}}
 				if(dragged!=null){
 				   dragElement(dragged);
 				    dragged.render();
@@ -545,11 +573,13 @@
 					ctx.fillRect(0,0,scrwid,tby);
 					ctx.fillStyle="#444444";
 				var sele=-1;
-				var tes=["Save","Load","Run"]
-				for(var i =0;i<3;i++){
+				var tes=["Save","Load","Run","Copy"]
+				for(var i =0;i<tes.length;i++){
 					ctx.fillStyle="#AAAAAA";
 						ctx.fillRect(1+i*tbx,1,tbx-2,tby-2);
-						ctx.fillStyle="#000000";
+					ctx.fillStyle="#000000";
+					if(i==3&&copy)
+						ctx.fillStyle="#FFFFFF";
 					ctx.textAlign="center";
 						ctx.textBaseline="middle";
 						ctx.font = "20px Arial";
@@ -579,6 +609,15 @@
 							consolet="";
 							resetZubble();
 					runZubble();
+					sele=1;
+				}
+						if(i==3&&sele==-1){
+					mousepressed=-1;
+							if(!copy){
+							copy=true;}else{
+								copy=false;
+							}
+							
 					sele=1;
 				}
 							}

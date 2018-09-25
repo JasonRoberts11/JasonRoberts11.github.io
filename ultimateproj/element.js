@@ -361,7 +361,7 @@
 						robj.children.push(this.children[i].parseToJSON());
                     }
 					//prev.children.push(robj);
-					console.log(JSON.stringify(robj));
+					//console.log(JSON.stringify(robj));
 					return robj;
 				}
 				this.makeJson= function(){
@@ -406,13 +406,20 @@
 						ffunction.run();
                         //ffunction.setEnable();
 						
+					}else if(this.label=="do"&&this.parent.label=="Delay"){
+						 cont=false;
+						this.goBack(null);
+						var teim = this.parent.children[0].ret;
+						//console.log(teim);
+						 if(this.children.length>0){
+						FrunObjAtTime(this.children[0],teim*tempo);
+						 }
 					}else{
 						/*for(var i =0;i<this.children.length;i++){
 							this.children[i].run();
                     	}*/
 						cont = true;
 						//this.reval();
-					
 					}					
 						if(cont==true){
 							if(this.children.length>0){
@@ -439,6 +446,17 @@
                         //console.log("no");
                         for(var i=0;i<this.children.length;i++){
                             this.children[i].findGoThis(reee);       
+                        }
+                    }
+                }
+				this.findGoThat = function(reee){
+                    if(this==reee){
+                        this.glow=false;
+ 						this.run();
+                    }else{
+                        //console.log("no");
+                        for(var i=0;i<this.children.length;i++){
+                            this.children[i].findGoThat(reee);       
                         }
                     }
                 }
@@ -538,6 +556,7 @@
 						var min = parseFloat(this.children[0].ret);
 						var max = this.children[1].ret;
 					   this.ret = min+Math.floor(Math.random()*(max-min+1))
+						console.log(this.ret);
 					}
                     if(this.label == "+"){
 					   this.ret=0;
@@ -584,6 +603,11 @@
 							//maine.findGoThis(sleepers[0]);},1000);
                             runObjAtTime(this,teim*tempo);
                     }
+					if(this.label=="do"&&this.parent.label=="Delay"){
+						 go=false;
+						//console.log('aser');
+						 
+					}
                     if(this.label == "return"){
                         var p = this.parent;
 						//console.log((p.call));

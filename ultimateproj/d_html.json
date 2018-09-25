@@ -36,7 +36,8 @@ var d_zubble= `{
 	{"name":"Initialize","jstart":"<!DOCTYPE html><html>","jend":"</html>","color":4},
     {"name":"Close","color":4},
 	{"name":"Print","color":2},
-    {"name":"Sleep","color":2,"time":1,"gen":["1"]}
+    {"name":"Sleep","color":2,"time":1,"gen":["1"]},
+	{"name":"Delay","color":2,"time":1,"gent":[{"name":"raw","color":3,"text":"1"},{"name":"do","color":3}]}
 ]},
 {"name":"Math","open":false,"set":[
 	{"name":"raw","color":3,"text":"hello world"},
