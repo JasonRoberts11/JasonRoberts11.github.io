@@ -12,7 +12,7 @@
         <p id = "output"></p>
         <button id ="test">TEST</button><br/>-->
         <div>
-        <canvas id="main" width="500" height="500" style="margin:0;padding:0;position:fixed;top:0;left:0;">
+        <canvas id="main" width="500" height="500" style="position:absolute;top:0;left:0;z-index:0;">
             </canvas></div><button id="Load" style="margin:20;padding:20;position:fixed;top:0;left:0;z-index:999;display:none;height:60px;width:120px">LOAD</button>
         <!--<div style="position:fixed;bottom:0;border:1px solid black;max-height: 200px;margin:auto;">
         <div id="preview">
@@ -21,6 +21,7 @@
         <script type="text/javascript" src="d_html.json"></script>
 		<script type="text/javascript" src="element.js"></script>
         <script type="text/javascript" src="sound.js"></script>
+        <script type="text/javascript" src="colorblocks.js"></script>
         <script>
            // playPitch(400,0.1,'square');
 					var mode = "zubble";
@@ -283,7 +284,6 @@
             var selrad = 10;
             var defsize = 25;
             var ddde=10;
-            var colorblocks = new Array([200,100,150],[100,150,200],[150,200,150],[230,230,230],[230,100,230],[230,220,23],[0,230,230],[234,124,30],[234,30,130]);
 			var parent=null;
             
             //THE STRUCTURE FOR THE Element OBject

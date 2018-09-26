@@ -399,11 +399,7 @@
                     }
 					var cont = true;
 					if(this.js.fun==true){
-						maine.findFunctionByName(this.label);
-                        cont = false;
-						ffunction.call=this;
-						//console.log(ffunction.call);
-						ffunction.run();
+						
                         //ffunction.setEnable();
 						
 					}else if(this.label=="do"&&this.parent.label=="Delay"){
@@ -507,6 +503,24 @@
                          if(this.children.length>0){
                         this.ret = this.children[0].ret;}
                          else{this.ret=null;}
+                    }
+                    if(this.js.fun==true){
+                        maine.findFunctionByName(this.label);
+                        
+                        go = false;
+                        
+						ffunction.call=this;
+						//console.log(ffunction.call);
+						ffunction.run();
+                    }
+                    if(this.label=="params"){
+                        //console.log("howdy");
+                        for(var i =0;i<this.children.length;i++){
+                            //console.log("hey");
+                            if(this.parent.call.children.length>i){
+                                this.children[i].ret=this.parent.call.children[i].ret;
+                            }
+                        }
                     }
                     //console.log(this.label);
                     if(this.js.vun==true){
