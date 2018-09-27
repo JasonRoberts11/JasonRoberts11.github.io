@@ -31,8 +31,7 @@ var d_zubble= `{
 "name":"ZBL",
 "array":[
 	{"name":"Main","open":false,"set":[
-    {"name":"Function","jstart":"ree","jend":"ree","color":4,"gent":[{"name":"params","color":2}]},
-    {"name":"return","jstart":"ree","jend":"ree","color":1},
+    
 	{"name":"Initialize","jstart":"<!DOCTYPE html><html>","jend":"</html>","color":4},
     {"name":"Close","color":4},
 	{"name":"Print","color":2},
@@ -56,7 +55,13 @@ var d_zubble= `{
     {"name":"var","color":5,"text":"i","gen":["0"]},
 	{"name":"++","color":8},
     {"name":"for","color":4,"gent":[{"name":"var","color":5,"gen":["0"],"vname":"i"},{"name":"repeat","color":3,"gen":["5"]},{"name":"do","color":3}]},
-    {"name":"Object","color":9,"gent":[{"name":"params","color":2}]}
+    {"name":"Object","color":9,"gent":[{"name":"params","color":2}]},{"name":"Function","jstart":"ree","jend":"ree","color":4,"gent":[{"name":"params","color":2}]}
 ]}
 ]
 }`
+var d_function=`{"name":"Functions","array":[{"name":"Functions","open":true,"set":[
+{"name":"Function","jstart":"ree","jend":"ree","color":4,"gent":[{"name":"params","color":2}]},    {"name":"return","jstart":"ree","jend":"ree","color":1}
+]},
+{"name":"Variables","open":true,"set":[
+{"name":"var","color":5,"text":"i","gen":["0"]}]}]}`;
+//var d_var = `{"name":"var","color":5,"text":"i","gen":["0"]}`

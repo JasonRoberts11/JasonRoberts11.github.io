@@ -21,6 +21,7 @@
                 this.layer=0;
                 this.size = defsize;
                 this.open = true;
+	 this.node=false;
      this.sleept = null;
                 this.connections = [];
      this.create=function(){
@@ -69,13 +70,20 @@
                     ctx.fillStyle= tint(colorblocks[this.color],t);
                     ctx.strokeStyle=tint(colorblocks[this.color],0.6*s);
                     ctx.lineWidth = s*2;
+					if(this.node){
+					ctx.beginPath();
+					ctx.moveTo(this.absx,this.absy);
+					ctx.lineTo(this.parent.absx,this.parent.absy);
+					ctx.stroke();}
                     ctx.beginPath();
                     ctx.arc(this.absx,this.absy,this.size,0,2*Math.PI);
                     ctx.fill();
                     ctx.stroke();
+					
 					ctx.font="10px Arial";
 					ctx.textAlign="center";
 					ctx.textBaseline="mid";
+					
                     ctx.fillStyle = tint(colorblocks[this.color],0);
 					ctx.fillText(this.label,this.absx,this.absy+this.size-10);
 					if(this.js!=null&&this.js.name=="raw"){
@@ -102,6 +110,10 @@
 						ctx.textBaseline="mid";
                         ctx.fillStyle = tint(colorblocks[this.color],0);
 						ctx.fillText(this.children.length,this.absx,this.absy);
+						for(var i =0;i<this.children.length;i++){
+                        	if(this.children[i].node)
+                        	this.children[i].render();
+						}
 					}
                     
                 };
@@ -120,6 +132,7 @@
 				this.phys=function(){
 					var p=this.parent;
 					//If collides with parent
+					if(!this.node)
 					if(dist2(this.absx,this.absy,p.absx,p.absy)+(this.size)+ddde*0.5>p.size){
 						//var r=Math.atan2(this.yv,this.xv);
 						var b=Math.atan2((this.absy-p.absy),(this.absx-p.absx));
@@ -301,6 +314,7 @@
                     for(var i =0;i<this.children.length;i++){
                         this.children[i].updateSize();
                         var c = this.children[i];
+						if(!c.node)
                         if(dist2(this.absx,this.absy,c.absx,c.absy)+(c.size)+ddde>maxsize){
                            maxsize=dist2(this.absx,this.absy,c.absx,c.absy)+(c.size)+ddde;
                             
@@ -498,6 +512,12 @@
                     }
                     if(this.label=="raw"){
                         this.ret = this.js.text;
+						if(this.children.length>0){
+							this.ret="";
+					   for(var i =0;i<this.children.length;i++){
+							this.ret+=this.children[i].ret;
+                    	}
+						}
                     }
                      if(this.label=="var"){
                          if(this.children.length>0){

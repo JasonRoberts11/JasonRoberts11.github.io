@@ -26,7 +26,7 @@
            // playPitch(400,0.1,'square');
 					var mode = "zubble";
 			
-			
+			var alphabet = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             var main = document.getElementById("main");
             var preview = document.getElementById("preview");
             var ctx = main.getContext("2d");
@@ -363,12 +363,53 @@
 				e.move(mdx,mdy);
 			}
 			dragged = null;
+			var nodrag = null;
 			function dragger(){
+				console.log(mousepressed);
+				
+				if(mousepressed==1){
+					if(dist2(mdx,mdy,0,0)>3){
+						mousepressed=2;
+						mousex-=mdx;
+						mousey-=mdy;
+						mdx=0;
+						mdy=0;
+					}
+				}
+				if(mousepressed==4){
+					if(nodrag==null){
+					selected=null;
+				    maine.getSelection();
+					nodrag=selected;
+					}
+					if(nodrag!=null&&nodrag!=maine){
+					var selp = nodrag.parent;
+					nodrag.absx=mousex;
+						nodrag.absy=mousey;
+					nodrag.x=-selp.absx+mousex;
+					nodrag.y=-selp.absy+mousey;
+						if(dist(mousex,mousey,selp.absx,selp.absy,selp.size)){
+					nodrag.node=true;
+					}else{
+						
+					}
+				}
+				}else{
+					if(nodrag!=null){
+						var selp = nodrag.parent;
+						if(!dist(mousex,mousey,selp.absx,selp.absy,selp.size)){
+					nodrag.node=true;
+					}else{
+						nodrag.node=false;
+					}
+					nodrag=null;
+				}
+				}
                 if(mousepressed==3){
                     selected=null;
 				    maine.getSelection();
 				    if(selected != maine&&selected!=null){
-						if(selected.js!=null&&selected.js.name=="Function"&&mousey<selected.absy){
+						if(selected.js!=null&&selected.js.name=="Function"&&mousey<selected.absy-selected.size+defsize){
 						var r=prompt("Name?",selected.js.fname)
 						if(r!=null)
 						selected.js.fname=r;
@@ -424,7 +465,8 @@
 				if(selected != maine&&selected!=null){
 				dragged=selected;
                     dragged.tint=1.1;
-				dragged.removeParent();}
+				dragged.removeParent();
+				dragged.node=false}
 				}}
 				if(dragged!=null){
 				   dragElement(dragged);
@@ -443,17 +485,28 @@
 					dragged.render();
 					if(dragged.js.name=="Function"){
 					if(dragged.js.fname==null){
-					dragged.js.fname="Function_1";
+					dragged.js.fname="Function_"+(alphabet.charAt(functions.length));
 					var r=prompt("Name?",dragged.js.fname)
-					if(r!=null)
-					dragged.js.fname=r;
+					if(r!=null){
+						dragged.js.fname=r;
+					 	findFunctions();
+					}else{
+						dragged.parent.children.splice(dragged.parent.children.indexOf(dragged),1);
+						dragged.parent = null;
+					}
 					}}
                     if(dragged.js.name=="var"){
 					if(dragged.js.vname==null){
-					dragged.js.vname="var_1";
+					dragged.js.vname="var_"+(alphabet.charAt(vars.length));
 					var r=prompt("Name?",dragged.js.vname)
 					if(r!=null)
+						{
 					dragged.js.vname=r;
+							findVars();
+						}else{
+							dragged.parent.children.splice(dragged.parent.children.indexOf(dragged),1);
+						dragged.parent = null;
+						}
 					}}
 					dragged=null;
 				}
@@ -501,12 +554,14 @@
 			var sby=0+tbs;
 			var side=true;
 			var mbar = [];
+			
 			var sbar = 0;
 			if(mode=="html"){
 			mbar.push(JSON.parse(d_html));
             mbar.push(JSON.parse(d_javascript));
 			}
 			mbar.push(JSON.parse(d_zubble));
+			mbar.push(JSON.parse(d_function))
 			var par="";
 			var upar="";
 			function parseHtml(el){
@@ -661,7 +716,7 @@
 							sbar=i;
 							}
 					}
-                    var i = mbar.length;
+                   /* var i = mbar.length;
 						ctx.fillStyle="#AAAAAA";
 						ctx.fillRect(sbx-sbsiz,sby+i*sbdy,sbsiz,(1)*sbdy);
 						ctx.fillStyle="#000000";
@@ -693,7 +748,7 @@
 							sbar=i;
                             findVars();
 							}
-					
+					*/
 					var j = 0;
                     if(sbar<mbar.length){
 					for(var i=0;i<mbar[sbar].array.length;i++){
@@ -718,6 +773,8 @@
 							ctx.font = "15px Arial";
 							ctx.fillStyle="#EEEEEE";
 							ctx.fillRect(sbx-sbsiz*2,sby+j*sbdy,sbsiz,(1)*sbdy);
+							ctx.fillStyle=atint(colorblocks[r.set[k].color],0.4);
+							ctx.fillRect(sbx-sbsiz*2+1,sby+j*sbdy+1,sbsiz-2,(1)*sbdy-2);
 							ctx.fillStyle="#000000";
 							ctx.fillText(r.set[k].name,sbx-sbsiz*1.5,sby+(j+0.5)*sbdy);
 							
@@ -731,11 +788,56 @@
 							}
 							j++;
 						}
-                    }
+                    	if(r.name=="Functions"){
+							for(var k = 0;k<functions.length;k++){
+							//r.set[k]
+							ctx.font = "15px Arial";
+							ctx.fillStyle="#EEEEEE";
+							ctx.fillRect(sbx-sbsiz*2,sby+j*sbdy,sbsiz,(1)*sbdy);
+							ctx.fillStyle="#000000";
+							ctx.fillText(functions[k].js.fname,sbx-sbsiz*1.5,sby+(j+0.5)*sbdy);
+							
+							if(mousepressed==1&&Math.abs(mousex-(sbx-sbsiz*1.5))<sbsiz/2&&Math.abs(mousey-(sby+(j+0.5)*sbdy))<sbdy/2){
+								dragged=new element(0,1,mousex,mousey);
+								dragged.label=functions[k].js.fname;
+                                dragged.js=JSON.parse('{"name":"test","color":6}');
+                                dragged.js.name=functions[k].js.fname;
+                                dragged.color=5;
+                                dragged.create;
+								dragged.js.fun=true;
+                                mousepressed=2;
+							}
+							j++;
+						}
+						}
+							if(r.name=="Variables"){
+								for(var k = 0;k<vars.length;k++){
+							//r.set[k]
+							ctx.font = "15px Arial";
+							ctx.fillStyle="#EEEEEE";
+							ctx.fillRect(sbx-sbsiz*2,sby+j*sbdy,sbsiz,(1)*sbdy);
+							ctx.fillStyle="#000000";
+							ctx.fillText(vars[k].js.vname,sbx-sbsiz*1.5,sby+(j+0.5)*sbdy);
+							
+							if(mousepressed==1&&Math.abs(mousex-(sbx-sbsiz*1.5))<sbsiz/2&&Math.abs(mousey-(sby+(j+0.5)*sbdy))<sbdy/2){
+								dragged=new element(0,1,mousex,mousey);
+								dragged.label=vars[k].js.vname;
+                                dragged.js=JSON.parse('{"name":"test","color":6}');
+                                dragged.js.name=vars[k].js.vname;
+                                dragged.color=5;
+                                dragged.create;
+								dragged.js.vun=true;
+                                mousepressed=2;
+							}
+                                 j++;
+                             }
+							}
+						}
 					}
 					ctx.fillStyle="#AAAAAA";
 					ctx.fill();
-				}else{if(sbar==mbar.length){
+				}else{/*if(sbar==mbar.length){
+					
 						for(var k = 0;k<functions.length;k++){
 							//r.set[k]
 							ctx.font = "15px Arial";
@@ -776,7 +878,7 @@
 							}
                                  j++;
                              }
-                    }}
+                    }*/}
 
 					ctx.fillStyle="#AAAAAA";
 					ctx.fill();
@@ -796,6 +898,9 @@
             }
             function tint(color,tint){
                 return("rgb("+color[0]*tint+","+color[1]*tint+","+color[2]*tint+")");
+            }
+			function atint(color,a){
+                return("rgb("+((color[0]-255)*a+255)+","+((color[1]-255)*a+255)+","+((color[2]-255)*a+255)+")");
             }
         
         </script>
