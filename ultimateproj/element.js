@@ -70,11 +70,16 @@
                     ctx.fillStyle= tint(colorblocks[this.color],t);
                     ctx.strokeStyle=tint(colorblocks[this.color],0.6*s);
                     ctx.lineWidth = s*2;
-					if(this.node){
+					if(this.node){var er=0.2;
+                        var pa = this.parent;
+                        var d = Math.atan2(this.absy-pa.absy,this.absx-pa.absx);
 					ctx.beginPath();
-					ctx.moveTo(this.absx,this.absy);
-					ctx.lineTo(this.parent.absx,this.parent.absy);
-					ctx.stroke();}
+					ctx.moveTo(pa.absx+Math.cos(d)*pa.size,pa.absy+Math.sin(d)*pa.size);
+					ctx.lineTo(this.absx-Math.cos(d)*this.size,this.absy-Math.sin(d)*this.size);
+                    ctx.lineTo(this.absx-Math.cos(d+er)*(this.size+10),this.absy-Math.sin(d+er)*(this.size+10));
+                        //ctx.lineTo(this.absx-Math.cos(d-er)*(this.size+10),this.absy-Math.sin(d-er)*(this.size+10));
+					ctx.stroke();
+                    }
                     ctx.beginPath();
                     ctx.arc(this.absx,this.absy,this.size,0,2*Math.PI);
                     ctx.fill();
@@ -343,13 +348,14 @@
 					}
 				}
 				this.recFindParent = function(c){
-					if(this!=c)
+					if(this!=c){
 					   if(dist(this.absx,this.absy,mousex,mousey,(this.size))){
 					   parent = this;
-                        if(!this.close)
-						for(var i =0;i<this.children.length;i++){
+                        //if(!this.close)
+                       }
+                        for(var i =0;i<this.children.length;i++){
                         this.children[i].recFindParent(c);
-                    	} 
+                    	}
 					}
 				}
 				this.removeParent = function(){
@@ -544,7 +550,7 @@
                     }
                     //console.log(this.label);
                     if(this.js.vun==true){
-                        maine.findVarByName(this.label);
+                        this.findVarByName(this.label);
                         
 						//console.log(vvar);
                          //console.log(this.label);
@@ -628,7 +634,7 @@
                         if (this.children.length>0)
                         teim = this.children[0].ret;
                         this.glow=true;
-                        //maine.setSkips();
+                        //maine.setSkips();I
                         //sleepers.push(this);
                         
                        // this.sleept = setTimeout(function(){

@@ -50,12 +50,12 @@ var d_zubble= `{
 	{"name":"pitch","color":7,"pitch":60,"time":1,"args":2,"gen":["60","1"]},
 {"name":"tempo","color":7,"gen":["1000"]}
 ]},
-{"name":"VarMath","open":false,"set":[
+{"name":"Logic","open":false,"set":[
 
-    {"name":"var","color":5,"text":"i","gen":["0"]},
 	{"name":"++","color":8},
     {"name":"for","color":4,"gent":[{"name":"var","color":5,"gen":["0"],"vname":"i"},{"name":"repeat","color":3,"gen":["5"]},{"name":"do","color":3}]},
-    {"name":"Object","color":9,"gent":[{"name":"params","color":2}]},{"name":"Function","jstart":"ree","jend":"ree","color":4,"gent":[{"name":"params","color":2}]}
+    {"name":"Object","color":9,"gent":[{"name":"params","color":2}]},
+    {"name":"ifelse","color":9,"gent":[{"name":"test","color":3},{"name":"true","color":3},{"name":"false","color":3}]}
 ]}
 ]
 }`

@@ -376,7 +376,17 @@
 						mdy=0;
 					}
 				}
-				if(mousepressed==4){
+                if(mousepressed==4){
+					if(dist2(mdx,mdy,0,0)>5){
+						mousepressed=5;
+						mousex-=mdx;
+						mousey-=mdy;
+						mdx=0;
+						mdy=0;
+					}
+				}
+                //////////NODE DRAGGER
+				if(mousepressed==5){
 					if(nodrag==null){
 					selected=null;
 				    maine.getSelection();
@@ -384,10 +394,9 @@
 					}
 					if(nodrag!=null&&nodrag!=maine){
 					var selp = nodrag.parent;
-					nodrag.absx=mousex;
-						nodrag.absy=mousey;
-					nodrag.x=-selp.absx+mousex;
-					nodrag.y=-selp.absy+mousey;
+					nodrag.lx=mousex;
+				    nodrag.ly=mousey;
+					dragElement(nodrag);
 						if(dist(mousex,mousey,selp.absx,selp.absy,selp.size)){
 					nodrag.node=true;
 					}else{
@@ -397,11 +406,15 @@
 				}else{
 					if(nodrag!=null){
 						var selp = nodrag.parent;
+                        if(selp!=null){
+                        nodrag.x = -selp.absx+nodrag.absx;
+                        nodrag.y = -selp.absy+nodrag.absy;
 						if(!dist(mousex,mousey,selp.absx,selp.absy,selp.size)){
 					nodrag.node=true;
 					}else{
 						nodrag.node=false;
 					}
+                    }
 					nodrag=null;
 				}
 				}
@@ -413,17 +426,21 @@
 						var r=prompt("Name?",selected.js.fname)
 						if(r!=null)
 						selected.js.fname=r;
-						mousepressed=4;
+						mousepressed=0;
+                            nodrag=null;
 				}else if(selected.js!=null&&selected.js.name=="raw"){
                            var r = "";
                             r = prompt("Text?",selected.js.text);
 							if(r!=null)
                             selected.js.text=r;
                             selected=null;
-                            mousepressed=4;
+                            mousepressed=0;
+                               nodrag=null;
                            }else{
 				        selected.togClose();
+                               nodrag=selected;
                         mousepressed=4;
+                              
                         }
                     }
                 }
@@ -449,8 +466,8 @@
 					var coopy = selected.parseToJSON();
 					dragged=new element(null,1,0,0);
 					dragged.readJson(JSON.parse(JSON.stringify(coopy)));
-						dragged.deOrphanize();
-						dragged.updatePos();
+				    dragged.deOrphanize();
+				    dragged.updatePos();
 					dragged.absx=mousex;
 					dragged.absy=mousey;
                     dragged.tint=1.1;
@@ -478,6 +495,7 @@
                     if(selected!=null)
                     selected.bold=2;
 				}
+                //LET GO OF THE THING
 				if(mousepressed==0&&dragged!=null){
                     if(selected!=null)
                     selected.bold=1;
