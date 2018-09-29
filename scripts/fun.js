@@ -34,7 +34,7 @@ var tare = 0;
 var g = setInterval(function(){
     
     tare+=0.1;
-    var rainbows = document.getElementsByName("p");
+    var rainbows = document.getElementsByTagName("P");
     for(var i = 0;i<rainbows.length;i++){
         rainbows[i].style.color=rgbToHex(127*Math.sin(tare)+127,127*Math.sin(tare+3.1415/3*2)+127,127*Math.sin(tare+3.1415/3*4)+127);
         rainbows[i].style.background=rgbToHex(50*Math.sin(tare+3.1415)+50,50*Math.sin(tare+3.1415/3*5)+50,50*Math.sin(tare+3.1415/3*1)+50);  //rainbows[i].innerHTML=Math.random();
