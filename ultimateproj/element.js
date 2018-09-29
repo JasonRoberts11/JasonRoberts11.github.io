@@ -309,7 +309,7 @@
                             dr.children[0].findVarByName(name);
                             //console.log("foundparams");
                             }
-                        }
+                        }else
                         if(this.parent!=null){
                             this.parent.findVarByName(name);
                         }
