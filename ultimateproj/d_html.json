@@ -30,8 +30,8 @@ var d_javascript= `{
 var d_zubble= `{
 "name":"ZBL",
 "array":[
-	{"name":"Main","open":false,"set":[
-    
+	{"name":"Main","open":true,"set":[
+    {"name":"raw","color":3,"text":"hello world"},
 	{"name":"Initialize","jstart":"<!DOCTYPE html><html>","jend":"</html>","color":4},
     {"name":"Close","color":4},
 	{"name":"Print","color":2},
@@ -39,7 +39,6 @@ var d_zubble= `{
 	{"name":"Delay","color":2,"time":1,"gent":[{"name":"raw","color":3,"text":"1"},{"name":"do","color":3}]}
 ]},
 {"name":"Math","open":false,"set":[
-	{"name":"raw","color":3,"text":"hello world"},
 	{"name":"+","color":6},
 	{"name":"*","color":6},
 	{"name":"-","color":6,"function":"t-b","args":2},
@@ -51,11 +50,18 @@ var d_zubble= `{
 {"name":"tempo","color":7,"gen":["1000"]}
 ]},
 {"name":"Logic","open":false,"set":[
-
+    {"name":"==","color":8},
+    {"name":"!=","color":8},
+    {"name":">","color":8},
 	{"name":"++","color":8},
-    {"name":"for","color":4,"gent":[{"name":"var","color":5,"gen":["0"],"vname":"i"},{"name":"repeat","color":3,"gen":["5"]},{"name":"do","color":3}]},
-    {"name":"Object","color":9,"gent":[{"name":"params","color":2}]},
-    {"name":"ifelse","color":9,"gent":[{"name":"test","color":3},{"name":"true","color":3},{"name":"false","color":3}]}
+{"name":"&&","color":8},
+{"name":"!","color":8},
+{"name":"||","color":8},
+    {"name":"for","color":9,"gent":[{"name":"var","color":5,"gen":["0"],"vname":"i"},
+{"name":"until","color":3,"gent":[{"name":">","color":8}]},{"name":"do","color":3}]},
+{"name":"ifelse","color":9,"gent":[{"name":"test","color":3},{"name":"true","color":3},{"name":"false","color":3}]},
+
+    {"name":"Object","color":9,"gent":[{"name":"params","color":2}]}
 ]}
 ]
 }`

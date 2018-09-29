@@ -2,6 +2,7 @@
                 this.x = xpos;
                 this.y = ypos;
 				this.close = false;
+     this.node=false;
 				this.lx=xpos;
 				this.ly=ypos;
 				this.xv=2;
@@ -20,8 +21,7 @@
                 this.bold = 1;
                 this.layer=0;
                 this.size = defsize;
-                this.open = true;
-	 this.node=false;
+                //this.open = true;
      this.sleept = null;
                 this.connections = [];
      this.create=function(){
@@ -67,17 +67,20 @@
 					if(this.glow){
                         t+=1;
 					}
+                    if(this==maine){
+                        t=1;
+                        s=1;
+                    }
                     ctx.fillStyle= tint(colorblocks[this.color],t);
                     ctx.strokeStyle=tint(colorblocks[this.color],0.6*s);
                     ctx.lineWidth = s*2;
-					if(this.node){var er=0.2;
+					if(this.node&&this.parent!=null){var er=0.2;
                         var pa = this.parent;
                         var d = Math.atan2(this.absy-pa.absy,this.absx-pa.absx);
 					ctx.beginPath();
 					ctx.moveTo(pa.absx+Math.cos(d)*pa.size,pa.absy+Math.sin(d)*pa.size);
 					ctx.lineTo(this.absx-Math.cos(d)*this.size,this.absy-Math.sin(d)*this.size);
                     ctx.lineTo(this.absx-Math.cos(d+er)*(this.size+10),this.absy-Math.sin(d+er)*(this.size+10));
-                        //ctx.lineTo(this.absx-Math.cos(d-er)*(this.size+10),this.absy-Math.sin(d-er)*(this.size+10));
 					ctx.stroke();
                     }
                     ctx.beginPath();
@@ -96,9 +99,50 @@
                     }
 					if(this.js!=null&&this.js.name=="Function"){
                         ctx.fillText(this.js.fname,this.absx,this.absy-this.size+10);
+                        ctx.fillStyle= tint(colorblocks[this.color],1);
+                            ctx.strokeStyle=tint(colorblocks[this.color],0.6);
+                        if(dist(mousex,mousey,this.absx+this.size,this.absy,10)){
+                            ctx.fillStyle= tint(colorblocks[this.color],1.4);
+                            ctx.strokeStyle=tint(colorblocks[this.color],0.6);
+                            if(mousepressed==1){
+                                dragged=new element(0,1,mousex,mousey);
+								dragged.label=this.js.fname;
+                                dragged.js=JSON.parse('{"name":"test","color":6}');
+                                dragged.js.name=this.js.fname;
+                                dragged.color=5;
+                                dragged.create;
+								dragged.js.fun=true;
+                                mousepressed=2;
+                            }
+                        }
+                          ctx.beginPath();
+                    ctx.arc(this.absx+this.size,this.absy,10,0,2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();                   
                     }
                     if(this.js!=null&&this.js.name=="var"){
                         ctx.fillText(this.js.vname,this.absx,this.absy-this.size+10);
+                        ctx.fillStyle= tint(colorblocks[this.color],1);
+                            ctx.strokeStyle=tint(colorblocks[this.color],0.6);
+                        if(dist(mousex,mousey,this.absx+this.size,this.absy,10)){
+                            ctx.fillStyle= tint(colorblocks[this.color],1.4);
+                            ctx.strokeStyle=tint(colorblocks[this.color],0.6);
+                            if(mousepressed==1){
+                                dragged=new element(0,1,mousex,mousey);
+								dragged.label=this.js.vname;
+                                dragged.js=JSON.parse('{"name":"test","color":6}');
+                                dragged.js.name=this.js.vname;
+                                dragged.color=5;
+                                dragged.create;
+								dragged.js.vun=true;
+                                mousepressed=2;
+                            }
+                        }
+                          ctx.beginPath();
+                    ctx.arc(this.absx+this.size,this.absy,10,0,2*Math.PI);
+                    ctx.fill();
+                    ctx.stroke();                   
+
                     }
 					if(!this.close){
                     for(var i =0;i<this.children.length;i++){
@@ -129,8 +173,8 @@
 					if(dist(this.absx,this.absy,mousex,mousey,this.size)){
 						selected=this;
 					}
-                    if(!this.close)
 					for(i = 0;i<this.children.length;i++){
+                        if((!this.close)||this.children[i].node)
 						this.children[i].getSelection();
 					}
 				}
@@ -252,18 +296,52 @@
                     
                 }
                 this.findVarByName=function(name){
-					
-                    for(var i =0;i<this.children.length;i++){
-						var cr = this.children[i];	
-					//console.log(cr.label);
-						if (cr.js.vname==name){
-							vvar=(cr);
-							//console.log("Initialized");
-						}else{
-                            cr.findVarByName(name);
+                    vvar=null;
+					var er = this.findSiblingByVar(name);
+                    if(er!=null){
+                        //console.log("success");
+                        vvar =er;
+                    }else{
+                        var dr = this.findSiblingByName("params");
+                        if(dr!=null){
+                            
+                            if(dr.children.length>0){
+                            dr.children[0].findVarByName(name);
+                            //console.log("foundparams");
+                            }
+                        }
+                        if(this.parent!=null){
+                            this.parent.findVarByName(name);
                         }
                     }
-                    
+                }
+                this.findSiblingByName=function(name){
+                    var p = this.parent;
+                    var found = null;
+                    if(p!=null){
+                    for(var i=0;i<p.children.length;i++)
+                    {
+                        if(p.children[i].label == name&&p.children[i]!=this){
+                            found=p.children[i];
+                            //console.log("found sibling : " + name);
+                        }
+                    }
+                    }
+                    return found;
+                }
+                this.findSiblingByVar=function(vname){
+                    var p = this.parent;
+                    var found = null;
+                    if(p!=null){
+                    for(var i=0;i<p.children.length;i++)
+                    {
+                        //console.log(p.children[i].vname);
+                        if(p.children[i].js.vname == vname){
+                            found=p.children[i];
+                        }
+                    }
+                    }
+                    return found;
                 }
 				this.updatePos = function(){
 					if(this.parent!=null){
@@ -351,9 +429,9 @@
 					if(this!=c){
 					   if(dist(this.absx,this.absy,mousex,mousey,(this.size))){
 					   parent = this;
-                        //if(!this.close)
                        }
                         for(var i =0;i<this.children.length;i++){
+                            if((!this.close)||(this.children[i].node))
                         this.children[i].recFindParent(c);
                     	}
 					}
@@ -393,6 +471,7 @@
 					obj.color =this.color;
 					obj.label =this.label;
 					obj.close = this.close;
+                    obj.node=this.node;
 					return obj;
 				}
 				this.readJson = function(obj){
@@ -403,6 +482,7 @@
 					this.color=obj.color;
 					this.label=obj.label;
 					this.close = obj.close;
+                    this.node=obj.node;
 					for(var i =0;i<obj.children.length;i++){
 						var ch = new element(null,1,1,1);
 						ch.readJson(obj.children[i]);
@@ -430,7 +510,13 @@
 						 if(this.children.length>0){
 						FrunObjAtTime(this.children[0],teim*tempo);
 						 }
-					}else{
+					}else if(this.label=="for"){
+                        if(this.children[0].ret==null){
+                            
+                        }else{
+                            
+                        }      
+                    }else if(false){}else{
 						/*for(var i =0;i<this.children.length;i++){
 							this.children[i].run();
                     	}*/
@@ -530,6 +616,7 @@
                         this.ret = this.children[0].ret;}
                          else{this.ret=null;}
                     }
+                    //FUNCTIONS//////////////////////////////////////
                     if(this.js.fun==true){
                         maine.findFunctionByName(this.label);
                         
@@ -551,20 +638,20 @@
                     //console.log(this.label);
                     if(this.js.vun==true){
                         this.findVarByName(this.label);
-                        
+                        //console.log("vvar: "+vvar.stringify);
 						//console.log(vvar);
                          //console.log(this.label);
                         if(this.children.length==0){
-                            this.ret=vvar.ret;
+                            this.ret=JSON.parse(JSON.stringify(vvar.ret));
                            // console.log("tdree");
                         }else{
-                            vvar.ret = this.children[0].ret;
-                            this.ret=vvar.ret;
+                            vvar.ret = JSON.parse(JSON.stringify(this.children[0].ret));
+                           this.ret=JSON.parse(JSON.stringify(vvar.ret));
                         }
                         
                     }
                      if(this.label == "++"){
-                         maine.findVarByName(this.parent.label);
+                         this.parent.findVarByName(this.parent.label);
                          if(this.children.length==0){
                             vvar.ret++;
                             }else{
@@ -596,7 +683,7 @@
 						var min = parseFloat(this.children[0].ret);
 						var max = this.children[1].ret;
 					   this.ret = min+Math.floor(Math.random()*(max-min+1))
-						console.log(this.ret);
+						//console.log(this.ret);
 					}
                     if(this.label == "+"){
 					   this.ret=0;
@@ -619,6 +706,7 @@
 							this.ret-=parseFloat(this.children[i].ret);
                     	}
 					}
+                    
                     if(this.label == "/"){
 					   this.ret=1;
 						for(var i =0;i<Math.floor(this.children.length/2);i++){
@@ -627,6 +715,48 @@
 						for(var i =Math.floor(this.children.length/2);i<this.children.length;i++){
 							this.ret/=parseFloat(this.children[i].ret);
                     	}
+					}
+                    if(this.label == "=="){
+                        if(this.children[0].ret==this.children[1].ret){
+                            this.ret=true;
+                        }else{
+                            this.ret=false;
+                        }
+					}
+                    if(this.label == "!="){
+                        if(this.children[0].ret!=this.children[1].ret){
+                            this.ret=true;
+                        }else{
+                            this.ret=false;
+                        }
+					}
+                    if(this.label == ">"){
+                        if(this.children[0].ret>this.children[1].ret){
+                            this.ret=true;
+                        }else{
+                            this.ret=false;
+                        }
+					}
+                    if(this.label == "&&"){
+                        if(this.children[0].ret==true&&this.children[1].ret==true){
+                            this.ret=true;
+                        }else{
+                            this.ret=false;
+                        }
+					}
+                    if(this.label == "||"){
+                        if(this.children[0].ret==true||this.children[1].ret==true){
+                            this.ret=true;
+                        }else{
+                            this.ret=false;
+                        }
+					}
+                    if(this.label == "!"){
+                        if(this.children[0].ret){
+                            this.ret=false;
+                        }else{
+                            this.ret=true;
+                        }
 					}
                     if(this.label=="Sleep"){
                         go=false;
@@ -648,6 +778,41 @@
 						//console.log('aser');
 						 
 					}
+                    ////////////FOR STATEMENTS
+                    if(this.label=="for"){
+                        
+                    }
+                    if(this.label=="until"&&this.parent.label=="for"){
+						//console.log('aser');
+                        if(this.children[0].ret==true){
+                            //console.log('aser');
+                           go=false; this.parent.parent.goNext(this.parent.parent.children.indexOf(this.parent));
+                        }else{
+                            		 go=true;
+                        }
+					}
+                    if(this.label=="do"&&this.parent.label=="for"){
+						 go=false;
+                        
+                        
+                        this.findSiblingByName("until").run();
+						//console.log('aser');
+						 
+					}
+                    ////////////IF ELSE STATEMENTS
+                     if(this.label=="test"&&this.parent.label=="ifelse"){
+						 go=false;
+                         if(this.children[0].ret==true){
+                         this.findSiblingByName("true").run();
+                     }else{
+                         this.findSiblingByName("false").run();
+                     } 
+					}
+                    if(this.label=="true"&&this.parent.label=="ifelse"){
+                        go=false;
+                       //console.log("skip false"); 
+                        this.parent.parent.goNext(this.parent.parent.children.indexOf(this.parent));
+                    }
                     if(this.label == "return"){
                         var p = this.parent;
 						//console.log((p.call));
@@ -658,7 +823,7 @@
 							for(var i =1;i<this.children.length;i++){
 								aaa+=this.children[i].ret;
                     		}
-							p.call.callbac=aaa;
+							p.call.ret=aaa;
 							//console.log(p.call);
 						}}
 					}
@@ -673,4 +838,5 @@
 				this.children = [];
 				this.js;
 				this.color;
+                this.node;
 			}

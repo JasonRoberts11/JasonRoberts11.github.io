@@ -363,9 +363,10 @@
 				e.move(mdx,mdy);
 			}
 			dragged = null;
+            var mmode=0;
 			var nodrag = null;
 			function dragger(){
-				console.log(mousepressed);
+				//console.log(mousepressed);
 				
 				if(mousepressed==1){
 					if(dist2(mdx,mdy,0,0)>3){
@@ -383,6 +384,7 @@
 						mousey-=mdy;
 						mdx=0;
 						mdy=0;
+                        mmode = 1;
 					}
 				}
                 //////////NODE DRAGGER
@@ -404,7 +406,9 @@
 					}
 				}
 				}else{
-					if(nodrag!=null){
+                    if(nodrag!=null&&mousepressed==0){
+                        if(mmode==0)
+                         nodrag.togClose();
 						var selp = nodrag.parent;
                         if(selp!=null){
                         nodrag.x = -selp.absx+nodrag.absx;
@@ -415,7 +419,9 @@
 						nodrag.node=false;
 					}
                     }
+                        
 					nodrag=null;
+                        
 				}
 				}
                 if(mousepressed==3){
@@ -437,14 +443,15 @@
                             mousepressed=0;
                                nodrag=null;
                            }else{
-				        selected.togClose();
                                nodrag=selected;
                         mousepressed=4;
                               
                         }
                     }
                 }
+                //NORMAL HOVER///////////////////////////////////
                 if(mousepressed==0&&dragged==null){
+                    mmode=0;
                     if(selected!=null)
                     selected.tint=1;
                     selected=null;
