@@ -852,8 +852,10 @@
                         //console.log(l);
                         var index = this.findSiblingByName("var",0);
                         var val = this.findSiblingByName("var",1);
+                        index.ret=parseInt(index.ret);
                         if(index.ret+1<l){
-                            val.ret = this.ret[index.ret];
+                            //console.log(index.ret);
+                            val.ret = this.ret[index.ret+1];
                             index.ret++;
                             go=true;
                             
