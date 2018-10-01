@@ -613,8 +613,48 @@
                     }
                      if(this.label=="var"){
                          if(this.children.length>0){
-                        this.ret = this.children[0].ret;}
+                        this.ret = this.children[0].ret;
+						 }
                          else{this.ret=null;}
+                    }
+					if(this.label=="array"){
+						var ar = [];
+                         for(i=0;i<this.children.length;i++){
+                        ar.push(this.children[i].ret);
+						 }
+                         this.ret=ar;
+                    }
+					if(this.label=="get"){
+						if(this.children.length==2){
+							this.ret = this.children[1].ret[parseInt(this.children[0].ret)];
+						}
+						if(this.children.length==3){
+							var bre = this.children[1].ret[parseInt(this.children[0].ret)];
+							this.findVarByName(this.children[1].label);
+							
+							vvar.ret[this.children[0].ret] = this.children[2].ret; 
+							
+							
+							this.ret = vvar.ret[parseInt(this.children[0].ret)];
+						}
+                    }
+					if(this.label=="push"){
+						if(this.children.length==2){
+
+							this.findVarByName(this.children[1].label);
+							
+							vvar.ret.push(this.children[0].ret); 
+							
+							
+							this.ret = vvar.ret[vvar.length-1];
+						}
+                    }if(this.label=="pop"){
+						if(this.children.length==2){
+							this.ret = this.children[1].ret[parseInt(this.children[0].ret)];
+							this.findVarByName(this.children[1].label);
+							
+							vvar.ret.splice(this.children[0].ret,1); 
+						}
                     }
                     //FUNCTIONS//////////////////////////////////////
                     if(this.js.fun==true){

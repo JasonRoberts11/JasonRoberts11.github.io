@@ -45,6 +45,12 @@ var d_zubble= `{
 	{"name":"/","color":6,"function":"t/b","args":2},
 	{"name":"randi","color":6,"args":2,"gen":["1","10"]}
 ]},
+{"name":"AMath","open":false,"set":[
+	{"name":"array","color":6},
+	{"name":"get","color":6,"gen":["0"]},
+{"name":"push","color":6},
+{"name":"pop","color":6}
+]},
 {"name":"Sound","open":false,"set":[
 	{"name":"pitch","color":7,"pitch":60,"time":1,"args":2,"gen":["60","1"]},
 {"name":"tempo","color":7,"gen":["1000"]}
