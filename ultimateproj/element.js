@@ -32,8 +32,8 @@
                  k.label="raw";
                  k.color="3";
                  k.js = JSON.parse('{"name":"raw","color":3,"text":"'+res[i]+'"}');
-                 k.x=Math.sin(2*3.1415*i/res.length-0.2)*10;
-                 k.y=-Math.cos(2*3.1415*i/res.length-0.2)*10;
+                 k.x=Math.sin(2*3.1415*i/res.length-0.2)*15;
+                 k.y=-Math.cos(2*3.1415*i/res.length-0.2)*15;
                  k.parent=this;
                  this.children.push(k);
                  
@@ -47,14 +47,14 @@
                  k.label= res[i].name;
                  k.color= res[i].color;
                  k.js = res[i];
-                 k.x=Math.sin(2*3.1415*i/res.length-0.2)*10;
-                 k.y=-Math.cos(2*3.1415*i/res.length-0.2)*10;
+                 k.x=Math.sin(2*3.1415*i/res.length-0.2)*15;
+                 k.y=-Math.cos(2*3.1415*i/res.length-0.2)*15;
                  k.parent=this;
                 
                  k.create();
                  findVars();
                  if(res[i].name=="var"){
-                     k.js.vname="i"+vars.length;
+                     k.js.vname= res[i].vname+vars.length;
                  }
                   this.children.push(k);
              }
@@ -154,7 +154,7 @@
                         this.children[i].render();
                     }
                     }else{
-                        ctx.font="30px Arial";
+                        ctx.font="20px Arial";
 						ctx.textAlign="center";
 						ctx.textBaseline="mid";
                         ctx.fillStyle = tint(colorblocks[this.color],0);
@@ -302,7 +302,7 @@
                         //console.log("success");
                         vvar =er;
                     }else{
-                        var dr = this.findSiblingByName("params");
+                        var dr = this.findSiblingByName("params",0);
                         if(dr!=null){
                             
                             if(dr.children.length>0){
@@ -315,14 +315,18 @@
                         }
                     }
                 }
-                this.findSiblingByName=function(name){
+                this.findSiblingByName=function(name,ind){
                     var p = this.parent;
                     var found = null;
+                    var er = 0;
                     if(p!=null){
                     for(var i=0;i<p.children.length;i++)
                     {
                         if(p.children[i].label == name&&p.children[i]!=this){
+                            if(er<=ind){
                             found=p.children[i];
+                            }
+                            er++;
                             //console.log("found sibling : " + name);
                         }
                     }
@@ -655,6 +659,8 @@
 							
 							vvar.ret.splice(this.children[0].ret,1); 
 						}
+                    }if(this.label=="length"){
+						this.ret=this.children[0].ret.length;
                     }
                     //FUNCTIONS//////////////////////////////////////
                     if(this.js.fun==true){
@@ -819,9 +825,6 @@
 						 
 					}
                     ////////////FOR STATEMENTS
-                    if(this.label=="for"){
-                        
-                    }
                     if(this.label=="until"&&this.parent.label=="for"){
 						//console.log('aser');
                         if(this.children[0].ret==true){
@@ -835,17 +838,41 @@
 						 go=false;
                         
                         
-                        this.findSiblingByName("until").run();
+                        this.findSiblingByName("until",0).run();
 						//console.log('aser');
 						 
 					}
+                    //////////////FOREACH
+                    if(this.label=="do"&&this.parent.label=="foreach"){
+                        go=false;
+                        this.parent.children[2].run();
+                    }
+                    if(this.parent.label=="foreach"&&this==this.parent.children[2]){
+                        var l = this.ret.length;
+                        //console.log(l);
+                        var index = this.findSiblingByName("var",0);
+                        var val = this.findSiblingByName("var",1);
+                        if(index.ret+1<l){
+                            val.ret = this.ret[index.ret];
+                            index.ret++;
+                            go=true;
+                            
+                        }else{
+                            go=false;
+                            this.parent.parent.goNext(this.parent.parent.children.indexOf(this.parent));
+                        }
+                    }
+                    
+                    
+                    
+                    
                     ////////////IF ELSE STATEMENTS
                      if(this.label=="test"&&this.parent.label=="ifelse"){
 						 go=false;
                          if(this.children[0].ret==true){
-                         this.findSiblingByName("true").run();
+                         this.findSiblingByName("true",0).run();
                      }else{
-                         this.findSiblingByName("false").run();
+                         this.findSiblingByName("false",0).run();
                      } 
 					}
                     if(this.label=="true"&&this.parent.label=="ifelse"){
