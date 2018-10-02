@@ -43,6 +43,7 @@ var d_zubble= `{
 	{"name":"*","color":6},
 	{"name":"-","color":6,"function":"t-b","args":2},
 	{"name":"/","color":6,"function":"t/b","args":2},
+    {"name":"%","color":6,"function":"t%b","args":2},
 	{"name":"randi","color":6,"args":2,"gen":["1","10"]}
 ]},
 {"name":"AMath","open":false,"set":[

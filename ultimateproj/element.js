@@ -743,6 +743,10 @@
 							this.ret*=parseFloat(this.children[i].ret);
                     	}
 					}
+                    if(this.label == "%"){
+					   this.ret=parseFloat(this.children[0].ret)%parseFloat(this.children[1].ret);
+                        this.ret=(this.ret+parseFloat(this.children[1].ret))%parseFloat(this.children[1].ret);
+					}
                     if(this.label == "-"){
 					   this.ret=0;
 						for(var i =0;i<Math.floor(this.children.length/2);i++){
