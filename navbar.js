@@ -10,7 +10,7 @@ navbar.innerHTML = `
 <a href="https://JChat--cookiepie.repl.co">Chat</a>
 <a href="ultimateproj/Main.html" class="rainbow">ULTIMATE PROJ</a>
 <a href="https://2048mb--cookiepie.repl.co">2048</a>
-
+<a href="https://minecraft--cookiepie.repl.co" class="rainbow">MINECRAFT</a>
 
 `;
 }
