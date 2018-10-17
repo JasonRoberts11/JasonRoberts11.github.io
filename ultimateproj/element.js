@@ -710,6 +710,70 @@
 
                          this.ret=vvar.ret;
 					}
+					if(this.label=="Pen Position"){
+                        
+						var x = parseFloat(this.children[0].ret);
+						var y = parseFloat(this.children[1].ret);
+						if(pendown){
+							dtx.lineWidth=pensize;
+							dtx.strokeStyle=pencolor;
+							dtx.beginPath();
+							dtx.moveTo(penx,peny);
+							dtx.lineTo(x,y);
+							dtx.stroke();
+							penx = x;
+							peny = y;
+						}
+						penx = x;
+						peny = y;
+                    }
+					if(this.label=="Pen Move"){
+                        if(this.children.length==2){
+						var x = parseFloat(this.children[0].ret)+penx;
+						var y = parseFloat(this.children[1].ret)+peny;
+						}else{
+							var d = parseFloat(this.children[2].ret);
+							var dx =parseFloat(this.children[0].ret);
+							var dy =parseFloat(this.children[1].ret) 
+							var x = dx*Math.cos(d)-dy*Math.sin(d)+penx;
+							var y = dx*Math.sin(d)+dy*Math.cos(d)+peny;
+						}
+						if(pendown){
+							dtx.lineWidth=pensize;
+							dtx.strokeStyle=pencolor;
+							dtx.beginPath();
+							dtx.moveTo(penx,peny);
+							dtx.lineTo(x,y);
+							dtx.stroke();
+							penx = x;
+							peny = y;
+						}
+						penx = x;
+						peny = y;
+                    }
+					if(this.label=="Pen Up"){
+                		pendown=false;
+                    }
+					if(this.label=="Pen Down"){
+      
+						pendown=true;
+						
+                    }
+					if(this.label=="Clear"){
+                		dtx.clearRect(0,0,cwid,chig);
+                    }
+					if(this.label=="Pen Color"){
+                		pencolor = this.children[0].ret;
+			dtx.strokeStyle=pencolor;
+                    }
+					if(this.label=="Pen Size"){
+                		pensize = this.children[0].ret;
+						dtx.lineWidth=pensize;
+                    }
+					if(this.label=="Prompt"){
+                        var t = prompt(this.children[0].ret,"");
+                        this.ret = t;
+                    }
                     if(this.label=="pitch"){
                         var c=[0,0];
                         for(var i =0;i<this.children.length;i++){

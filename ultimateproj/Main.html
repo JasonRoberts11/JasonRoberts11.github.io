@@ -12,6 +12,8 @@
         <p id = "output"></p>
         <button id ="test">TEST</button><br/>-->
         <div>
+			<canvas id="draw" width="500" height="500" style="position:absolute;top:0;left:0;z-index:1;">
+            </canvas>
         <canvas id="main" width="500" height="500" style="position:absolute;top:0;left:0;z-index:0;">
             </canvas></div><button id="Load" style="margin:20;padding:20;position:fixed;top:0;left:0;z-index:999;display:none;height:60px;width:120px">LOAD</button>
         <!--<div style="position:fixed;bottom:0;border:1px solid black;max-height: 200px;margin:auto;">
@@ -19,6 +21,7 @@
             </div>
             </div>-->
         <script type="text/javascript" src="d_html.json"></script>
+		
 		<script type="text/javascript" src="element.js"></script>
         <script type="text/javascript" src="sound.js"></script>
         <script type="text/javascript" src="colorblocks.js"></script>
@@ -38,6 +41,8 @@
             
 			var alphabet = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             var main = document.getElementById("main");
+			var draw = document.getElementById("draw");
+			var dtx = draw.getContext('2d');
             var preview = document.getElementById("preview");
             var ctx = main.getContext("2d");
             var scrwid =window.innerWidth-10;
@@ -125,6 +130,7 @@
             var dat = new Date();
             var time= dat.getTime;
             function setMouse(event){
+				
                 if(true){
                    main.focus();
                    }
@@ -137,10 +143,17 @@
                 mousepressed=4;
                     //console.log(mousepressed+" "+dt);
                 }
+				if(oncanvas){
                 mdx = event.layerX-mousex;
                 mdy = event.layerY-mousey;
                 mousex = event.layerX;
                 mousey = event.layerY;
+				}else{
+					mdx = event.layerX+cx-mousex;
+					mdy = event.layerY+cy-mousey;
+                	mousex = event.layerX+cx;
+                	mousey = event.layerY+cy;
+				}
                 //if(mousepressed==1||upmos<10){
                 if(picked==-1){
                     //setSelection();
@@ -154,6 +167,7 @@
                     output.innerHTML+=" Layer: "+ elements[selected][8];
                 }*/
                 update();
+				oncanvas=true;
                 title.innerHTML= Math.floor(Math.random()*1000)+" things to do"
                 //}
             }
@@ -238,6 +252,7 @@
                 mdy = tou[0].pageY-e.top-mousey;
                 mousex = tou[0].pageX-e.left;
                 mousey = tou[0].pageY-e.top;
+					
                 }
 				mdx=0;
 				mdy=0;
@@ -295,6 +310,25 @@
             var defsize = 20;
             var ddde=10;
 			var parent=null;
+			var pendown = false;
+			var pencolor = "#000000"
+			var pensize = 1;
+			var cx=100;
+			var cy=100;
+			var cwid=500;
+			var chig=500;
+			var oncanvas=true;
+			var penx =0;
+			var peny =0;
+			draw.style.left = cx+'px';
+			draw.style.top = cy+'px';
+			dtx.lineWidth=pensize;
+			dtx.strokeStyle=pencolor;
+			dtx.strokeRect(0,0,cwid,chig);
+			draw.onmousemove = function(){
+				oncanvas=false;
+			};
+
             
             //THE STRUCTURE FOR THE Element OBject
             //Absolutes then the easily changed...
@@ -335,7 +369,8 @@
 				drawSideBar();
 				drawTopBar();
 				drawConsole();
-				dragger();
+					dragger();
+				//console.log(oncanvas);
 				maine.updateChildSize();
             }
 			var startphys= window.setInterval(function(){
@@ -397,6 +432,25 @@
                         mmode = 1;
 					}
 				}
+				
+				//Drag the Canvas
+				if(dist(mousex,mousey,cx,cy,20)){
+					ctx.lineWidth=2;
+					ctx.strokeStyle='#0000ff';
+					ctx.strokeRect(cx,cy,cwid,chig);
+					if(mousepressed==2){
+						mousepressed=7;
+					}
+				}
+				if(mousepressed==7){
+					cx+=mdx;
+					cy+=mdy;
+					draw.style.left = cx+'px';
+			draw.style.top = cy+'px';
+					
+						
+				}
+				
                 //////////NODE DRAGGER
 				if(mousepressed==5){
 					if(nodrag==null){
@@ -545,6 +599,7 @@
 					}}
 					dragged=null;
 				}
+				
 			}
 				
 			
@@ -620,7 +675,9 @@
             mbar.push(JSON.parse(d_javascript));
 			}
 			mbar.push(JSON.parse(d_zubble));
-			mbar.push(JSON.parse(d_function))
+			mbar.push(JSON.parse(d_input));
+			mbar.push(JSON.parse(d_draw));
+			mbar.push(JSON.parse(d_function));
 			var par="";
 			var upar="";
 			function parseHtml(el){

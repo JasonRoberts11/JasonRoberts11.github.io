@@ -27,6 +27,7 @@ var d_javascript= `{
 ]}
 ]
 }`
+
 var d_zubble= `{
 "name":"ZBL",
 "array":[
@@ -79,6 +80,22 @@ var d_zubble= `{
 ]}
 ]
 }`
+var d_input=`{"name":"Input","array":[
+{"name":"Prompt","open":true,"set":[
+	{"name":"Prompt","color":5,"gen":["What is your name?"]}
+]}
+]}`	
+var d_draw=`{"name":"Draw","array":[
+{"name":"Pen","open":true,"set":[
+	{"name":"Pen Position","color":7,"gen":["100","100"]},
+{"name":"Pen Move","color":7,"gen":["10","10"]},
+	{"name":"Pen Color","color":7,"gen":["#FF0000"]},
+{"name":"Pen Size","color":7,"gen":["5"]},
+	{"name":"Pen Down","color":7},
+	{"name":"Pen Up","color":7},
+	{"name":"Clear","color":7}
+]}
+]}`	
 var d_function=`{"name":"Functions","array":[{"name":"Functions","open":true,"set":[
 {"name":"Function","jstart":"ree","jend":"ree","color":4,"gent":[{"name":"params","color":2}]},    {"name":"return","jstart":"ree","jend":"ree","color":1}
 ]},
