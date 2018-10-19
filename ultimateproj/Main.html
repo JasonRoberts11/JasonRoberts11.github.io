@@ -320,6 +320,7 @@
 			var oncanvas=true;
 			var penx =0;
 			var peny =0;
+            var pendir = 0;
 			draw.style.left = cx+'px';
 			draw.style.top = cy+'px';
 			dtx.lineWidth=pensize;
@@ -366,12 +367,17 @@
                 ctx.clearRect(0,0,scrwid,scrhig);
                 maine.render();
 				//selected= maine;
+                
+                
 				drawSideBar();
 				drawTopBar();
 				drawConsole();
 					dragger();
 				//console.log(oncanvas);
 				maine.updateChildSize();
+                    ctx.lineWidth=1;
+					ctx.strokeStyle='#777777';
+					ctx.strokeRect(cx,cy,cwid,chig);
             }
 			var startphys= window.setInterval(function(){
 				   ctx.clearRect(0,0,scrwid,scrhig);
@@ -380,6 +386,9 @@
 				drawSideBar();
 				drawTopBar();
 				drawConsole();
+                ctx.lineWidth=1;
+					ctx.strokeStyle='#777777';
+					ctx.strokeRect(cx,cy,cwid,chig);
 				if(dragged!=null){
 				    dragged.render();
                     if(selected!=null)
@@ -489,6 +498,7 @@
 				}
 				}
                 if(mousepressed==3){
+                    selected=null;
                     selected=null;
 				    maine.getSelection();
 				    if(selected != maine&&selected!=null){
@@ -676,6 +686,7 @@
 			}
 			mbar.push(JSON.parse(d_zubble));
 			mbar.push(JSON.parse(d_input));
+            mbar.push(JSON.parse(d_math));
 			mbar.push(JSON.parse(d_draw));
 			mbar.push(JSON.parse(d_function));
 			var par="";

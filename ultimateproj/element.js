@@ -726,18 +726,26 @@
 						}
 						penx = x;
 						peny = y;
+                        if(this.children.length==3){
+                            pendir= parseFloat(this.children[2].ret);
+                        }
                     }
 					if(this.label=="Pen Move"){
                         if(this.children.length==2){
 						var x = parseFloat(this.children[0].ret)+penx;
 						var y = parseFloat(this.children[1].ret)+peny;
 						}else{
-							var d = parseFloat(this.children[2].ret);
+                            
+							var dd = parseFloat(this.children[2].ret);
+                            pendir+=dd;
+                            pendir%=360
+                            var d = pendir/180*Math.PI;
 							var dx =parseFloat(this.children[0].ret);
 							var dy =parseFloat(this.children[1].ret) 
 							var x = dx*Math.cos(d)-dy*Math.sin(d)+penx;
 							var y = dx*Math.sin(d)+dy*Math.cos(d)+peny;
-						}
+				
+                        }
 						if(pendown){
 							dtx.lineWidth=pensize;
 							dtx.strokeStyle=pencolor;
@@ -907,6 +915,21 @@
                         
                         
                         this.findSiblingByName("until",0).run();
+						//console.log('aser');
+						 
+					}
+                    /////////////////////REPEAT STATEMENTS
+                    if(this.parent.label=="repeat"&&this==this.parent.children[0]){
+                      this.parent.num = this.ret;
+					}
+                if(this.label=="do"&&this.parent.label=="repeat"){
+                        go=false;
+                    if(this.parent.num>0){
+                        this.parent.num--;
+                        this.run();
+                    }else{
+                        go=true;
+                    }
 						//console.log('aser');
 						 
 					}
