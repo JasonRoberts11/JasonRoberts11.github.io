@@ -90,6 +90,9 @@ var d_math = `{"name":"Math","array":[
 var d_input=`{"name":"Input","array":[
 {"name":"Prompt","open":true,"set":[
 	{"name":"Prompt","color":5,"gen":["What is your name?"]}
+]},
+{"name":"Keyboard","open":true,"set":[
+	{"name":"OnKeyPress","color":2,"key":32}
 ]}
 ]}`	
 var d_draw=`{"name":"Draw","array":[

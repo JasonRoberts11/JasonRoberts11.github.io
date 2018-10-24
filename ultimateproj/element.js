@@ -97,6 +97,9 @@
 					if(this.js!=null&&this.js.name=="raw"){
                         ctx.fillText(this.js.text,this.absx,this.absy);
                     }
+					if(this.js!=null&&this.js.name=="OnKeyPress"){
+                        ctx.fillText(this.js.key,this.absx,this.absy);
+                    }
 					if(this.js!=null&&this.js.name=="Function"){
                         ctx.fillText(this.js.fname,this.absx,this.absy-this.size+10);
                         ctx.fillStyle= tint(colorblocks[this.color],1);
@@ -263,6 +266,7 @@
                     }
                     
                 }
+				
                  this.findVars=function(){
                     for(var i =0;i<this.children.length;i++){
 						var cr = this.children[i];	
@@ -587,6 +591,8 @@
 								}else {
                                     
                                     if(this.label=="Initialize"){
+									
+								}else if(this.label=="OnKeyPress"){
 									
 								}else{
                                     this.parent.goNext(this.parent.children.indexOf(this));

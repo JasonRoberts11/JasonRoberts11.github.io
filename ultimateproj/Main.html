@@ -455,9 +455,7 @@
 					cx+=mdx;
 					cy+=mdy;
 					draw.style.left = cx+'px';
-			draw.style.top = cy+'px';
-					
-						
+			draw.style.top = cy+'px';				
 				}
 				
                 //////////NODE DRAGGER
@@ -502,6 +500,7 @@
                     selected=null;
 				    maine.getSelection();
 				    if(selected != maine&&selected!=null){
+						//Different things for different double clicks
 						if(selected.js!=null&&selected.js.name=="Function"&&mousey<selected.absy-selected.size+defsize){
 						var r=prompt("Name?",selected.js.fname)
 						if(r!=null)
@@ -513,6 +512,39 @@
                             r = prompt("Text?",selected.js.text);
 							if(r!=null)
                             selected.js.text=r;
+                            selected=null;
+                            mousepressed=0;
+                               nodrag=null;
+                           }else
+						   if(selected.js!=null&&selected.js.name=="OnKeyPress"){
+                           var r = "";
+                            r = prompt("KeyCode?",selected.js.key);
+							if(r!=null){
+								//console.log(parseInt(r));
+								if(isNaN(parseInt(r))){
+									//console.log(parseInt(r));
+									var keylist = "k0k1k2k3k4k5k6k7k8k9kakbkckdkekfkgkhkikjkkklkmknkokpkqkrksktkukvkwkxkykz";
+									if(keylist.indexOf(r)!=-1){
+										selected.js.key=((keylist.indexOf(r)/2)+48)
+										
+									}else{
+										if(r=="up"){
+											selected.js.key=38;
+										}
+										if(r=="down"){
+											selected.js.key=40;
+										}
+										if(r=="left"){
+											selected.js.key=37;
+										}
+										if(r=="right"){
+											selected.js.key=39;
+										}
+									}
+								}else{
+									selected.js.key=parseInt(r);	
+								}
+							}
                             selected=null;
                             mousepressed=0;
                                nodrag=null;
@@ -631,6 +663,22 @@
 						}
                     }
 			}
+			//////////////KEY LISTENERS
+			document.onkeydown = function(event){
+				var x = event.which;
+				//console.log(x);
+				for(var i =0;i<maine.children.length;i++){
+						var cr = maine.children[i];	
+					//console.log(cr.label);
+						if (cr.label=="OnKeyPress"){
+							if(cr.js.key==x)
+							cr.run();
+							//console.log("Initialized");
+						}
+                    }
+			}
+			
+			
 //var refunout;
             var ffunction;
             var functions=[];
