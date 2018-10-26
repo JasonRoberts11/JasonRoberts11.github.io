@@ -516,7 +516,7 @@
                             mousepressed=0;
                                nodrag=null;
                            }else
-						   if(selected.js!=null&&selected.js.name=="OnKeyPress"){
+						   if(selected.js!=null&&(selected.js.name=="OnKeyPress"||selected.js.name=="OnKeyRelease"||selected.js.name=="OnKeyDown")){
                            var r = "";
                             r = prompt("KeyCode?",selected.js.key);
 							if(r!=null){
@@ -671,6 +671,19 @@
 						var cr = maine.children[i];	
 					//console.log(cr.label);
 						if (cr.label=="OnKeyPress"){
+							if(cr.js.key==x)
+							cr.run();
+							//console.log("Initialized");
+						}
+                    }
+			}
+			document.onkeyup = function(event){
+				var x = event.which;
+				//console.log(x);
+				for(var i =0;i<maine.children.length;i++){
+						var cr = maine.children[i];	
+					//console.log(cr.label);
+						if (cr.label=="OnKeyRelease"){
 							if(cr.js.key==x)
 							cr.run();
 							//console.log("Initialized");

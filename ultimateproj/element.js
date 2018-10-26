@@ -97,8 +97,11 @@
 					if(this.js!=null&&this.js.name=="raw"){
                         ctx.fillText(this.js.text,this.absx,this.absy);
                     }
-					if(this.js!=null&&this.js.name=="OnKeyPress"){
-                        ctx.fillText(this.js.key,this.absx,this.absy);
+					if(this.js!=null&&(this.js.name=="OnKeyPress"||this.js.name=="OnKeyRelease"||this.js.name=="KeyDown")){
+                        ctx.fillText(this.js.key,this.absx,this.absy-this.size+10);
+                    }
+					if(this.js!=null&&(this.js.name=="OnMousePress"||this.js.name=="OnMouseRelease"||this.js.name=="MouseDown")){
+                        ctx.fillText(this.js.button,this.absx,this.absy-this.size+10);
                     }
 					if(this.js!=null&&this.js.name=="Function"){
                         ctx.fillText(this.js.fname,this.absx,this.absy-this.size+10);

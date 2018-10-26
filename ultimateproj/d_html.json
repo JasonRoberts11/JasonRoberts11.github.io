@@ -92,8 +92,18 @@ var d_input=`{"name":"Input","array":[
 	{"name":"Prompt","color":5,"gen":["What is your name?"]}
 ]},
 {"name":"Keyboard","open":true,"set":[
-	{"name":"OnKeyPress","color":2,"key":32}
+	{"name":"OnKeyPress","color":2,"key":32},
+{"name":"OnKeyRelease","color":2,"key":32},
+	{"name":"KeyDown","color":2,"key":32}
+]},
+{"name":"Mouse","open":true,"set":[
+	{"name":"OnMouseClick","color":2,"button":0},
+	{"name":"OnMouseRelease","color":2,"button":0},
+	{"name":"MouseDown","color":2,"button":0},
+	{"name":"MouseX","color":2},
+	{"name":"MouseY","color":2}
 ]}
+
 ]}`	
 var d_draw=`{"name":"Draw","array":[
 {"name":"Pen","open":true,"set":[
