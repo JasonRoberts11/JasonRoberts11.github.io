@@ -34,6 +34,7 @@ var d_zubble= `{
 	{"name":"Main","open":true,"set":[
     {"name":"raw","color":3,"text":"hello world"},
 	{"name":"Initialize","jstart":"<!DOCTYPE html><html>","jend":"</html>","color":4},
+	{"name":"Update","color":4},
     {"name":"Close","color":4},
 	{"name":"Print","color":2},
     {"name":"Sleep","color":2,"time":1,"gen":["1"]},
@@ -99,6 +100,7 @@ var d_input=`{"name":"Input","array":[
 {"name":"Mouse","open":true,"set":[
 	{"name":"OnMouseClick","color":2,"button":0},
 	{"name":"OnMouseRelease","color":2,"button":0},
+{"name":"OnMouseMove","color":2},
 	{"name":"MouseDown","color":2,"button":0},
 	{"name":"MouseX","color":2},
 	{"name":"MouseY","color":2}

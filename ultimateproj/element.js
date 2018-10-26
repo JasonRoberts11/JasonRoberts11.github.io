@@ -100,7 +100,7 @@
 					if(this.js!=null&&(this.js.name=="OnKeyPress"||this.js.name=="OnKeyRelease"||this.js.name=="KeyDown")){
                         ctx.fillText(this.js.key,this.absx,this.absy-this.size+10);
                     }
-					if(this.js!=null&&(this.js.name=="OnMousePress"||this.js.name=="OnMouseRelease"||this.js.name=="MouseDown")){
+					if(this.js!=null&&(this.js.name=="OnMouseClick"||this.js.name=="OnMouseRelease"||this.js.name=="MouseDown")){
                         ctx.fillText(this.js.button,this.absx,this.absy-this.size+10);
                     }
 					if(this.js!=null&&this.js.name=="Function"){
@@ -593,9 +593,16 @@
 									this.call.parent.goNext(this.call.parent.children.indexOf(this.call));
 								}else {
                                     
-                                    if(this.label=="Initialize"){
+                                if(this.label=="Initialize"){
+									for(var i =0;i<maine.children.length;i++){
+										var cr = maine.children[i];	
+										if (cr.label=="Update"){
+											cr.run();
+										}
+                    				}
+								}else if(this.label=="OnKeyPress"||this.label=="OnKeyRelease"||this.label=="OnMouseClick"||this.label=="OnMouseRelease"||this.label=="OnMouseMove"){
 									
-								}else if(this.label=="OnKeyPress"){
+								}else if(this.label=="Update"){
 									
 								}else{
                                     this.parent.goNext(this.parent.children.indexOf(this));
@@ -719,6 +726,25 @@
 
                          this.ret=vvar.ret;
 					}
+					///////////INPUT
+					if(this.label=="KeyDown"){
+						this.ret=Keys[this.js.key];
+					}
+					
+					if(this.label=="MouseDown"){
+						this.ret=ismouse;
+					}
+					if(this.label=="MouseX"){
+						this.ret=mousex-cx;
+					}
+					if(this.label=="MouseY"){
+						this.ret=mousey-cy;
+					}
+					
+					
+					
+					
+					////////PEN
 					if(this.label=="Pen Position"){
                         
 						var x = parseFloat(this.children[0].ret);
@@ -903,6 +929,11 @@
 							//maine.undoSkips();
 							//maine.findGoThis(sleepers[0]);},1000);
                             runObjAtTime(this,teim*tempo);
+                    }
+					if(this.label=="Update"){
+                        go=false;
+                        this.glow=true;
+                        runUpdate(this,100);
                     }
 					if(this.label=="do"&&this.parent.label=="Delay"){
 						 go=false;

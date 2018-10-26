@@ -63,17 +63,35 @@
                 
                 
             }*/
+			
+			var timeouts = [];
             function runObjAtTime(ree,time){
-                setTimeout(
+                var a = setTimeout(
 					function(){
 						//console.log(ree)
                 maine.findGoThis(ree)},time);
+				//timeouts.push(a);
+            }
+			function runUpdate(ree){
+                var a = setTimeout(
+					function(){
+						for(var i =0;i<maine.children.length;i++){
+						var cr = maine.children[i];	
+					//console.log(cr.label);
+						if (cr ==ree){
+							cr.run();
+							//console.log("Initialized");
+						}
+                    }
+                },33);
+				//timeouts.push(a);
             }
             function FrunObjAtTime(ree,time){
-                setTimeout(
+                var a = setTimeout(
 					function(){
 						//console.log(ree)
                 maine.findGoThat(ree)},time);
+				//timeouts.push(a);
             }
             
             
@@ -89,7 +107,7 @@
                 scrwid =window.innerWidth-5;
                 scrhig=window.innerHeight-5;
                 if(/*scrwid <scrhig*/false){
-                     maine.size = scrwid/2;
+                     maine.size = scrwid/1;
 				maine.absx = scrwid/2;
 				maine.absy = scrwid/2+tby;
                        
@@ -99,8 +117,8 @@
                     main.getAttributeNode("width").value=scrhig;
             main.getAttributeNode("height").value=scrhig;
                 }else{
-     maine.size = (scrhig-2*tby)/2;
-				maine.absx = (scrhig-tby*2)/2;
+     maine.size = (scrhig-2*tby)/1;
+				maine.absx = scrwid-(scrhig-tby*2)/2;
 				maine.absy = (scrhig-2*tby)/2+tby;
                     sbhig=scrhig;
 			sbx=scrwid;
@@ -327,6 +345,12 @@
 			dtx.strokeStyle=pencolor;
 			dtx.strokeRect(0,0,cwid,chig);
 			draw.onmousemove = function(){
+				for(var i =0;i<maine.children.length;i++){
+						var cr = maine.children[i];	
+						if (cr.label=="OnMouseMove"){
+							cr.run();
+					}
+                 }
 				oncanvas=false;
 			};
 
@@ -647,6 +671,8 @@
 			
 			
 			function resetZubble(){
+				var killId = setTimeout(function() {}, 0);
+				for (var i = killId+1; i > 0; i--) {clearInterval(i);}
                  maine.dofntoall(
                 'clearTimeout(this.sleept);'
             );
@@ -664,18 +690,18 @@
                     }
 			}
 			//////////////KEY LISTENERS
+			var Keys = new Array(256);
 			document.onkeydown = function(event){
 				var x = event.which;
 				//console.log(x);
 				for(var i =0;i<maine.children.length;i++){
 						var cr = maine.children[i];	
-					//console.log(cr.label);
 						if (cr.label=="OnKeyPress"){
 							if(cr.js.key==x)
 							cr.run();
-							//console.log("Initialized");
 						}
                     }
+				Keys[x] = true;
 			}
 			document.onkeyup = function(event){
 				var x = event.which;
@@ -689,7 +715,36 @@
 							//console.log("Initialized");
 						}
                     }
+				Keys[x] = false;
 			}
+			/////////////////////MOUSE LISTENERS
+			var ismouse = false;
+			var rightclick = false;
+			document.addEventListener( 'click', function ( event ) {}, false );
+        	document.addEventListener( 'mousedown', function ( e ) {
+				if (e.which) rightclick = (e.which == 3);
+    			else if (e.button) rightclick = (e.button == 2);
+				ismouse=true;
+				for(var i =0;i<maine.children.length;i++){
+						var cr = maine.children[i];	
+						if (cr.label=="OnMouseClick"){
+							cr.run();
+					}
+                 }
+			
+			}, false );
+        	document.addEventListener( 'mouseup', function ( e ) {
+          		if (e.which) rightclick = (e.which == 3);
+    			else if (e.button) rightclick = (e.button == 2);
+				ismouse=false;
+				for(var i =0;i<maine.children.length;i++){
+						var cr = maine.children[i];	
+						if (cr.label=="OnMouseRelease"){
+							cr.run();
+					}
+                 }
+			}, false );
+//controls.lock();
 			
 			
 //var refunout;
