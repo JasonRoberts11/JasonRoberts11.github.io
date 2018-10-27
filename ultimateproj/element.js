@@ -735,10 +735,10 @@
 						this.ret=ismouse;
 					}
 					if(this.label=="MouseX"){
-						this.ret=mousex-cx;
+						this.ret=dmx;
 					}
 					if(this.label=="MouseY"){
-						this.ret=mousey-cy;
+						this.ret=dmy;
 					}
 					
 					

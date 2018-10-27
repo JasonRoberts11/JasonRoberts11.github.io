@@ -202,11 +202,19 @@
                 }
                 var tou = event.changedTouches;
                 if(tou.length==1){
+                    
                     var e = main.getBoundingClientRect();
+                    if(oncanvas){
                 mdx = tou[0].pageX-e.left-mousex;
                 mdy = tou[0].pageY-e.top-mousey;
                 mousex = tou[0].pageX-e.left;
                 mousey = tou[0].pageY-e.top;
+                    }else{
+                   mdx = tou[0].pageX-e.left+cx-mousex;
+					mdy = tou[0].pageY-e.top+cy-mousey;
+                	mousex = tou[0].pageX-e.left+cx;
+                	mousey = tou[0].pageY-e.top;
+                }
                 }
                 //if(mousepressed==1||upmos<10){
                 if(picked==-1){
@@ -339,12 +347,16 @@
 			var penx =0;
 			var peny =0;
             var pendir = 0;
+            var dmx=0;
+            var dmy=0;
 			draw.style.left = cx+'px';
 			draw.style.top = cy+'px';
 			dtx.lineWidth=pensize;
 			dtx.strokeStyle=pencolor;
 			dtx.strokeRect(0,0,cwid,chig);
-			draw.onmousemove = function(){
+			draw.onmousemove = function(event){
+                dmx = event.layerX;
+                	dmy = event.layerY;
 				for(var i =0;i<maine.children.length;i++){
 						var cr = maine.children[i];	
 						if (cr.label=="OnMouseMove"){
@@ -353,7 +365,22 @@
                  }
 				oncanvas=false;
 			};
-
+            draw.addEventListener( "touchmove",function(event){
+               // console.log("touchmove")
+                var tou = event.changedTouches;
+                if(tou.length==1){
+                    var e = main.getBoundingClientRect();
+                	dmx = tou[0].pageX-e.left-cx;
+                	dmy = tou[0].pageY-e.top-cy;
+                }
+				for(var i =0;i<maine.children.length;i++){
+						var cr = maine.children[i];	
+						if (cr.label=="OnMouseMove"){
+							cr.run();
+					}
+                 }
+				oncanvas=false;
+			});
             
             //THE STRUCTURE FOR THE Element OBject
             //Absolutes then the easily changed...
@@ -720,8 +747,8 @@
 			/////////////////////MOUSE LISTENERS
 			var ismouse = false;
 			var rightclick = false;
-			document.addEventListener( 'click', function ( event ) {}, false );
-        	document.addEventListener( 'mousedown', function ( e ) {
+			draw.addEventListener( 'click', function ( event ) {}, false );
+        	draw.addEventListener( 'mousedown', function ( e ) {
 				if (e.which) rightclick = (e.which == 3);
     			else if (e.button) rightclick = (e.button == 2);
 				ismouse=true;
@@ -733,9 +760,38 @@
                  }
 			
 			}, false );
-        	document.addEventListener( 'mouseup', function ( e ) {
+        	draw.addEventListener( 'mouseup', function ( e ) {
           		if (e.which) rightclick = (e.which == 3);
     			else if (e.button) rightclick = (e.button == 2);
+				ismouse=false;
+				for(var i =0;i<maine.children.length;i++){
+						var cr = maine.children[i];	
+						if (cr.label=="OnMouseRelease"){
+							cr.run();
+					}
+                 }
+			}, false );
+            draw.addEventListener( 'touchstart', function ( event ) {
+          		//if (e.which) rightclick = (e.which == 3);
+    			//else if (e.button) rightclick = (e.button == 2);
+                //console.log("memes");
+                var tou = event.changedTouches;
+                if(tou.length==1){
+                    var e = main.getBoundingClientRect();
+                	dmx = tou[0].pageX-e.left-cx;
+                	dmy = tou[0].pageY-e.top-cy;
+                }
+				ismouse=true;
+				for(var i =0;i<maine.children.length;i++){
+						var cr = maine.children[i];	
+						if (cr.label=="OnMouseClick"){
+							cr.run();
+					}
+                 }
+			}, false );
+            draw.addEventListener( 'touchend', function ( e ) {
+          		//if (e.which) rightclick = (e.which == 3);
+    			//else if (e.button) rightclick = (e.button == 2);
 				ismouse=false;
 				for(var i =0;i<maine.children.length;i++){
 						var cr = maine.children[i];	
