@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MKR - EVILGOBLINS</title>
+        <script type="text/javascript" src="frame.js"></script>
+    </head>
+    <body style="margin:0;padding:0;" onresize="upScr()">
+        <!--<p>HI!</p>-->
+        <canvas id="all" width="0" height="0"></canvas>
+        <script>
+
+            var img = document.getElementById("scream");
+            var canvas = document.getElementById("all");
+            var scrwid =window.innerWidth-10;
+            var scrhig=window.innerHeight-10;
+            canvas.getAttributeNode("width").value=scrwid;
+            canvas.getAttributeNode("height").value=scrhig;
+            var ctx = canvas.getContext("2d");
+            ctx.fillStyle="#FF0000";
+            ctx.fillText("stupid",100,100);
+            var img = new Image();
+            img.src = 'thehek.png';
+            
+            ////Mouse Movement
+            var mouseX;
+            var mouseY;
+            canvas.addEventListener('mousemove',setMouse);
+            //canvas.addEventListener('mousedown',click);
+            //canvas.addEventListener('mouseup',cluck);
+            function setMouse(e){
+                mouseX=e.layerX;
+                mouseY=e.layerY;
+                fDraw.mouse();
+            }
+            
+            
+            ////DRAWING ALL SCREEN
+            var fDraw;var fTop;var fMain;
+            var fStates;var fFrames;var fMid;
+            var fSide;var fColor;var fPics;
+            var fCanvas;var fTools;
+            fDraw = new Frame("",0,"v","even",0);
+            fTop = new Frame("This is the top",0,"h","p30",6);
+            fMain = new Frame("",0,"h","even",2);
+            fStates = new Frame("States",4,"v","a20",2);
+            fFrames = new Frame("Frames",5,"v","a20",2);
+            fMid = new Frame("Canvas",2,"v","even",0);
+            fSide = new Frame("",1,"v","a50",0);
+            fPics = new Frame("Pics",1,"v","even",6);
+            fColor = new Frame("Color",6,"h","even",6);
+            fCanvas = new Frame("Canvas",2,"h","even",6);
+            fTools = new Frame("Tools",3,"h","a16",6);
+            fDraw.add(fTop);
+            fDraw.add(fMain);
+            fMain.add(fStates);
+            fMain.add(fFrames);
+            fMain.add(fMid);
+            fMain.add(fSide);
+            fSide.add(fPics);
+            fSide.add(fColor);
+            fMid.add(fCanvas);
+            fMid.add(fTools);
+            //CANVAS TOOLS:
+            var tPencil = new Frame("Pencil",3,"h","a100",6);
+            var tEraser = new Frame("Eraser",3,"h","a100",6);
+            var tHand = new Frame("Hand",3,"h","a100",6);
+            var tUndo = new Frame("Undo",3,"h","a100",6);
+            var tLighten = new Frame("Lighten",3,"h","a100",6);
+
+            
+            fTools.add(tPencil);
+            fTools.add(tEraser);
+            fTools.add(tHand);
+            fTools.add(tUndo);
+            fTools.add(tLighten);
+            
+            
+            
+            
+            
+            fCanvas.mouseover=function(x,y){
+                console.log("X: "+x+" Y:"+y);
+            };
+            
+            upScr();
+            
+            
+            
+            
+            
+            function upScr(){
+                scrwid=window.innerWidth-4;
+                scrhig=window.innerHeight-4;
+                canvas.getAttributeNode("width").value=scrwid;
+                canvas.getAttributeNode("height").value=scrhig;
+                ctx.fillStyle="#FF0000";
+                ctx.strokeStyle="#00FF00"
+                ctx.scale(1,1);
+                //ctx.drawImage(img, 10, 10);
+                fDraw.render(0,0,scrwid,scrhig,0);
+            }
+            
+            
+        </script>
+    </body>
+</html>

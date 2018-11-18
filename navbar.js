@@ -7,7 +7,7 @@ navbar.innerHTML = `
 <a href="choose_gen.html">ChooseGenerator</a>
 <a href="pictures.html">Art</a>
 <a href="https://ers--cookiepie.repl.co">ERS</a>
-<a href="https://JChat--cookiepie.repl.co">Chat</a>
+<a href="mkr/main.html" class="rainbow">MKR</a>
 <a href="ultimateproj/Main.html" class="rainbow">ULTIMATE PROJ</a>
 <a href="https://2048mb--cookiepie.repl.co">2048</a>
 <a href="https://mc--cookiepie.repl.co">MINECRAFT</a>
