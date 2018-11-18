@@ -8,23 +8,28 @@
         <!--<p>HI!</p>-->
         <canvas id="all" width="0" height="0"></canvas>
         <script>
-
-            var img = document.getElementById("scream");
+console.log(rgbToString([255,255,255,255]))
             var canvas = document.getElementById("all");
             var scrwid =window.innerWidth-10;
             var scrhig=window.innerHeight-10;
             canvas.getAttributeNode("width").value=scrwid;
             canvas.getAttributeNode("height").value=scrhig;
             var ctx = canvas.getContext("2d");
+            //ctx.imageSmoothingEnabled = false;
+
             ctx.fillStyle="#FF0000";
             ctx.fillText("stupid",100,100);
-            var img = new Image();
-            img.src = 'thehek.png';
+            //var img = new Image();
+            //img.src = 'thehek.png';
             
-            ////Mouse Movement
+            ////MOUSE SUPPORT
             var mouseX;
             var mouseY;
+            var mousedown;
+            var click=false;
             canvas.addEventListener('mousemove',setMouse);
+            canvas.addEventListener('mousedown',setMouseDown);
+            canvas.addEventListener('mouseup',setMouseUp);
             //canvas.addEventListener('mousedown',click);
             //canvas.addEventListener('mouseup',cluck);
             function setMouse(e){
@@ -32,7 +37,50 @@
                 mouseY=e.layerY;
                 fDraw.mouse();
             }
-            
+            function setMouseDown(e){
+                mousedown=true;
+                click=true;
+                fDraw.mouse();
+                click=false;
+                //console.log("hey");
+            }
+            function setMouseUp(e){
+                mousedown=false;
+                click=true;
+                fDraw.mouse();
+                click=false;
+                //console.log("hi");
+            }
+            ////TOUCH SUPPORT
+            canvas.addEventListener('touchmove',setTouch);
+            canvas.addEventListener('touchstart',setTouchDown);
+            canvas.addEventListener('touchend',setTouchUp);
+            function setTouch(e){
+                    e.preventDefault();
+                if(e.touches.length==1){
+                    mouseX=e.touches[0].pageX;
+                    mouseY=e.touches[0].pageY;
+                    fDraw.mouse();
+                }
+            }
+            function setTouchDown(e){
+                e.preventDefault();
+                if(e.touches.length==1){
+                    mouseX=e.touches[0].pageX;
+                    mouseY=e.touches[0].pageY;
+                    mousedown=true;
+                    click=true;
+                    fDraw.mouse();
+                    click=false;
+                }
+            }
+            function setTouchUp(e){
+                e.preventDefault();
+                    mousedown=false;
+                    click=true;
+                    fDraw.mouse();
+                    click=false;
+            }
             
             ////DRAWING ALL SCREEN
             var fDraw;var fTop;var fMain;
@@ -61,27 +109,94 @@
             fMid.add(fCanvas);
             fMid.add(fTools);
             //CANVAS TOOLS:
+            var tool = 0;
             var tPencil = new Frame("Pencil",3,"h","a100",6);
             var tEraser = new Frame("Eraser",3,"h","a100",6);
             var tHand = new Frame("Hand",3,"h","a100",6);
             var tUndo = new Frame("Undo",3,"h","a100",6);
             var tLighten = new Frame("Lighten",3,"h","a100",6);
-
             
+            var sprtsimg = new Image;
+            sprtsimg.src = 'sprites.png';
+            sprtsimg.onload=function(){
+                
+                tPencil.setImg(getImageFrom(sprtsimg,0,0,13,13));
+                tEraser.img=getImageFrom(sprtsimg,0,16,13,13);
+                tHand.img=getImageFrom(sprtsimg,0,16*2,13,13);
+                tUndo.img=getImageFrom(sprtsimg,0,16*3,13,13);
+                tLighten.img=getImageFrom(sprtsimg,0,16*4,13,13);
+                fDraw.render(0,0,scrwid,scrhig,0);
+            }
             fTools.add(tPencil);
             fTools.add(tEraser);
             fTools.add(tHand);
             fTools.add(tUndo);
             fTools.add(tLighten);
+            tPencil.mouseclick=function(){
+                //console.log("clicked");
+                tool = 0;
+            }
+            tEraser.mouseclick=function(){
+                tool = 1;
+            }
             
             
-            
-            
-            
+            //CANVAS FOR DRAWING!!!
+            var zoom=0;
+            var kanvsx=32;
+            var kanvsy=32;
+            var board=genArray(kanvsx,kanvsy,0);
+            var kanv = document.createElement("canvas");
+            var ktx = kanv.getContext('2d');
+            kanv.width=50;
+            kanv.height=50;
             fCanvas.mouseover=function(x,y){
-                console.log("X: "+x+" Y:"+y);
+                var zoom=10;
+                kanv.width=fCanvas.xs/zoom;
+                kanv.height=fCanvas.ys/zoom;
+                var dx=Math.floor((kanv.width-kanvsx)/2);
+                var dy=Math.floor((kanv.height-kanvsy)/2);
+                var px=Math.floor(x/zoom-dx);
+                var py=Math.floor(y/zoom-dy);
+                
+                
+                ktx.fillStyle="#FFFFFF";
+                ktx.fillRect(dx,dy,kanvsx,kanvsy);
+                ktx.fillStyle="#CCCCCC";
+                
+                for(i=0;i<kanvsx;i++){
+                    for(j=0;j<kanvsy;j++){
+                        if(board[i][j]==0){
+                            ktx.fillStyle="#CCCCCC";
+                        if((i+j)%2==0)
+                        ktx.fillRect(i+dx,j+dy,1,1);
+                        }else{
+                            ktx.fillStyle="#000000";
+                            ktx.fillRect(i+dx,j+dy,1,1)
+                        }
+                    }
+                }
+                ktx.fillStyle="#44444444";
+                ktx.fillRect(px+dx,py+dy,1,1);
+                ktx.imageSmoothingEnabled = false;
+
+                fCanvas.img=kanv;
+                fCanvas.render(fCanvas.x,fCanvas.y,fCanvas.xs,fCanvas.ys);
+                console.log("X: "+px+" Y:"+py);
+                //DRAWING
+                if(mousedown&&px>=0&&px<kanvsx&&py>=0&&py<kanvsy){
+                    if(tool==0)
+                        board[px][py]=1;
+                    if(tool==1)
+                        board[px][py]=0;
+                }
+                
+                //ctx.drawImage(tPencil.img,fCanvas.x+x,fCanvas.y+y-20,20,20);
             };
-            
+            fDraw.mouseover=function(x,y){
+                //var col = ctx.getImageData(x,y,1,1).data;
+                //console.log(col);
+            }
             upScr();
             
             
@@ -96,11 +211,66 @@
                 ctx.fillStyle="#FF0000";
                 ctx.strokeStyle="#00FF00"
                 ctx.scale(1,1);
+                //img.src="sprites.png";
+                //ctx.drawImage(getImageFrom("sprites.png",0,0,104,104),10,10,104,104);
                 //ctx.drawImage(img, 10, 10);
                 fDraw.render(0,0,scrwid,scrhig,0);
             }
             
-            
+            //var canvastmp = document.createElement('canvas');
+            function getImageFrom(src,x,y,xs,ys){
+                var img = src;
+                var canvastmp = document.createElement('canvas');
+                canvastmp.width=xs;
+                canvastmp.height=ys;
+                canvastmp.getContext('2d').imageSmoothingEnabled = false;
+
+                canvastmp.getContext('2d').drawImage(img,-x,-y,img.width,img.height);
+                //var newimg = new Image();
+                //newimg.src=canvastmp.toDataURL("image/png");
+                return canvastmp;
+            }
+            function stretchImage(src,xs,ys){
+                var canvastmp=document.createElement('canvas');
+                var num = Math.floor(xs/src.width);
+                if(num>Math.floor(ys/src.height)){
+                    num=Math.floor(ys/src.height);
+                }
+                var exs = src.width*num;
+                var eys = src.height*num;
+                canvastmp.width=exs;
+                canvastmp.height=eys;
+                var ttx = canvastmp.getContext('2d');
+                for(var i = 0;i<src.width;i++){
+                    for(var j=0;j<src.height;j++){
+                        var col = src.getContext('2d').getImageData(i,j,1,1).data;
+                        ttx.fillStyle=rgbToString(col);
+                        ttx.fillRect(i*num,j*num,num,num);
+                    }
+                }
+                return canvastmp;
+            }
+            function rgbToString(parts){
+                 r = parseInt((parts[0]), 10),
+                g = parseInt((parts[1]), 10),
+                b = parseInt((parts[2]), 10),
+                a = parseInt(parts[3],10);
+//console.log(parts);
+    return ('#' + r.toString(16) + g.toString(16) + b.toString(16) + (a ).toString(16));
+                
+            }
+            function genArray(row,col,val)
+{
+  var a=[];
+  for (var i=0;i<row;i++){
+    var b = [];
+    for (var j=0;j<col;j++){
+      b.push(eval(String(val)));
+    }
+    a.push(b);
+  }
+  return a;
+}
         </script>
     </body>
 </html>

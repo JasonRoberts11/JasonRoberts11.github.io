@@ -24,7 +24,9 @@ function Frame(label,color,layout,expand,p){
                 */
                 this.expand=expand;
     
-    
+                this.setImg=function(img){
+                    this.img=img;
+                }
                 this.render=function(x,y,xs,ys,n){
                     this.x=x;this.y=y;this.xs=xs;this.ys=ys;
                     ctx.scale(1,1);
@@ -35,6 +37,19 @@ function Frame(label,color,layout,expand,p){
                     ctx.strokeRect(x,y,xs,ys);
                     ctx.fillStyle="#000000";
                     ctx.fillText(this.label,x+xs/2,y+10);
+                    if(this.img!=null){
+                        ctx.imageSmoothingEnabled = false;
+                        ctx.imageSmoothingQuality="low";
+                        /*var num = (xs/this.img.width);
+                        if(num>ys/this.img.height){
+                         num=ys/this.img.height;   
+                        }
+                        var wid=this.img.width*num;
+                        var hig=this.img.height*num;
+                        ctx.drawImage(this.img,x+xs/2-wid/2,y+ys/2-hig/2,wid,hig);*/
+                        ctx.drawImage(this.img,x,y,xs,ys);
+                        //console.log(this.img.width);
+                    }
                     var l = this.children.length;
                     var p = this.padding;
                     var dd=xs-p*(l+1);
@@ -108,6 +123,9 @@ function Frame(label,color,layout,expand,p){
                 this.add=function(frm){
                     this.children.push(frm);
                 }
+                this.startclick=false;
+                this.clickx=0;
+                this.clicky=0;
                 this.mouse=function(){
                     //console.log(this.label);
                     var x=this.x;
@@ -116,12 +134,31 @@ function Frame(label,color,layout,expand,p){
                     var ys=this.ys;
                     if(mouseX>x&&mouseX<x+xs&&mouseY>y&&mouseY<y+ys){
                         this.mouseover(mouseX-x,mouseY-y);
+                        if(this.startclick==false&&mousedown==true&&click==true){
+                            //console.log("click");
+                            this.startclick=true;
+                            this.clickx=mouseX-x;
+                            this.clicky=mouseY-y;
+                        }
+                        if(this.startclick==true&&mousedown==false&&click==true){
+                            //console.log("unclick")
+                            if(this.clickx==mouseX-x&&this.clicky==mouseY-y){
+                                this.mouseclick();
+                            }
+                        }
+                        
+                        
+                        
                         for(var i=0;i<this.children.length;i++){
                             this.children[i].mouse();
                         }
                     }
+                    if(mousedown==false){
+                        this.startclick=false;
+                    }
                 }
                 this.mouseover=function(x,y){};
+                this.mouseclick=function(){};
             }
 
 
