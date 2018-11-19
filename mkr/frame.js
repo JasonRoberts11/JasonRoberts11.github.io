@@ -8,6 +8,7 @@ function Frame(label,color,layout,expand,p){
     this.y=0;
     this.xs=0;
     this.ys=0;
+	this.stretch=true;
                 /*
                 Layout:
                     "v";
@@ -47,7 +48,17 @@ function Frame(label,color,layout,expand,p){
                         var wid=this.img.width*num;
                         var hig=this.img.height*num;
                         ctx.drawImage(this.img,x+xs/2-wid/2,y+ys/2-hig/2,wid,hig);*/
-                        ctx.drawImage(this.img,x,y,xs,ys);
+						if(this.stretch){
+                        	ctx.drawImage(this.img,x,y,xs,ys);
+						}else{
+							var num = Math.floor(xs/this.img.width);
+                        if(num>ys/this.img.height){
+                         num=Math.floor(ys/this.img.height);   
+                        }
+                        var wid=this.img.width*num;
+                        var hig=this.img.height*num;
+							ctx.drawImage(this.img,x,y,wid,hig);
+						}
                         //console.log(this.img.width);
                     }
                     var l = this.children.length;
@@ -133,6 +144,9 @@ function Frame(label,color,layout,expand,p){
                     var xs=this.xs;
                     var ys=this.ys;
                     if(mouseX>x&&mouseX<x+xs&&mouseY>y&&mouseY<y+ys){
+						if(scroll!=0){
+							this.mousescroll(scroll/100);
+						}
                         this.mouseover(mouseX-x,mouseY-y);
                         if(this.startclick==false&&mousedown==true&&click==true){
                             //console.log("click");
@@ -157,6 +171,7 @@ function Frame(label,color,layout,expand,p){
                         this.startclick=false;
                     }
                 }
+				this.mousescroll=function(dy){};
                 this.mouseover=function(x,y){};
                 this.mouseclick=function(){};
             }
