@@ -132,7 +132,7 @@ console.log(rgbToString([255,255,255,255]))
             fMid = new Frame("Canvas",2,"v","even",0);
             fSide = new Frame("",1,"v","a50",0);
             fPics = new Frame("Pics",1,"v","even",6);
-            fColor = new Frame("Color",6,"h","even",6);
+            fColor = new Frame("Color",6,"v","even",6);
             fCanvas = new Frame("Canvas",2,"h","even",6);
             fTools = new Frame("Tools",3,"h","a16",6);
             fDraw.add(fTop);
@@ -145,8 +145,9 @@ console.log(rgbToString([255,255,255,255]))
             fSide.add(fColor);
             fMid.add(fCanvas);
             fMid.add(fTools);
+            
             //CANVAS TOOLS:
-            var History=[];
+           
             var tool = 0;
             var tPencil = new Frame("Pencil",3,"h","a100",6);
             var tEraser = new Frame("Eraser",3,"h","a100",6);
@@ -177,14 +178,17 @@ console.log(rgbToString([255,255,255,255]))
             tEraser.mouseclick=function(){
                 tool = 1;
             }
-            
+            tUndo.mouseclick=function(){
+                undoStroke();
+            }
             
             //CANVAS FOR DRAWING!!!
 			fCanvas.stretch=false;
+            
             var zoom=10;
             var kanvsx=64;
             var kanvsy=64;
-            var board=genArray(kanvsx,kanvsy,0);
+            var board=genArray(kanvsx,kanvsy,-1);
             var kanv = document.createElement("canvas");
             var ktx = kanv.getContext('2d');
 			var cdx=Math.floor((kanv.width-kanvsx)/2);
@@ -198,6 +202,7 @@ console.log(rgbToString([255,255,255,255]))
             var startdist=10;
             var px=0;
             var py=0;
+            var drawdown=false;
             kanv.width=50;
             kanv.height=50;
 			fCanvas.mousescroll=function(dy){
@@ -234,12 +239,12 @@ console.log(rgbToString([255,255,255,255]))
                 
                 for(i=0;i<kanvsx;i++){
                     for(j=0;j<kanvsy;j++){
-                        if(board[i][j]==0){
+                        if(board[i][j]==-1){
                             ktx.fillStyle="#CCCCCC";
                         if((i+j)%2==0)
                         	ktx.fillRect(i+cdx,j+cdy,1,1);
                         }else{
-                            ktx.fillStyle="#000000";
+                            ktx.fillStyle=rgbToString(acolors[board[i][j]]);
                             ktx.fillRect(i+cdx,j+cdy,1,1)
                         }
                     }
@@ -250,20 +255,26 @@ console.log(rgbToString([255,255,255,255]))
 
                 fCanvas.img=kanv;
                 fCanvas.render(fCanvas.x,fCanvas.y,fCanvas.xs,fCanvas.ys);
-                console.log("X: "+px+" Y:"+py);
+                //console.log("X: "+px+" Y:"+py);
                 //DRAWING
                 if(mousedown&&px>=0&&px<kanvsx&&py>=0&&py<kanvsy){
+                    if(!drawdown){
+                        //console.log("hey");
+                        rpx=px;
+                        rpy=py;
+                        drawdown=true;
+                    }
                     var col=-1;
 					if(mouseButton==0){
                     	if(tool==0)
-							col=1;
+							col=selectedcolor;
 						if(tool==1)
-							col=0;
+							col=-1;
 					}
 					if(mouseButton==2){
-						col=0;
+						col=-1;
 					}
-                    if(col!=-1){
+                    if(col!=-2){
                         setPixel(px,py,col);
                         //DRAW LINES
                         if(Math.abs(rpx-px)>1||Math.abs(rpy-py)>1){
@@ -305,7 +316,7 @@ console.log(rgbToString([255,255,255,255]))
                     }
                 }
                 
-                console.log(touchcount);
+                //console.log(touchcount);
                 //TOUCH SCREEN PANNING AND ZOOMING
                 if(touchcount==2&&startscroll==0){
                     starx=cdx;
@@ -313,14 +324,15 @@ console.log(rgbToString([255,255,255,255]))
                     startx=mouseX;
                     starty=mouseY;
                     startscroll=1;
-                    console.log('scroll');
+                    //console.log('scroll');
                     starzoom=zoom;
                     stardist=ddist;
+                    
                 }
                 if(touchcount==2&&startscroll==1){
                     cdx=starx+Math.floor((mouseX-startx)/zoom);
 					cdy=stary+Math.floor((mouseY-starty)/zoom);
-                    console.log('scrooling');
+                    //console.log('scrooling');
                     var ezoom=zoom;
                     zoom=starzoom+Math.floor((ddist-stardist)/10);
                     if(zoom<1){zoom=1};
@@ -343,7 +355,13 @@ console.log(rgbToString([255,255,255,255]))
 					cdx=starx+Math.floor((mouseX-startx)/zoom);
 					cdy=stary+Math.floor((mouseY-starty)/zoom);
 				}
-				if(!mousedown&&touchcount!=2){startscroll=0;}
+				if(!mousedown&&touchcount!=2){startscroll=0;;
+                    if(drawdown){
+                        console.log("hi");
+                        saveUndo();
+                    }
+                                              drawdown=false;
+                                             }
                 
                 //ctx.drawImage(tPencil.img,fCanvas.x+x,fCanvas.y+y-20,20,20);
             };
@@ -352,17 +370,42 @@ console.log(rgbToString([255,255,255,255]))
                 //console.log(col);
             }
             upScr();
-            
+             var chistory=[];
             function undoStroke(){
-                
+                if(chistory.length>0){
+                    board=JSON.parse(JSON.stringify(chistory.splice(chistory.length-1,1)[0]));
+                console.log("undo");
+                }
+            }
+            function saveUndo(){
+                //console.log(chistory);
+                chistory.push(JSON.parse(JSON.stringify(board)));
+                if(chistory.length>40){
+                    chistory.splice(0,1);
+                }
             }
             function setPixel(x,y,c){
                 if(x>=0&&x<kanvsx&&y>=0&&y<kanvsy){
                     board[x][y]=c;
                 }
             }
+            var selectedcolor=0;
+            var acolors=[[0,0,0],[255,0,0],[255,255,0],[0,255,0],[0,255,255],[0,0,255],[255,0,255],[255,255,255]];
+            var cColors = new Frame("Colors",3,"h","a10",0);
             
+            for(var i =0;i<acolors.length;i++){
+                b=new Frame("",acolors[i],"h","a100",4);
+                b.data=i;
+                b.mouseclick=function(){
+                    selectedcolor=this.data;
+                    console.log(this.data);
+                    
+                }
+                cColors.add(b);
+            }
             
+
+            fColor.add(cColors)
             
             function upScr(){
                 scrwid=window.innerWidth-4;
@@ -412,13 +455,19 @@ console.log(rgbToString([255,255,255,255]))
                 return canvastmp;
             }
             function rgbToString(parts){
-                 r = parseInt((parts[0]), 10),
-                g = parseInt((parts[1]), 10),
-                b = parseInt((parts[2]), 10),
-                a = parseInt(parts[3],10);
-//console.log(parts);
-    return ('#' + r.toString(16) + g.toString(16) + b.toString(16) + (a ).toString(16));
-                
+                var r = (parts[0]).toString(16);
+                if(r.length==1){r="0"+r;}
+                var g = (parts[1]).toString(16);
+                if(g.length==1){g="0"+g;}
+                var b = (parts[2]).toString(16);
+                if(b.length==1){b="0"+b;}
+                     if(parts.length==4){
+                var a = (parts[3]).toString(16);
+                         if(a.length==1){a="0"+a;}
+    return ('#' + r + g+ b+ a);
+                     }else{
+                         return ('#' + r+ g+ b);
+                     }
             }
             function genArray(row,col,val)
 {

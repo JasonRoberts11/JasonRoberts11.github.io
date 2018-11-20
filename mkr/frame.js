@@ -3,6 +3,7 @@ function Frame(label,color,layout,expand,p){
                 this.label=label;
                 this.color=color;
                 this.layout=layout;
+    this.data=null;
     this.img=null;
     this.x=0;
     this.y=0;
@@ -32,8 +33,14 @@ function Frame(label,color,layout,expand,p){
                     this.x=x;this.y=y;this.xs=xs;this.ys=ys;
                     ctx.scale(1,1);
                     ctx.lineWidth=this.padding/2;
-                    ctx.strokeStyle=colors[this.color][0];
-                    ctx.fillStyle=colors[this.color][1];
+                    if((typeof this.color)=="number"){
+                        ctx.strokeStyle=colors[this.color][0];
+                        ctx.fillStyle=colors[this.color][1];
+                    }else{
+                        ctx.strokeStyle="#222222";
+                        console.log(rgbToString(this.color));
+                        ctx.fillStyle=rgbToString(this.color);
+                    };
                     ctx.fillRect(x,y,xs,ys);
                     ctx.strokeRect(x,y,xs,ys);
                     ctx.fillStyle="#000000";
