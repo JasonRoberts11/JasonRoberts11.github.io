@@ -154,6 +154,7 @@ console.log(rgbToString([255,255,255,255]))
             var tHand = new Frame("Hand",3,"h","a100",6);
             var tUndo = new Frame("Undo",3,"h","a100",6);
             var tLighten = new Frame("Lighten",3,"h","a100",6);
+            var tBucket = new Frame("Fill",3,"h","a100",6);
             
             var sprtsimg = new Image;
             sprtsimg.src = 'sprites.png';
@@ -164,6 +165,7 @@ console.log(rgbToString([255,255,255,255]))
                 tHand.img=getImageFrom(sprtsimg,0,16*2,13,13);
                 tUndo.img=getImageFrom(sprtsimg,0,16*3,13,13);
                 tLighten.img=getImageFrom(sprtsimg,0,16*4,13,13);
+                tBucket.img=getImageFrom(sprtsimg,0,16*5,13,13);
                 fDraw.render(0,0,scrwid,scrhig,0);
             }
             fTools.add(tPencil);
@@ -171,6 +173,7 @@ console.log(rgbToString([255,255,255,255]))
             fTools.add(tHand);
             fTools.add(tUndo);
             fTools.add(tLighten);
+            fTools.add(tBucket);
             tPencil.mouseclick=function(){
                 //console.log("clicked");
                 tool = 0;
@@ -180,6 +183,9 @@ console.log(rgbToString([255,255,255,255]))
             }
             tUndo.mouseclick=function(){
                 undoStroke();
+            }
+            tBucket.mouseclick=function(){
+                tool=2;
             }
             
             //CANVAS FOR DRAWING!!!
@@ -202,6 +208,8 @@ console.log(rgbToString([255,255,255,255]))
             var startdist=10;
             var px=0;
             var py=0;
+            var cdex=32;
+            var cdey=32;
             var drawdown=false;
             kanv.width=50;
             kanv.height=50;
@@ -223,11 +231,16 @@ console.log(rgbToString([255,255,255,255]))
 				if(kanvsx*zoom<fCanvas.xs&&kanvsy*zoom<fCanvas.ys){
                 	cdx=Math.floor((kanv.width-kanvsx)/2);
                 	cdy=Math.floor((kanv.height-kanvsy)/2);
-                    starx=cdx;
-                    stary=cdy;
+                    cdex=Math.floor(kanvsx/2);
+                    cdey=Math.floor(kanvsy/2);
+                    
+                    starx=cdex;
+                    stary=cdey;
 				}else{
-					
+					cdx=Math.floor(kanv.width/2-cdex);
+                    cdy=Math.floor(kanv.height/2-cdey);
 				}
+                //console.log(cdex);
                 var rpx=px;
                 var rpy=py;
                 px=Math.floor(x/zoom-cdx);
@@ -264,12 +277,22 @@ console.log(rgbToString([255,255,255,255]))
                         rpy=py;
                         drawdown=true;
                     }
-                    var col=-1;
+                    var col=-2;
 					if(mouseButton==0){
                     	if(tool==0)
 							col=selectedcolor;
 						if(tool==1)
 							col=-1;
+                        ////FILL BUCKET
+                        if(tool==2){
+                            var colo=board[px][py];
+                            //var tmp=genArray(kanvsx,kanvsy,-1);
+                            var tmp=[[px,py,colo]];
+                            for(var i =0;i<10;i++){
+                                setPixel(px,py+i,selectedcolor);
+                            }
+                            
+                        }
 					}
 					if(mouseButton==2){
 						col=-1;
@@ -319,8 +342,8 @@ console.log(rgbToString([255,255,255,255]))
                 //console.log(touchcount);
                 //TOUCH SCREEN PANNING AND ZOOMING
                 if(touchcount==2&&startscroll==0){
-                    starx=cdx;
-                    stary=cdy;
+                    starx=cdex;
+                    stary=cdey;
                     startx=mouseX;
                     starty=mouseY;
                     startscroll=1;
@@ -330,8 +353,8 @@ console.log(rgbToString([255,255,255,255]))
                     
                 }
                 if(touchcount==2&&startscroll==1){
-                    cdx=starx+Math.floor((mouseX-startx)/zoom);
-					cdy=stary+Math.floor((mouseY-starty)/zoom);
+                    cdex=starx-Math.floor((mouseX-startx)/zoom);
+					cdey=stary-Math.floor((mouseY-starty)/zoom);
                     //console.log('scrooling');
                     var ezoom=zoom;
                     zoom=starzoom+Math.floor((ddist-stardist)/10);
@@ -345,20 +368,21 @@ console.log(rgbToString([255,255,255,255]))
                 }
                 //MIDDLEMOUSE PANNING
 				if(mousedown&&mouseButton==1&&startscroll==0){
-					starx=cdx;
-					stary=cdy;
+					starx=cdex;
+					stary=cdey;
 					startx=mouseX;
 					starty=mouseY;
 					startscroll=1;
 				}
 				if(mousedown&&mouseButton==1&&startscroll==1){
-					cdx=starx+Math.floor((mouseX-startx)/zoom);
-					cdy=stary+Math.floor((mouseY-starty)/zoom);
+					cdex=starx-Math.floor((mouseX-startx)/zoom);
+					cdey=stary-Math.floor((mouseY-starty)/zoom);
 				}
 				if(!mousedown&&touchcount!=2){startscroll=0;;
                     if(drawdown){
                         console.log("hi");
                         saveUndo();
+                        
                     }
                                               drawdown=false;
                                              }
@@ -370,11 +394,13 @@ console.log(rgbToString([255,255,255,255]))
                 //console.log(col);
             }
             upScr();
-             var chistory=[];
+            var chistory=[genArray(kanvsx,kanvsy,-1)];
             function undoStroke(){
-                if(chistory.length>0){
-                    board=JSON.parse(JSON.stringify(chistory.splice(chistory.length-1,1)[0]));
-                console.log("undo");
+                if(chistory.length>1){
+                    JSON.parse(JSON.stringify(chistory.splice(chistory.length-1,1)[0]));
+                    board = JSON.parse(JSON.stringify(chistory[chistory.length-1]));
+                    console.log("undo");
+                    fCanvas.mouseover(0,0);
                 }
             }
             function saveUndo(){
@@ -391,14 +417,14 @@ console.log(rgbToString([255,255,255,255]))
             }
             var selectedcolor=0;
             var acolors=[[0,0,0],[255,0,0],[255,255,0],[0,255,0],[0,255,255],[0,0,255],[255,0,255],[255,255,255]];
-            var cColors = new Frame("Colors",3,"h","a10",0);
+            var cColors = new Frame("Colors",3,"h","a12.5",0);
             
             for(var i =0;i<acolors.length;i++){
                 b=new Frame("",acolors[i],"h","a100",4);
                 b.data=i;
                 b.mouseclick=function(){
                     selectedcolor=this.data;
-                    console.log(this.data);
+                    //console.log(this.data);
                     
                 }
                 cColors.add(b);

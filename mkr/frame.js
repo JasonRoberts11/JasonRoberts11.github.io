@@ -44,7 +44,7 @@ function Frame(label,color,layout,expand,p){
                     ctx.fillRect(x,y,xs,ys);
                     ctx.strokeRect(x,y,xs,ys);
                     ctx.fillStyle="#000000";
-                    ctx.fillText(this.label,x+xs/2,y+10);
+                    //ctx.fillText(this.label,x+xs/2,y+10);
                     if(this.img!=null){
                         ctx.imageSmoothingEnabled = false;
                         ctx.imageSmoothingQuality="low";
