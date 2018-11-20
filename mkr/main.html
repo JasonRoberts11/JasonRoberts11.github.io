@@ -71,6 +71,7 @@ console.log(rgbToString([255,255,255,255]))
             ////TOUCH SUPPORT
 			var dzoom=1;
 			var ddist=10;
+            var touchcount=0;
             canvas.addEventListener('touchmove',setTouch);
             canvas.addEventListener('touchstart',setTouchDown);
             canvas.addEventListener('touchend',setTouchUp);
@@ -87,10 +88,12 @@ console.log(rgbToString([255,255,255,255]))
 					var ndist=dist2(e.touches[0].pageX,e.touches[0].pageY,e.touches[1].pageX,e.touches[1].pageY);
 					dzoom=ndist/ddist;
 						ddist=ndist;
+                    fDraw.mouse()
 				}
             }
             function setTouchDown(e){
                 e.preventDefault();
+                touchcount=e.touches.length;
                 if(e.touches.length==1){
                     mouseX=e.touches[0].pageX;
                     mouseY=e.touches[0].pageY;
@@ -109,6 +112,7 @@ console.log(rgbToString([255,255,255,255]))
             }
             function setTouchUp(e){
                 e.preventDefault();
+                touchcount=e.touches.length;
                     mousedown=false;
                     click=true;
                     fDraw.mouse();
@@ -142,6 +146,7 @@ console.log(rgbToString([255,255,255,255]))
             fMid.add(fCanvas);
             fMid.add(fTools);
             //CANVAS TOOLS:
+            var History=[];
             var tool = 0;
             var tPencil = new Frame("Pencil",3,"h","a100",6);
             var tEraser = new Frame("Eraser",3,"h","a100",6);
@@ -177,8 +182,8 @@ console.log(rgbToString([255,255,255,255]))
             //CANVAS FOR DRAWING!!!
 			fCanvas.stretch=false;
             var zoom=10;
-            var kanvsx=32;
-            var kanvsy=32;
+            var kanvsx=64;
+            var kanvsy=64;
             var board=genArray(kanvsx,kanvsy,0);
             var kanv = document.createElement("canvas");
             var ktx = kanv.getContext('2d');
@@ -189,6 +194,10 @@ console.log(rgbToString([255,255,255,255]))
 			var starty=0;
 			var starx=0;
 			var stary=0;
+            var starzoom=zoom;
+            var startdist=10;
+            var px=0;
+            var py=0;
             kanv.width=50;
             kanv.height=50;
 			fCanvas.mousescroll=function(dy){
@@ -197,7 +206,7 @@ console.log(rgbToString([255,255,255,255]))
 					cdx-=dy;
 					cdy-=dy;
 				}
-				if(dy<0&&zoom+dy>2){
+				if(dy<0&&zoom+dy>1){
 					zoom+=dy;
 					cdx-=dy;
 					cdy-=dy;
@@ -209,11 +218,15 @@ console.log(rgbToString([255,255,255,255]))
 				if(kanvsx*zoom<fCanvas.xs&&kanvsy*zoom<fCanvas.ys){
                 	cdx=Math.floor((kanv.width-kanvsx)/2);
                 	cdy=Math.floor((kanv.height-kanvsy)/2);
+                    starx=cdx;
+                    stary=cdy;
 				}else{
 					
 				}
-                var px=Math.floor(x/zoom-cdx);
-                var py=Math.floor(y/zoom-cdy);
+                var rpx=px;
+                var rpy=py;
+                px=Math.floor(x/zoom-cdx);
+                py=Math.floor(y/zoom-cdy);
 				
                 ktx.fillStyle="#FFFFFF";
                 ktx.fillRect(cdx,cdy,kanvsx,kanvsy);
@@ -240,16 +253,85 @@ console.log(rgbToString([255,255,255,255]))
                 console.log("X: "+px+" Y:"+py);
                 //DRAWING
                 if(mousedown&&px>=0&&px<kanvsx&&py>=0&&py<kanvsy){
+                    var col=-1;
 					if(mouseButton==0){
                     	if(tool==0)
-							board[px][py]=1;
+							col=1;
 						if(tool==1)
-							board[px][py]=0;
+							col=0;
 					}
 					if(mouseButton==2){
-						board[px][py]=0;
+						col=0;
 					}
+                    if(col!=-1){
+                        setPixel(px,py,col);
+                        //DRAW LINES
+                        if(Math.abs(rpx-px)>1||Math.abs(rpy-py)>1){
+                            var pdx=px-rpx;
+                            var pdy=py-rpy;
+                            if(Math.abs(pdx)>Math.abs(pdy)){
+                                
+                                var m = pdy/pdx;
+                                if(pdx>0){
+                                for(var i = 1; i<pdx;i++){
+                                    var ey=rpy+Math.round(i*m);
+                                    var ex=rpx+i;
+                                    setPixel(ex,ey,col);
+                                }
+                                }else{
+                                for(var i = 1; i<-pdx;i++){
+                                    var ey=rpy+Math.round(-i*m);
+                                    var ex=rpx-i;
+                                    setPixel(ex,ey,col);
+                                }
+                                }
+                            }else{
+                                var m = pdx/pdy;
+                                if(pdy>0){
+                                for(var i = 1; i<pdy;i++){
+                                    var ex=rpx+Math.round(i*m);
+                                    var ey=rpy+i;
+                                    setPixel(ex,ey,col);
+                                }
+                                }else{
+                                for(var i = 1; i<-pdy;i++){
+                                    var ex=rpx+Math.round(-i*m);
+                                    var ey=rpy-i;
+                                    setPixel(ex,ey,col);
+                                }
+                                }
+                            }
+                        }
+                    }
                 }
+                
+                console.log(touchcount);
+                //TOUCH SCREEN PANNING AND ZOOMING
+                if(touchcount==2&&startscroll==0){
+                    starx=cdx;
+                    stary=cdy;
+                    startx=mouseX;
+                    starty=mouseY;
+                    startscroll=1;
+                    console.log('scroll');
+                    starzoom=zoom;
+                    stardist=ddist;
+                }
+                if(touchcount==2&&startscroll==1){
+                    cdx=starx+Math.floor((mouseX-startx)/zoom);
+					cdy=stary+Math.floor((mouseY-starty)/zoom);
+                    console.log('scrooling');
+                    var ezoom=zoom;
+                    zoom=starzoom+Math.floor((ddist-stardist)/10);
+                    if(zoom<1){zoom=1};
+                    if(zoom>40){zoom=40};
+                    if(ezoom!=zoom){
+                        //startx+=Math.floor(2/(zoom-ezoom)*zoom);
+                        //starty+=Math.floor(2/(zoom-ezoom)*zoom);
+                    }
+                    
+                }
+                //MIDDLEMOUSE PANNING
 				if(mousedown&&mouseButton==1&&startscroll==0){
 					starx=cdx;
 					stary=cdy;
@@ -261,7 +343,7 @@ console.log(rgbToString([255,255,255,255]))
 					cdx=starx+Math.floor((mouseX-startx)/zoom);
 					cdy=stary+Math.floor((mouseY-starty)/zoom);
 				}
-				if(!mousedown){startscroll=0;}
+				if(!mousedown&&touchcount!=2){startscroll=0;}
                 
                 //ctx.drawImage(tPencil.img,fCanvas.x+x,fCanvas.y+y-20,20,20);
             };
@@ -271,7 +353,14 @@ console.log(rgbToString([255,255,255,255]))
             }
             upScr();
             
-            
+            function undoStroke(){
+                
+            }
+            function setPixel(x,y,c){
+                if(x>=0&&x<kanvsx&&y>=0&&y<kanvsy){
+                    board[x][y]=c;
+                }
+            }
             
             
             
