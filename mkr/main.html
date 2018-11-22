@@ -285,13 +285,37 @@ console.log(rgbToString([255,255,255,255]))
 							col=-1;
                         ////FILL BUCKET
                         if(tool==2){
+                            console.log("fill");
                             var colo=board[px][py];
-                            //var tmp=genArray(kanvsx,kanvsy,-1);
-                            var tmp=[[px,py,colo]];
-                            for(var i =0;i<10;i++){
-                                setPixel(px,py+i,selectedcolor);
-                            }
+                            if(colo!=selectedcolor){
+                                //var tmp=genArray(kanvsx,kanvsy,-1);
+                                var tmp=[[px,py]];
+                                var tmp2;
+                                //for(var i =0;i<10;i++){
+                                    //setPixel(px,py+i,selectedcolor);
+                                //}
+                                while(tmp.length>0){
+                                    //console.log(tmp.length);
+                                    tmp2=[];
+                                    for(var i=0;i<tmp.length;i++){
+                                        var x=tmp[i][0];
+                                        var y=tmp[i][1];
+                                        //console.log("x"+x+"y"+y);
+                                        if(x>=0&&y>=0&&x<kanvsx&&y<kanvsy)
+                                        if(board[x][y]==colo){
+                                            setPixel(x,y,selectedcolor);
+                                            noDupe([x+1,y],tmp2);
+                                            noDupe([x-1,y],tmp2);
+                                            noDupe([x,y+1],tmp2);
+                                            noDupe([x,y-1],tmp2);
+                                        }else{
+                                            
+                                        }
+                                    }
+                                    tmp=JSON.parse(JSON.stringify(tmp2));
+                                }
                             
+                            }
                         }
 					}
 					if(mouseButton==2){
@@ -415,10 +439,10 @@ console.log(rgbToString([255,255,255,255]))
                     board[x][y]=c;
                 }
             }
+            
             var selectedcolor=0;
             var acolors=[[0,0,0],[255,0,0],[255,255,0],[0,255,0],[0,255,255],[0,0,255],[255,0,255],[255,255,255]];
             var cColors = new Frame("Colors",3,"h","a12.5",0);
-            
             for(var i =0;i<acolors.length;i++){
                 b=new Frame("",acolors[i],"h","a100",4);
                 b.data=i;
@@ -507,6 +531,11 @@ console.log(rgbToString([255,255,255,255]))
   }
   return a;
 }
+            function noDupe(i,array){
+                if(array.indexOf(i)==-1){
+                    array.push(i);
+                }
+            }
 			function dist2(x,y,x2,y2){
                 return (Math.pow((Math.pow((x-x2),2)+Math.pow((y-y2),2)),0.5));
             }
