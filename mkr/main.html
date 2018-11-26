@@ -145,7 +145,69 @@ console.log(rgbToString([255,255,255,255]))
             fSide.add(fColor);
             fMid.add(fCanvas);
             fMid.add(fTools);
+            //////////FRAME HANDLER
+			var frame=0;
+			var aframes=[[],[],[],[]];
+            var cFrames = new Frame("Frames",5,"v","even",3);
+            for(var i =0;i<aframes.length;i++){
+                b=new Frame("",1,"h","a100",4);
+                b.data=i;
+                b.mouseclick=function(){
+					
+					if(frame!=this.data){
+                    	aframes[frame]=JSON.parse(JSON.stringify(board));
+						var kanv = document.createElement("canvas");
+            			var ktx = kanv.getContext('2d');
+						kanv.width=board.length;
+                		kanv.height=board[0].length;
+						var kanvsx=board.length;
+						var kanvsy=board[0].length;
+						for(i=0;i<kanvsx;i++){
+                    		for(j=0;j<kanvsy;j++){
+                        		if(board[i][j]==-1){
+                            		ktx.fillStyle="#CCCCCC";
+                        			if((i+j)%2==0)
+                        				ktx.fillRect(i,j,1,1);
+                        		}else{
+                            		ktx.fillStyle=rgbToString(acolors[board[i][j]]);
+                            		ktx.fillRect(i,j,1,1)
+								}
+							}
+                		}
+						cFrames.children[frame].img=kanv;
+						cFrames.children[frame].render();
+						
+						
+						frame=this.data;
+						
+						
+						
+						if(aframes[frame].length==0){
+							board=genArray(kanvsx,kanvsy,-1);
+						}else{
+							board=aframes[frame];
+						}
+					
+					
+					
+					}
+                    //console.log(this.data);
+                    
+                }
+                cFrames.add(b);
+            }
             
+
+            fFrames.add(cFrames)
+			
+			
+			
+			
+			
+			
+			
+			
+			
             //CANVAS TOOLS:
            
             var tool = 0;
