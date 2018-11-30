@@ -38,7 +38,7 @@ function Frame(label,color,layout,expand,p){
                         ctx.fillStyle=colors[this.color][1];
                     }else{
                         ctx.strokeStyle="#222222";
-                        console.log(rgbToString(this.color));
+                        //console.log(rgbToString(this.color));
                         ctx.fillStyle=rgbToString(this.color);
                     };
                     ctx.fillRect(x,y,xs,ys);

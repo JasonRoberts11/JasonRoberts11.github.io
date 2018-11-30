@@ -145,6 +145,40 @@ console.log(rgbToString([255,255,255,255]))
             fSide.add(fColor);
             fMid.add(fCanvas);
             fMid.add(fTools);
+			////PICTURE VIEWER:
+			var vimg=0;
+			setInterval(function(){
+				vimg+=1;
+				vimg%=4;
+				var kanv = document.createElement("canvas");
+            		var ktx = kanv.getContext('2d');
+				var tmg=aframes[vimg];
+				if(tmg!=[]&&tmg!=null&&tmg!="emo"){
+						kanv.width=tmg.length;
+                		kanv.height=tmg[0].length;
+						var kanvsx=tmg.length;
+						var kanvsy=tmg[0].length;
+						for(i=0;i<kanvsx;i++){
+                    		for(j=0;j<kanvsy;j++){
+                        		if(tmg[i][j]==-1){
+                            		ktx.fillStyle="#CCCCCC";
+                        		}else{
+                            		ktx.fillStyle=rgbToString(acolors[tmg[i][j]]);
+                            		ktx.fillRect(i,j,1,1)
+								}
+							}
+                		}
+						fPics.img=kanv;
+				}
+						upScr();
+				
+				console.log("picture?")
+			},300);
+			
+			
+			
+			
+			
             //////////FRAME HANDLER
 			var frame=0;
 			var aframes=[[],[],[],[]];
@@ -187,7 +221,9 @@ console.log(rgbToString([255,255,255,255]))
 						}else{
 							board=aframes[frame];
 						}
-					
+						upScr();
+						fCanvas.mouseover(0,0);
+						chistory=[JSON.parse(JSON.stringify(board))];
 					
 					
 					}
@@ -473,7 +509,17 @@ console.log(rgbToString([255,255,255,255]))
                                               drawdown=false;
                                              }
                 
-                //ctx.drawImage(tPencil.img,fCanvas.x+x,fCanvas.y+y-20,20,20);
+               
+				if(mouseX+25<fCanvas.x+fCanvas.xs&&mouseY>25+fCanvas.y){
+				if (tool==0){
+					ctx.drawImage(tPencil.img,fCanvas.x+x,fCanvas.y+y-20,20,20);
+				}if (tool==1){
+					ctx.drawImage(tEraser.img,fCanvas.x+x,fCanvas.y+y-20,20,20);
+				}
+				if (tool==2){
+					ctx.drawImage(tBucket.img,fCanvas.x+x,fCanvas.y+y-20,20,20);
+				}
+				}
             };
             fDraw.mouseover=function(x,y){
                 //var col = ctx.getImageData(x,y,1,1).data;
@@ -503,11 +549,28 @@ console.log(rgbToString([255,255,255,255]))
             }
             
             var selectedcolor=0;
-            var acolors=[[0,0,0],[255,0,0],[255,255,0],[0,255,0],[0,255,255],[0,0,255],[255,0,255],[255,255,255]];
-            var cColors = new Frame("Colors",3,"h","a12.5",0);
-            for(var i =0;i<acolors.length;i++){
-                b=new Frame("",acolors[i],"h","a100",4);
+			var tcolors=[[0,0,0],[255,0,0],[255,255,0],[0,255,0],[0,255,255],[0,0,255],[255,0,255],[255,255,255]];
+            var acolors=[];
+			var bColors = new Frame("Colors",3,"h","a12.5",0);
+            for(var i =0;i<tcolors.length;i++){
+                b=new Frame("",darkenRGB(tcolors[i],1,128),"h","a100",4);
+				acolors.push(darkenRGB(tcolors[i],1,128));
                 b.data=i;
+                b.mouseclick=function(){
+                    selectedcolor=this.data;
+                    //console.log(this.data);
+                    
+                }
+                bColors.add(b);
+            }
+            
+
+            fColor.add(bColors)
+            var cColors = new Frame("Colors",3,"h","a12.5",0);
+            for(var i =0;i<tcolors.length;i++){
+                b=new Frame("",tcolors[i],"h","a100",4);
+				acolors.push(tcolors[i]);
+                b.data=i+8;
                 b.mouseclick=function(){
                     selectedcolor=this.data;
                     //console.log(this.data);
@@ -518,6 +581,22 @@ console.log(rgbToString([255,255,255,255]))
             
 
             fColor.add(cColors)
+			
+			var dColors = new Frame("Colors",3,"h","a12.5",0);
+            for(var i =0;i<tcolors.length;i++){
+                b=new Frame("",darkenRGB(tcolors[i],0.5,0),"h","a100",4);
+				acolors.push(darkenRGB(tcolors[i],0.5,0));
+                b.data=i+16;
+                b.mouseclick=function(){
+                    selectedcolor=this.data;
+                    //console.log(this.data);
+                    
+                }
+                dColors.add(b);
+            }
+            
+
+            fColor.add(dColors)
             
             function upScr(){
                 scrwid=window.innerWidth-4;
@@ -581,6 +660,15 @@ console.log(rgbToString([255,255,255,255]))
                          return ('#' + r+ g+ b);
                      }
             }
+			function darkenRGB(rgb,val,add){
+				var col	= [0,0,0];
+				col[0]=(rgb[0]*val+add<255)?(Math.floor(rgb[0]*val+add)):255;
+				col[1]=(rgb[1]*val+add<255)?Math.floor(rgb[1]*val+add):255;
+				col[2]=(rgb[2]*val+add<255)?Math.floor(rgb[2]*val+add):255;
+				return col;
+			}
+			
+			
             function genArray(row,col,val)
 {
   var a=[];
