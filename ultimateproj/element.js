@@ -97,6 +97,12 @@
 					if(this.js!=null&&this.js.name=="raw"){
                         ctx.fillText(this.js.text,this.absx,this.absy);
                     }
+					if(this.js!=null&&this.js.name=="img"){
+                        //ctx.fillText(this.js.text,this.absx,this.absy);
+						if(this.js.image!=null){
+							ctx.drawImage(this.js.image,this.absx,this.absy);
+						}
+                    }
 					if(this.js!=null&&(this.js.name=="OnKeyPress"||this.js.name=="OnKeyRelease"||this.js.name=="KeyDown")){
                         ctx.fillText(this.js.key,this.absx,this.absy-this.size+10);
                     }
@@ -494,6 +500,13 @@
 					this.label=obj.label;
 					this.close = obj.close;
                     this.node=obj.node;
+					if(this.js!=null){
+						if(this.js.image!=null){
+							var img = new Image();
+							img.src=this.js.imgurl;
+							this.js.image=img;
+						}
+					}
 					for(var i =0;i<obj.children.length;i++){
 						var ch = new element(null,1,1,1);
 						ch.readJson(obj.children[i]);

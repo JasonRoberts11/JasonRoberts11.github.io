@@ -122,5 +122,8 @@ var d_function=`{"name":"Functions","array":[{"name":"Functions","open":true,"se
 {"name":"Function","jstart":"ree","jend":"ree","color":4,"gent":[{"name":"params","color":2}]},    {"name":"return","jstart":"ree","jend":"ree","color":1}
 ]},
 {"name":"Variables","open":true,"set":[
-{"name":"var","color":5,"text":"i","gen":["0"]}]}]}`;
+{"name":"var","color":5,"text":"i","gen":["0"]}]},
+{"name":"Sprites","open":true,"set":[
+{"name":"sprite","color":5,"text":"i","gent":[{"name":"img","color":3}]}]}
+]}`;
 //var d_var = `{"name":"var","color":5,"text":"i","gen":["0"]}`

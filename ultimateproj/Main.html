@@ -470,6 +470,7 @@
 			dragged = null;
             var mmode=0;
 			var nodrag = null;
+			var selimage=null;
 			function dragger(){
 				//console.log(mousepressed);
 				
@@ -566,6 +567,18 @@
                             selected=null;
                             mousepressed=0;
                                nodrag=null;
+                           }else if(selected.js!=null&&selected.js.name=="img"){
+                           		if (selimage==null){
+							   selimage = selected;
+							   uploadimage();
+								}
+							   //var r = "";
+                            //r = prompt("Text?",selected.js.text);
+							//if(r!=null)
+                            //selected.js.text=r;
+                            //selected=null;
+                            //mousepressed=0;
+                              // nodrag=null;
                            }else
 						   if(selected.js!=null&&(selected.js.name=="OnKeyPress"||selected.js.name=="OnKeyRelease"||selected.js.name=="OnKeyDown")){
                            var r = "";
@@ -869,6 +882,60 @@
                 //console.log(par);
                 preview.innerHTML=par;
             }
+			const ib=document.createElement('INPUT');
+			ib.innerHTML=("LOAD IMAGE");
+			ib.setAttribute("type","file");
+			ib.addEventListener("change",upimage);
+			ib.style.display='none';
+			document.body.appendChild(ib);
+			function uploadimage(){
+				ib.click();
+			}
+			var dcanvas = document.createElement("canvas");
+            var dctx = dcanvas.getContext('2d');
+			var uploadedimage=null;
+			//document.body.appendChild(dcanvas);
+			
+			
+			
+			
+			
+			/////////UPLLOADING IMAGES
+			function upimage(e){
+				 var reader = new FileReader();
+				reader.onload = function(event){
+					var img = new Image();
+        			img.onload = function(){
+						uploadedimage=img;
+						console.log("HAHAH");
+						selimage.js.image=img;selimage.js.imgurl=convertToDataURLviaCanvas(img);
+						
+						
+						selimage=null;
+			}
+        img.src = event.target.result;
+    }
+    reader.readAsDataURL(e.target.files[0]);  
+			}
+			
+			
+			function convertToDataURLviaCanvas(img){
+    	img.crossOrigin = 'Anonymous';
+        var canvas = document.createElement('CANVAS');
+        var ctx = canvas.getContext('2d');
+        var dataURL;
+        canvas.height = img.height;
+        canvas.width = img.width;
+        ctx.drawImage(img, 0, 0);
+        dataURL = canvas.toDataURL();
+        canvas = null; 
+				return dataURL;
+}
+			
+			
+			
+			
+			
  const rb=document.createElement('INPUT');
             rb.innerHTML=("LOAD");
 			rb.setAttribute("type","file");
