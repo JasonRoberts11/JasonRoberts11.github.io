@@ -124,6 +124,12 @@ var d_function=`{"name":"Functions","array":[{"name":"Functions","open":true,"se
 {"name":"Variables","open":true,"set":[
 {"name":"var","color":5,"text":"i","gen":["0"]}]},
 {"name":"Sprites","open":true,"set":[
-{"name":"sprite","color":5,"text":"i","gent":[{"name":"img","color":3}]}]}
+{"name":"Sprite","color":5,"text":"i","gent":[
+{"name":"img","color":3}
+]}]}
+]}`;
+var d_sprites=`{"name":"Sprite","array":[{"name":"Position","open":true,"set":[
+{"name":"Move","color":7,"gen":["10","10"]}    
+]}
 ]}`;
 //var d_var = `{"name":"var","color":5,"text":"i","gen":["0"]}`

@@ -56,6 +56,11 @@
                  if(res[i].name=="var"){
                      k.js.vname= res[i].vname+vars.length;
                  }
+				 if(res[i].name=="Sprites"){
+					 this.js.xpos=0;
+					this.js.ypos=0;
+                     k.js.sname= res[i].sname+sprites.length;
+                 }
                   this.children.push(k);
              }
              this.close=true;
@@ -289,6 +294,19 @@
                     }
                     
                 }
+				  this.findSprites=function(){
+                    for(var i =0;i<this.children.length;i++){
+						var cr = this.children[i];	
+					//console.log(cr.label);
+						if (cr.label=="Sprite"){
+							sprites.push(cr);
+							//console.log("Initialized");
+						}else{
+                            cr.findSprites();
+                        }
+                    }
+                    
+                }
                 this.dofntoall=function(fn){
                     eval(fn);
                     for(var i =0;i<this.children.length;i++){
@@ -308,6 +326,7 @@
                     }
                     
                 }
+				
                 this.findVarByName=function(name){
                     vvar=null;
 					var er = this.findSiblingByVar(name);

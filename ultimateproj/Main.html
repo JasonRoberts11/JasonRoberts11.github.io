@@ -12,7 +12,9 @@
         <p id = "output"></p>
         <button id ="test">TEST</button><br/>-->
         <div>
-			<canvas id="draw" width="500" height="500" style="position:absolute;top:0;left:0;z-index:1;">
+			<canvas id="draw" width="500" height="500" style="position:absolute;top:0;left:0;z-index:2;">
+            </canvas>
+			<canvas id="draw2" width="500" height="500" style="position:absolute;top:0;left:0;z-index:1;">
             </canvas>
         <canvas id="main" width="500" height="500" style="position:absolute;top:0;left:0;z-index:0;">
             </canvas></div><button id="Load" style="margin:20;padding:20;position:fixed;top:0;left:0;z-index:999;display:none;height:60px;width:120px">LOAD</button>
@@ -42,6 +44,8 @@
 			var alphabet = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             var main = document.getElementById("main");
 			var draw = document.getElementById("draw");
+			var draw2 = document.getElementById("draw2");
+			var d2x = draw2.getContext('2d');
 			var dtx = draw.getContext('2d');
             var preview = document.getElementById("preview");
             var ctx = main.getContext("2d");
@@ -351,6 +355,8 @@
             var dmy=0;
 			draw.style.left = cx+'px';
 			draw.style.top = cy+'px';
+			draw2.style.left = cx+'px';
+			draw2.style.top = cy+'px';
 			dtx.lineWidth=pensize;
 			dtx.strokeStyle=pencolor;
 			dtx.strokeRect(0,0,cwid,chig);
@@ -381,7 +387,26 @@
                  }
 				oncanvas=false;
 			});
-            
+            ////////////SPRITE DRAWING
+			
+			function drawSprites(){
+				//console.log("bob");
+				d2x.strokeWidth=10;
+				d2x.font="30px Arial";
+				d2x.fillText("This is a test",10,50);
+				d2x.strokeStyle="#000000";
+				d2x.strokeRect(0,0,draw2.width,draw2.height);
+				for(var i = 0;i<sprites.length;i++){
+					if(sprites[i].js.image!=null){
+						//console.log("yolo");
+					   d2x.drawImage(sprites[i].js.image,sprites[i].js.xpos,sprites[i].js.ypos);
+						d2x.drawImage(sprites[i].js.image,0,0);
+				}
+				}
+			}
+			
+			
+			
             //THE STRUCTURE FOR THE Element OBject
             //Absolutes then the easily changed...
             // 0type, 1parent, 2children[], 3local xpos, 4local ypos, 5connections[],  6abs xpos, 7abs ypos, 8layer , 9size,10 open?
@@ -414,6 +439,7 @@
 			
 			////UPDATE/////////////////////////////////////////////////////////
             function update(){
+				drawSprites();
                 //head.innerHTML="JASN "+(Math.floor(Math.random()*1000));
                 ctx.clearRect(0,0,scrwid,scrhig);
                 maine.render();
@@ -507,7 +533,9 @@
 					cx+=mdx;
 					cy+=mdy;
 					draw.style.left = cx+'px';
-			draw.style.top = cy+'px';				
+			draw.style.top = cy+'px';		
+					draw2.style.left = cx+'px';
+			draw2.style.top = cy+'px';		
 				}
 				
                 //////////NODE DRAGGER
@@ -571,6 +599,7 @@
                            		if (selimage==null){
 							   selimage = selected;
 							   uploadimage();
+								
 								}
 							   //var r = "";
                             //r = prompt("Text?",selected.js.text);
@@ -703,6 +732,19 @@
 						dragged.parent = null;
 						}
 					}}
+					if(dragged.js.name=="Sprite"){
+					if(dragged.js.sname==null){
+					dragged.js.sname="Sprite_"+(alphabet.charAt(sprites.length));
+					var r=prompt("Name?",dragged.js.sname)
+					if(r!=null)
+						{
+					dragged.js.sname=r;
+							findSprites();
+						}else{
+							dragged.parent.children.splice(dragged.parent.children.indexOf(dragged),1);
+						dragged.parent = null;
+						}
+					}}
 					dragged=null;
 				}
 				
@@ -829,6 +871,12 @@
                 vars=[];
                 maine.findVars();
             }
+			var ssprite;
+			var sprites=[];
+			function findSprites(){
+                sprites=[];
+                maine.findSprites();
+            }
 				
             
             
@@ -874,6 +922,7 @@
             mbar.push(JSON.parse(d_math));
 			mbar.push(JSON.parse(d_draw));
 			mbar.push(JSON.parse(d_function));
+			mbar.push(JSON.parse(d_sprites));
 			var par="";
 			var upar="";
 			function parseHtml(el){
@@ -909,7 +958,11 @@
 						uploadedimage=img;
 						console.log("HAHAH");
 						selimage.js.image=img;selimage.js.imgurl=convertToDataURLviaCanvas(img);
-						
+						console.log(selimage.parent);
+						if(selimage.parent.js.name=="Sprite"){
+							selimage.parent.js.image=img;
+							console.log("hi")
+						}
 						
 						selimage=null;
 			}
@@ -1193,6 +1246,28 @@
                                 dragged.color=5;
                                 dragged.create;
 								dragged.js.vun=true;
+                                mousepressed=2;
+							}
+                                 j++;
+                             }
+							}
+							if(r.name=="Sprites"){
+								for(var k = 0;k<sprites.length;k++){
+							//r.set[k]
+							ctx.font = "15px Arial";
+							ctx.fillStyle="#EEEEEE";
+							ctx.fillRect(sbx-sbsiz*2,sby+j*sbdy,sbsiz,(1)*sbdy);
+							ctx.fillStyle="#000000";
+							ctx.fillText(sprites[k].js.sname,sbx-sbsiz*1.5,sby+(j+0.5)*sbdy);
+							
+							if(mousepressed==1&&Math.abs(mousex-(sbx-sbsiz*1.5))<sbsiz/2&&Math.abs(mousey-(sby+(j+0.5)*sbdy))<sbdy/2){
+								dragged=new element(0,1,mousex,mousey);
+								dragged.label=sprites[k].js.sname;
+                                dragged.js=JSON.parse('{"name":"test","color":6}');
+                                dragged.js.name=sprites[k].js.sname;
+                                dragged.color=5;
+                                dragged.create;
+								dragged.js.sun=true;
                                 mousepressed=2;
 							}
                                  j++;
