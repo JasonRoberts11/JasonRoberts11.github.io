@@ -57,8 +57,7 @@
                      k.js.vname= res[i].vname+vars.length;
                  }
 				 if(res[i].name=="Sprites"){
-					 this.js.xpos=0;
-					this.js.ypos=0;
+					
                      k.js.sname= res[i].sname+sprites.length;
                  }
                   this.children.push(k);
@@ -772,7 +771,45 @@
 					if(this.label=="MouseY"){
 						this.ret=dmy;
 					}
-					
+					/////////////SPRITE FUNCTIONS
+					if(this.label=="Move"){
+						pare = findSprite(this.parent.label);
+						if (pare!=null){
+                        if(this.children.length==2){
+						var x = parseFloat(this.children[0].ret)+pare.js.xpos;
+						var y = parseFloat(this.children[1].ret)+pare.js.ypos;
+						}else{
+                            
+							var dd = parseFloat(this.children[2].ret);
+                            pendir+=dd;
+                            pendir%=360
+                            var d = pendir/180*Math.PI;
+							var dx =parseFloat(this.children[0].ret);
+							var dy =parseFloat(this.children[1].ret) 
+							var x = dx*Math.cos(d)-dy*Math.sin(d)+pare.js.xpos;
+							var y = dx*Math.sin(d)+dy*Math.cos(d)+pare.js.ypos;
+				
+                        }
+						pare.js.xpos = x;
+						pare.js.ypos = y;
+							drawSprites();
+							//console.log("hahaeeeh"+pare.xpos);
+                    }
+						//console.log("hahah");
+					}
+					if(this.label=="SetLocation"){
+						pare = findSprite(this.parent.label);
+						if (pare!=null){
+                        if(this.children.length==2){
+						var x = parseFloat(this.children[0].ret);
+						var y = parseFloat(this.children[1].ret);
+						pare.js.xpos = x;
+						pare.js.ypos = y;
+						}
+						drawSprites();	//console.log("hahaeeeh"+pare.xpos);
+                    }
+						//console.log("hahah");
+					}
 					
 					
 					

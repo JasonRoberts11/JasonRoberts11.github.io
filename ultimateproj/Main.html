@@ -393,14 +393,14 @@
 				//console.log("bob");
 				d2x.strokeWidth=10;
 				d2x.font="30px Arial";
-				d2x.fillText("This is a test",10,50);
+				//d2x.fillText("This is a test",10,50);
 				d2x.strokeStyle="#000000";
-				d2x.strokeRect(0,0,draw2.width,draw2.height);
+				d2x.clearRect(0,0,draw2.width,draw2.height);
 				for(var i = 0;i<sprites.length;i++){
-					if(sprites[i].js.image!=null){
+					if(sprites[i].dimage!=null){
 						//console.log("yolo");
-					   d2x.drawImage(sprites[i].js.image,sprites[i].js.xpos,sprites[i].js.ypos);
-						d2x.drawImage(sprites[i].js.image,0,0);
+					   d2x.drawImage(sprites[i].dimage.js.image,sprites[i].js.xpos,sprites[i].js.ypos);
+						//d2x.drawImage(sprites[i].js.image,0,0);
 				}
 				}
 			}
@@ -457,6 +457,7 @@
 					ctx.strokeRect(cx,cy,cwid,chig);
             }
 			var startphys= window.setInterval(function(){
+				
 				   ctx.clearRect(0,0,scrwid,scrhig);
 				maine.childPhys();
 				maine.render();
@@ -477,7 +478,9 @@
 				}
 				//dragger();
 			},10);
-            
+            var dspites=window.setInterval(function(){
+				drawSprites();
+			},10);
 			
 			
 			
@@ -734,6 +737,8 @@
 					}}
 					if(dragged.js.name=="Sprite"){
 					if(dragged.js.sname==null){
+						dragged.js.xpos=0;
+						dragged.js.ypos=0;
 					dragged.js.sname="Sprite_"+(alphabet.charAt(sprites.length));
 					var r=prompt("Name?",dragged.js.sname)
 					if(r!=null)
@@ -877,7 +882,24 @@
                 sprites=[];
                 maine.findSprites();
             }
+			function findSprite(name){
+				for(var i = 0 ;i<sprites.length;i++){
+					if(sprites[i].js.sname==name){
+					   return sprites[i];
+					   }
+				}
+				return null;
+			}
+			function spriteImages(){
+				for(var i = 0 ;i<sprites.length;i++){
+					for(var j = 0;j<sprites[i].children.length;j++){
+						if(sprites[i].children[j].label=="img"){
+							sprites[i].dimage=sprites[i].children[j];
+						}
+					}
+				}
 				
+			}
             
             
              if(window.location.hash) {
@@ -960,7 +982,7 @@
 						selimage.js.image=img;selimage.js.imgurl=convertToDataURLviaCanvas(img);
 						console.log(selimage.parent);
 						if(selimage.parent.js.name=="Sprite"){
-							selimage.parent.js.image=img;
+							selimage.parent.dimage=selimage;
 							console.log("hi")
 						}
 						
@@ -1018,6 +1040,12 @@
 						upScr();
 						maine.deOrphanize();
 						maine.updatePos();
+						
+						
+						findFunctions();
+							findSprites();
+							findVars();
+						spriteImages();
 					//maine = JSON.parse(upar);
 						//maine.eorphanize();
 					}else{

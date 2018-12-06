@@ -129,7 +129,8 @@ var d_function=`{"name":"Functions","array":[{"name":"Functions","open":true,"se
 ]}]}
 ]}`;
 var d_sprites=`{"name":"Sprite","array":[{"name":"Position","open":true,"set":[
-{"name":"Move","color":7,"gen":["10","10"]}    
+{"name":"Move","color":10,"gen":["10","10"]},
+{"name":"SetLocation","color":10,"gen":["10","10"]}
 ]}
 ]}`;
 //var d_var = `{"name":"var","color":5,"text":"i","gen":["0"]}`
