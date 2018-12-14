@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MusicFactory</title>
+         <link rel="stylesheet" href="robstyle.css">
+		 <style>
+             body{
+                 font-family: Arial, Helvetica, sans-serif	;
+                    padding: 0px 0px;
+                 background: linear-gradient(to right, #edf0ff,#ffedfc);
+                 perspective: 1000px;
+                 perspective-origin: top;
+             }
+             
+             canvas{
+                 transition: transform 2s;
+             }
+             .button {
+            background: linear-gradient(to right, #e0e0ff, #e0f2ff);
+            border: none;
+            color: black;
+            padding: 15px 32px;
+            text-align: center;
+            display: inline-block;
+            font-size: 20px;
+            transition: padding 2s;
+             }
+             h1{
+                color: whitesmoke;
+                 text-align: center;
+                 font-size: 80px;
+                 background: linear-gradient(to right, #101050, #202030);
+                 padding: 30px 30px;
+                 margin: 0px 0px;
+             }
+             button:hover{
+                padding: 15px 72px;
+             }
+             canvas:hover{
+                 transform: rotate3d(1,1,0.5,360deg);
+             }
+             div{
+                  text-align: center;
+             }
+             .cent{
+                 
+                 text-align: center;
+                 padding:15px 15px;
+                 background: linear-gradient(to right, #e0e0ff, #e0f2ff);
+             }
+             p{
+                 font-size: 20px;
+             }
+             #sos{
+                 animation: anime 2s ease infinite normal;
+             }
+             @keyframes anime{
+                 0% {transform: rotateY(-20deg)}
+                 50% {transform: rotateY(20deg)}
+                 100%   {transform: rotateY(-20deg)}
+             }
+             
+        </style>
+    </head>
+    <body>
+        <div>
+			<div id="topnav" class="topnav">
+				<a href="index.html">Main</a>
+                <a href="neuralnetwork.html">NeuralNetwork</a>
+			</div>
+        </div>
+		<div><h1>Music Factory</h1></div>
+		<script>
+		/////MAKES THE MUSIC
+		
+		var bpm=60;
+		var tempo=250/(bpm/60);
+		//OSCILLATOR TYPES//
+			/*sine
+			square
+			sawtooth
+			triangle
+			custom
+			*/
+		let audioCtx = new AudioContext();
+			var patterns = [[0,0,0,1],[0,1,0,1],[0,1,0,2],[0,1,0,1,0,1,0,2]];
+			
+			var derfs=[];
+			genDerfs();
+			
+			
+			var i=0;
+			//var priorities=[1,2,3,4,5,6,7,7,8];
+			var chs=[[0,2,4,5,7,9,11,12],[0,2,3,5,6,9,10,12]];
+			var chords=[[0,4,7],[11,0,4]];
+			var noiceness=chs[0];
+			
+			var pitches = [0,1,2,3,4,6];
+			genPitches();
+			var all  = setInterval(function(){
+				
+				playPitch(pitches[i]+60,1,"square");
+				//console.log("hi");
+				i=(i+1)%pitches.length;
+			},250/(bpm/60));
+			
+			function genPitches(){
+				genDerfs();
+				pitches=[];
+				//console.log(derfs.length);
+				//console.log(derfs[0]);
+				var selpat = patterns[Math.floor(Math.random()*patterns.length)];
+				console.log(selpat);
+				for(var l = 0;l<selpat.length;l++){
+					for(var j = 0;j<derfs[selpat[l]].length;j++){
+						var d = derfs[selpat[l]][j];
+						pitches.push(noiceness[d%noiceness.length]);
+					}
+				}
+				
+				/*for(var k =0;k<derfs.length;k++){
+					for(var j =0;j<derfs[k].length;j++){
+					pitches.push(derfs[k][j]);
+						console.log(k);
+					}	
+				}*/
+				console.log("generated the pitches");
+			}
+			function genDerfs(){
+				derfs=[];
+				var a =[];
+				for(var i=0;i<8;i++){
+					a[i]=Math.floor(Math.random()*6);
+				}
+				derfs.push(a);
+				derfs.push(derivDerf(a));
+				derfs.push(derivDerf(a));
+				
+			}
+			function derivDerf(b){
+				var c = [];
+				var mode = Math.floor(Math.random()*3);
+				if (mode==0){
+					//Make new derf
+					for (var i=0;i<8;i++){
+						c.push(Math.floor(Math.random()*6));
+					}
+				}
+				if (mode==1){
+					//Make new derf
+					for (var i=0;i<4;i++){
+						c.push(b[i]);
+					}
+					for (var i=0;i<4;i++){
+						c.push(Math.floor(Math.random()*6));
+					}
+				}
+				if (mode==2){
+					//Make new derf
+					for (var i=0;i<8;i++){
+						c.push(b[i]+1);
+					}
+				}
+				console.log(c);
+				console.log(b);
+				
+				return c;
+			}
+					
+			
+			
+			
+			
+			
+			function playPitch(pit,time,type){
+				
+				var htz = 440*Math.pow((2),(pit-60-9)/12);
+				var volume = audioCtx.createGain();
+    	volume.connect(audioCtx.destination);
+    	volume.gain.value=0;
+    	var oscillator=audioCtx.createOscillator();
+				oscillator.connect(volume);
+				oscillator.type=type;
+				oscillator.frequency.value=htz;
+   		// oscillator.connect(audioCtx.destination);
+				oscillator.start();
+				volume.gain.linearRampToValueAtTime(1,audioCtx.currentTime+0.01);
+				setTimeout(function(){
+        volume.gain.linearRampToValueAtTime(0.4,audioCtx.currentTime+0.05);
+				},50);
+    	setTimeout(function(){
+        volume.gain.linearRampToValueAtTime(0,audioCtx.currentTime+time/4*tempo/1000);
+        oscillator.stop(audioCtx.currentTime+time/4*tempo/1000);
+    },time*3/4*tempo);}
+		</script>
+    
+    </body>
+    
+    
+    
+     <script src="navbar.js"></script>
+</html>
