@@ -12,6 +12,8 @@ navbar.innerHTML = `
 <a href="https://2048mb--cookiepie.repl.co">2048</a>
 <a href="https://mc--cookiepie.repl.co">MINECRAFT</a>
 <a href="https://tanks--cookiepie.repl.co" class="rainbow">Tanks</a>
+<a href="music.html">Music</a>
+
 
 `;
 }

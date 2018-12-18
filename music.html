@@ -70,11 +70,21 @@
 			</div>
         </div>
 		<div><h1>Music Factory</h1></div>
+		<canvas id="canv" width="500" height="500"></canvas>
 		<script>
 		/////MAKES THE MUSIC
 		
-		var bpm=60;
+		var bpm=Math.floor(Math.random()*40+80);
 		var tempo=250/(bpm/60);
+		var inst1="square"
+		var inst2="sawtooth"
+		
+		
+		
+		var blocks=[];
+		
+		
+		
 		//OSCILLATOR TYPES//
 			/*sine
 			square
@@ -84,25 +94,67 @@
 			*/
 		let audioCtx = new AudioContext();
 			var patterns = [[0,0,0,1],[0,1,0,1],[0,1,0,2],[0,1,0,1,0,1,0,2]];
-			
+			var chords=[[0,4,7],[7,11,14],[11,0,4],[9,12,16],[0,6,9]];
+			var chs=[[0,2,4,5,7,9,11,12],[0,2,3,5,6,9,10,12]];
+
 			var derfs=[];
 			genDerfs();
 			
 			
 			var i=0;
 			//var priorities=[1,2,3,4,5,6,7,7,8];
-			var chs=[[0,2,4,5,7,9,11,12],[0,2,3,5,6,9,10,12]];
-			var chords=[[0,4,7],[11,0,4]];
+			var selchords=[];
 			var noiceness=chs[0];
+			var arp=Math.floor(Math.random()*3);
+			var times=[1,1,0.5,0.5,2,1,0.5,2];
+			var canvas=document.getElementById("canv");
+			var ctx=canvas.getContext("2d");
+			
 			
 			var pitches = [0,1,2,3,4,6];
 			genPitches();
+			var t=0;
+			var k = 0;
 			var all  = setInterval(function(){
+				//bpm-=0.1;
+				ctx.clearRect(0,0,500,500);
+				for(var l=0;l<blocks.length;l++){
+					var c = blocks[l];
+					ctx.fillRect(c[0]+100,c[1]+100,c[2]*10,10);
+					blocks[l][2]+=-0.5;
+					if(blocks[l][2]<0){
+						blocks.splice(l,1);
+						l--;
+					}
+				}
 				
-				playPitch(pitches[i]+60,1,"square");
-				//console.log("hi");
+				if(t%2==0)
+				playPitch(pitches[i]+60,1,inst1);
 				i=(i+1)%pitches.length;
-			},250/(bpm/60));
+				if(arp==0){
+					if(t%32==0){
+					playPitch(selchords[k][0]+48,16,inst2);
+					playPitch(selchords[k][1]+48,16,inst2);
+					playPitch(selchords[k][2]+48,16,inst2);
+					k=(k+1)%selchords.length;
+					}
+				}
+				if(arp==1){
+					playPitch(selchords[k][t%3]+48,0.5,inst2);
+					if(t%32==0){
+					k=(k+1)%selchords.length;
+					}
+				}
+				if(arp==2){
+					if(t%2==0)
+					playPitch(selchords[k][(t%4)%3]+48,1,inst2);
+					if(t%32==0){
+					k=(k+1)%selchords.length;
+					}
+				}
+				//console.log("hi");
+				t++;
+			},125/(bpm/60));
 			
 			function genPitches(){
 				genDerfs();
@@ -125,11 +177,16 @@
 					}	
 				}*/
 				console.log("generated the pitches");
+				selchords=[];
+				for (var l=0;l<4;l++){
+					selchords.push(chords[Math.floor(Math.random()*chords.length)])
+				}
+				console.log("Generated the chords");
 			}
 			function genDerfs(){
 				derfs=[];
 				var a =[];
-				for(var i=0;i<8;i++){
+				for(var i=0;i<16;i++){
 					a[i]=Math.floor(Math.random()*6);
 				}
 				derfs.push(a);
@@ -142,22 +199,22 @@
 				var mode = Math.floor(Math.random()*3);
 				if (mode==0){
 					//Make new derf
-					for (var i=0;i<8;i++){
+					for (var i=0;i<16;i++){
 						c.push(Math.floor(Math.random()*6));
 					}
 				}
 				if (mode==1){
 					//Make new derf
-					for (var i=0;i<4;i++){
+					for (var i=0;i<8;i++){
 						c.push(b[i]);
 					}
-					for (var i=0;i<4;i++){
+					for (var i=0;i<8;i++){
 						c.push(Math.floor(Math.random()*6));
 					}
 				}
 				if (mode==2){
 					//Make new derf
-					for (var i=0;i<8;i++){
+					for (var i=0;i<16;i++){
 						c.push(b[i]+1);
 					}
 				}
@@ -173,6 +230,7 @@
 			
 			
 			function playPitch(pit,time,type){
+				blocks.push([(pit-48)*10,(pit-48)*10+10,time,type]);
 				
 				var htz = 440*Math.pow((2),(pit-60-9)/12);
 				var volume = audioCtx.createGain();
