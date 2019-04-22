@@ -43,7 +43,7 @@ function BodyPart(name="unnamed",typ=0,color="#FFAA00"){
 			var b = data[i+2];
 			var a = data[i+3];
 			if(true){
-				if(!(r<50&&g<50&&b<50)){
+				if(true){
 					data[i]=rgbcolor[0];
 					data[i+1]=rgbcolor[1];
 					data[i+2]=rgbcolor[2];
