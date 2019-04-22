@@ -1,4 +1,4 @@
-function BodyPart(name="unnamed",typ=0,color="#FF0000"){
+function BodyPart(name="unnamed",typ=0,color="#FFAA00"){
 	//This is the object BodyPart, name is what the image is called, and typ is which version of that body part is shown.
 	//the color variable represents the color of the image.
 	//this.color="rgb(255,0,0)";
