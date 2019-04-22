@@ -1,8 +1,8 @@
 function BodyPart(name="unnamed",typ=0,color="#FFAA00"){
 	//This is the object BodyPart, name is what the image is called, and typ is which version of that body part is shown.
 	//the color variable represents the color of the image.
-	//this.color="rgb(255,0,0)";
-	this.color=color;
+
+    this.color=color;
 	this.name=name;
 	this.typ=typ;
 	this.img = new Image();
@@ -36,7 +36,7 @@ function BodyPart(name="unnamed",typ=0,color="#FFAA00"){
 		//Converts the color string to rgb value
 		var rgbcolor = this.convertColorToRGB();
 		//Gets the data from the canvas
-		var data=ttx.getImageData(0,0,cw,ch).data;
+		var data=etx.getImageData(0,0,cw,ch).data;
 		for(var i =0;i<cw*ch*4;i+=4){
 			var r = data[i];
 			var g = data[i+1];
