@@ -32,7 +32,7 @@ function BodyPart(name="unnamed",typ=0,color="#FFAA00"){
 		//Draws image onto canvas
 		
         etx.drawImage(this.img,0,0);
-		etx.fillRect(5,10,50,50);
+		//etx.fillRect(5,10,50,50);
 		//Converts the color string to rgb value
 		var rgbcolor = this.convertColorToRGB();
 		//Gets the data from the canvas
@@ -50,6 +50,7 @@ function BodyPart(name="unnamed",typ=0,color="#FFAA00"){
 				}
 			}
 		}
+        etx.getImageData(0,0,cw,ch).data=(data);
 		return can;
 	}
 	
