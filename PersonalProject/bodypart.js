@@ -22,20 +22,16 @@ function BodyPart(name="unnamed",typ=0,color="#FF0000"){
 	this.convertImageColor=function(){
 		//Creates temporary canvas
 		var can = document.createElement("canvas");
-        var tan = document.createElement("canvas");
 		var cw=this.img.width;
 		var ch=this.img.height;
 		can.width=cw;
 		can.height=ch;
-        tan.width=cw;
-        tan.height=ch;
+        
+        
 		var etx = can.getContext("2d");
-        var ttx = tan.getContext("2d");
-		
 		//Draws image onto canvas
 		
-        ttx.drawImage(this.img,0,0);
-        etx.drawImage(tan,0,0);
+        etx.drawImage(this.img,0,0);
 		etx.fillRect(5,10,50,50);
 		//Converts the color string to rgb value
 		var rgbcolor = this.convertColorToRGB();
@@ -46,7 +42,7 @@ function BodyPart(name="unnamed",typ=0,color="#FF0000"){
 			var g = data[i+1];
 			var b = data[i+2];
 			var a = data[i+3];
-			if(a>128){
+			if(true){
 				if(!(r<50&&g<50&&b<50)){
 					data[i]=rgbcolor[0];
 					data[i+1]=rgbcolor[1];
