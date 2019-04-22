@@ -35,18 +35,19 @@ function BodyPart(name="unnamed",typ=0,color="#FFAA00"){
 		//etx.fillRect(5,10,50,50);
 		//Converts the color string to rgb value
 		var rgbcolor = this.convertColorToRGB();
+        console.log("rgb"+rgbcolor)
 		//Gets the data from the canvas
-		var data=etx.getImageData(0,0,cw,ch).data;
+		var idata=etx.getImageData(0,0,cw,ch);
 		for(var i =0;i<cw*ch*4;i+=4){
-			var r = data[i];
-			var g = data[i+1];
-			var b = data[i+2];
-			var a = data[i+3];
+			var r = idata.data[i];
+			var g = idata.data[i+1];
+			var b = idata.data[i+2];
+			var a = idata.data[i+3];
 			if(true){
 				if(true){
-					data[i]=rgbcolor[0];
-					data[i+1]=rgbcolor[1];
-					data[i+2]=rgbcolor[2];
+					idata.data[i]=rgbcolor[0];
+					idata.data[i+1]=rgbcolor[1];
+					idata.data[i+2]=rgbcolor[2];
 				}
 			}
 		}

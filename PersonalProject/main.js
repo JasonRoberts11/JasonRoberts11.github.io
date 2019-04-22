@@ -1,6 +1,6 @@
 //Initial Variables
-var width=640;
-var height=640;
+var width=768;
+var height=768;
 
 
 //Defines the variables for the Program
