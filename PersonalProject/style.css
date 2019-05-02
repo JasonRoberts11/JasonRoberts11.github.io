@@ -1,0 +1,29 @@
+body{
+  background:#AAAAAA;
+  text-align: center;
+  
+}
+#main{
+  //border:1px solid#EEEEEE;
+  width: 50%;
+  margin:auto;
+  display: flex;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:110%;
+  background:#AAAAAA;
+  text-align: center;
+}
+table{
+  //background:#AAAAAA;
+}
+td{
+  color:white;
+  text-align:center;
+}
+button,input{
+  background: #EEEEEE;
+  border:none;
+  border-radius: 5px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size:110%;
+}
