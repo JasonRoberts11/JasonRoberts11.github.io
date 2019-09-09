@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>BeatSaberOnlineEditor</title>
+</head>
+<body>
+<p>Import Zip File:
+<input type="file" id="zipimport" accept=".zip"></input>
+</p>
+<p></p>
+</body>
+
+<script src = "https://howlerjs.com/assets/howler.js/dist/howler.js"></script>
+<script src = "https://stuk.github.io/jszip/dist/jszip.js"></script>
+<script>
+//Use JSZIP   https://stuk.github.io/jszip/;
+
+
+
+
+
+
+
+let infoObj;
+/* _version:
+ _songName :
+ _songSubName:
+ _songAuthorName:
+ _levelAuthorName:
+ _beatsPerMinute: 160
+ _songFilename: "Happey.egg"
+ _coverImageFilename: "name.jpg"
+ _envronmentName: "TriangleEnvironment"
+*/
+let beatObj;
+// _version:"2.0.0"
+// _notes[] : [{"_time":30.075332641601562,"_lineIndex":0,"_lineLayer":0,"_type":0,"_cutDirection":1}
+// _obstacles[] : [{"_time":0.07533333450555801,"_lineIndex":3,"_type":0,"_duration":28,"_width":1},
+// _events[] : [{"_time":29.075332641601562,"_type":0,"_value":5},
+// _bookmarks[] :
+// _BPMChanges[] :
+function UpdateBeatMap(){
+}
+
+let fileInput = document.getElementById("zipimport");
+fileInput.onchange = LoadFile;
+
+
+function LoadFile(){
+	let file;
+	file = fileInput.files[0];
+	console.log("Importing:",file.name);
+	let azip = new JSZip();
+	azip.loadAsync(file).then(function(zip){
+		let infoFile = azip.file("info.dat");
+		if(infoFile != null){
+			console.log("found info.dat");
+			infoFile.async("string")
+			.then(function (infoString){ //After the info file is read
+				console.log(infoString);
+				infoObj = JSON.parse(infoString);
+				console.log("Loaded " + infoObj._songName);
+				let diffObj = infoObj._difficultyBeatmapSets[0]._difficultyBeatmaps[0];
+				console.log("Loading: " + diffObj._beatmapFilename);
+				let beatFile = azip.file(diffObj._beatmapFilename); // Loads the Beat file
+				if(beatFile != null){
+					beatFile.async("string")
+					.then(function (beatString){ //After the beat file is read
+						//console.log(beatString);
+						beatObj = JSON.parse(beatString);
+						console.log("loaded " + beatFile.name);
+						UpdateBeatMap();
+					});
+				}else{
+					console.log("Could not find " + diffObj._beatmapFilename);
+				}
+
+				let songFile = azip.file(infoObj._songFilename);
+				if(songFile != null){
+					songFile.async("blob")
+					.then(function (songBlob){
+					
+						var sound = new Howl({
+							src: [songBlob],
+							format: ['ogg']
+						});
+						sound.play();
+						console.log("Playing Song");
+					})
+				}else{
+					console.log("Could not find " + infoObj._songFilename);
+				}
+			});
+		}else{
+			console.log("Could not load info.dat");
+		}
+	});
+}
+
+</script>
+
+
+
+</html>
