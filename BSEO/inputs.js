@@ -4,7 +4,11 @@ let SETTINGS = ["songName","songSubName","songAuthorName","levelAuthorName"]
 let BPMInput = document.getElementById("BPMInput");
 
 let beatSong;
-
+let sliderInput = document.getElementById("timeSlider");
+sliderInput.oninput = function(){
+	beatSong.seek(this.value/10000*beatSong.duration());
+	upSeek(beatSong.seek());
+}
 
 function GenSettings(){
 	let h = "";
@@ -42,6 +46,9 @@ function UpdateSong(){
 		format: ['ogg'],
 		html5: true
 	});
+	beatSong.on("end",function(){
+		playbutton.innerHTML="Play";
+	},songId);
 }
 console.log(JSZip.support.blob);
 

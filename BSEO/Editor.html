@@ -25,11 +25,14 @@ Import Zip File:
 		Song:<input id="songImport" type="file"></br>
 		Image:<input id="imgImport" type="file"><img id="cover"></img>
 	</div>
-	<!--<div id="editor">
-		<canvas id="canvas"></canvas>
-	
-	</div>-->
-<button id="playbutton">Play</button>
+	<div id="editor">
+		<input type="range" min="0" max="10000" value="50" id="timeSlider">
+		<p>
+		<button id="playbutton">Play</button>
+		<button id="stopbutton">Stop</button>
+		
+		</p>
+	</div>
 <p></p>
 </div>
 </main>
@@ -67,18 +70,29 @@ let beatObj;
 
 GenSettings();
 
-let playbutton = document.getElementById("playbutton");
+document.getElementById("stopbutton").onclick = function(){
+	beatSong.stop(songId);
+	playbutton.innerHTML="Play";
+}
 
+let playbutton = document.getElementById("playbutton");
 playbutton.onclick = function(){PlaySong();}
 
 let songUrl;
 let coverUrl;
 let songId;
 function PlaySong(){
-	beatSong.stop(songId);
-	songId = beatSong.play();
-	console.log("Playign song");
+	if(beatSong.playing(songId)){
+		playbutton.innerHTML="Play";
+		beatSong.pause(songId);
+	}else{
+		playbutton.innerHTML="Pause";
+		songId = beatSong.play();
+	}
 }
+
+
+
 
 /*
 let canv = document.getElementById("canvas");
@@ -105,33 +119,58 @@ var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
 scene.add( directionalLight );
 
 
-//Create Cube
-var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-var sphere = new THREE.DodecahedronGeometry(0.8,0);
-var Bluematerial = new THREE.MeshLambertMaterial( { color: 0xff, emmisive:0xff } );
-var Redmaterial = new THREE.MeshLambertMaterial( { color: 0xff0000, emmisive:0xff0000 } );
-var Blackmaterial = new THREE.MeshLambertMaterial( { color: 0x404040, emmisive:0x000000 } );
-
-var cube = new THREE.Mesh( geometry, Bluematerial );
-scene.add( cube );
-
-var Trigeometry = new THREE.BufferGeometry( 1, 1, 1 );
+//Create Geometries
+var cubeGeo = new THREE.BoxGeometry( 1, 1, 1 );
+var bombGeo = new THREE.DodecahedronGeometry(0.8,0);
+var triGeo = new THREE.BufferGeometry( 1, 1, 1 );
 var TriVerts = new Float32Array([
 -.5, 0.51, 0.5,
 0.5, 0.51, 0.5,
 0.0, 0.51, 0.3
-
 ])
-Trigeometry.addAttribute('position',new THREE.BufferAttribute( TriVerts, 3 ) ) 
-var Whitematerial = new THREE.MeshLambertMaterial( { color: 0xffffff, emmisive:0xffffff } );
-var tri = new THREE.Mesh( Trigeometry, Whitematerial );
+triGeo.addAttribute('position',new THREE.BufferAttribute( TriVerts, 3 ) );
+var planeGeo = new THREE.PlaneGeometry(1,1);
+
+//Create Materials
+var blueMat = new THREE.MeshLambertMaterial( { color: 0xff, emmisive:0xff } );
+var redMat = new THREE.MeshLambertMaterial( { color: 0xff0000, emmisive:0xff0000 } );
+var blackMat = new THREE.MeshLambertMaterial( { color: 0x404040, emmisive:0x000000 } );
+var whiteMat = new THREE.MeshLambertMaterial( { color: 0xffffff, emmisive:0xffffff } );
+var transMat = new THREE.MeshBasicMaterial({color:0xffffff, opacity:0.2, transparent:true});
+var redTransMat = new THREE.MeshBasicMaterial({color:0x900000, opacity:0.5, transparent:true});
+var blueTransMat = new THREE.MeshBasicMaterial({color:0x000090, opacity:0.5, transparent:true});
+//Creates the planeGeo
+for(x=0;x<4;x++){
+	for(y=0;y<3;y++){
+		let t = new THREE.Mesh(planeGeo,transMat);
+		t.position.x=(x-1.5)*1.3+10;
+		t.position.y=(y-1)*1.3;
+		t.position.z=(0);
+		scene.add(t)
+	}
+}
+
+//Create cube w/ Triang,e
+var cube = new THREE.Mesh( cubeGeo, blueMat );
+var tri = new THREE.Mesh( triGeo, whiteMat );
 cube.add( tri);
 
+//Creates the tracking spheres
+var smsphere = new THREE.DodecahedronGeometry(0.2,0);
+
+var blTrk = new THREE.Mesh(smsphere,blueMat);
+var rdTrk = new THREE.Mesh(smsphere,redMat);
+scene.add(blTrk);
+scene.add(rdTrk);
+
+
+//setsvariables
 let idcopy=[];
 let cubes=[];
 camera.position.z = 5;
 camera.position.x = 10;
 
+//creates cube array
 for(i=0;i<60;i++){
 let cln = cube.clone(true);
 scene.add(cln);
@@ -139,6 +178,109 @@ cln.position.z=i*-1.1;
 cubes.push(cln);
 idcopy.push(0);
 }
+
+
+let ROTS = [0,PI,PI/2,3*PI/2,PI/4,7*PI/4,3*PI/4,5*PI/4,PI/8]
+
+//On Animate
+let tre=0;
+let BPM;
+
+let seekNumNow=0;
+function upSeek(now){
+	let seekNum = findSeekNum();
+	seekNumNow=seekNum;
+	console.log(seekNum+":"+now);
+	for(i=0;i<cubes.length;i++){
+		let c =beatObj._notes[seekNum+i];
+		idcopy[i]=i+seekNum;
+	}
+}
+
+function animate() {
+	requestAnimationFrame( animate );
+	tre++;
+	if(beatSong!=null){
+		BPM = BPMInput.value;
+		let now = beatSong.seek();
+		seekNumNow = upSeekNum();
+		if(tre%60==0){
+			upSeek(now);
+		}
+		for(i=0;i<cubes.length;i++){
+			let c =beatObj._notes[idcopy[i]];
+			if(c!=null){
+				let ct = c._time/BPM*60;
+				let cb = cubes[i];
+				cb.position.z = (ct-now)*-25;
+				cb.position.x = (c._lineIndex-1.5)*1.3+10;
+				cb.position.y = (c._lineLayer-1)*1.3;
+				cb.rotation.x= PI/2;
+				cb.rotation.y = ROTS[c._cutDirection];
+				cb.geometry=cubeGeo;
+				if(c._type==0){
+					cb.material = redMat;
+				}else if(c._type==1){
+					cb.material = blueMat;
+				}else{
+					cb.geometry = bombGeo;
+					cb.material = blackMat;
+				}
+				if(ct-now<0){
+				if(c._type==0){
+					cb.material = redTransMat;
+				}else if(c._type==1){
+					cb.material = blueTransMat;
+				}else{
+					cb.geometry = bombGeo;
+					cb.material = transekMat;
+				}
+				}
+			}else{
+				let cb = cubes[i];
+				cb.position.z = 20;
+				cb.position.x = 0;
+				cb.position.y = 0;
+
+
+			}
+		}
+		if(seekNumNow>0){
+				let bluepre = beatObj._notes[findPrev(1)];
+				let bluenxt = beatObj._notes[findNext(1)];
+				let pre2x = bluepre._lineIndex + 1.8*Math.cos(ROTS[bluepre._cutDirection]+PI/2);
+				let pre2y = bluepre._lineLayer + 1.8*Math.sin(ROTS[bluepre._cutDirection]+PI/2);
+				let nxt2x = bluenxt._lineIndex + -1.8*Math.cos(ROTS[bluenxt._cutDirection]+PI/2);
+				let nxt2y = bluenxt._lineLayer + -1.8*Math.sin(ROTS[bluenxt._cutDirection]+PI/2);
+				let ate = (now/60*BPM-bluepre._time) / (bluenxt._time-bluepre._time);
+				let bte = 1-ate;
+				blTrk.position.x = ((bluepre._lineIndex*bte*bte*bte+bluenxt._lineIndex*ate*ate*ate + 3*bte*bte*ate*pre2x + 3*ate*ate*bte*nxt2x)-1.5)*1.3+10;
+				blTrk.position.y = ((bluepre._lineLayer*bte*bte*bte+bluenxt._lineLayer*ate*ate*ate + 3*bte*bte*ate*pre2y+ 3*ate*ate*bte*nxt2y)-1)*1.3;
+				blTrk.position.z = 0;
+
+				bluepre = beatObj._notes[findPrev(0)];
+				bluenxt = beatObj._notes[findNext(0)];
+				pre2x = bluepre._lineIndex + 1.8*Math.cos(ROTS[bluepre._cutDirection]+PI/2);
+				pre2y = bluepre._lineLayer + 1.8*Math.sin(ROTS[bluepre._cutDirection]+PI/2);
+				nxt2x = bluenxt._lineIndex + -1.8*Math.cos(ROTS[bluenxt._cutDirection]+PI/2);
+				nxt2y = bluenxt._lineLayer + -1.8*Math.sin(ROTS[bluenxt._cutDirection]+PI/2);
+				ate = (now/60*BPM-bluepre._time) / (bluenxt._time-bluepre._time);
+				bte = 1-ate;
+				rdTrk.position.x = ((bluepre._lineIndex*bte*bte*bte+bluenxt._lineIndex*ate*ate*ate + 3*bte*bte*ate*pre2x + 3*ate*ate*bte*nxt2x)-1.5)*1.3+10;
+				rdTrk.position.y = ((bluepre._lineLayer*bte*bte*bte+bluenxt._lineLayer*ate*ate*ate + 3*bte*bte*ate*pre2y+ 3*ate*ate*bte*nxt2y)-1)*1.3;
+				rdTrk.position.z = 0;
+
+
+				/*if(tre%20==0){
+					console.log(ate);
+				}*/
+			}
+			sliderInput.value = 10000*now / beatSong.duration();
+	}
+	renderer.render( scene, camera );
+}
+animate();
+
 function findSeekNum(){
 	let temp = 0;
 	for(let i=0;i<beatObj._notes.length;i++){
@@ -183,95 +325,6 @@ function findNext(type){
 	}
 	return temp;
 }
-
-
-let ROTS = [0,PI,PI/2,3*PI/2,PI/4,7*PI/4,3*PI/4,5*PI/4,PI/8]
-
-//On Animate
-let tre=0;
-let BPM;
-
-var smsphere = new THREE.DodecahedronGeometry(0.2,0);
-var blTrk = new THREE.Mesh(smsphere,Bluematerial);
-var rdTrk = new THREE.Mesh(smsphere,Redmaterial);
-scene.add(blTrk);
-scene.add(rdTrk);
-let seekNumNow=0;
-
-function animate() {
-	requestAnimationFrame( animate );
-	tre++;
-	if(beatSong!=null){
-		BPM = BPMInput.value;
-		let now = beatSong.seek();
-		seekNumNow = upSeekNum();
-		if(tre%60==0){
-			let seekNum = findSeekNum();
-			seekNumNow=seekNum;
-			console.log(seekNum+":"+now);
-			for(i=0;i<cubes.length;i++){
-				let c =beatObj._notes[seekNum+i];
-				idcopy[i]=i+seekNum;
-			}
-		}
-		for(i=0;i<cubes.length;i++){
-			let c =beatObj._notes[idcopy[i]];
-			if(c!=null){
-			let ct = c._time/BPM*60;
-			let cb = cubes[i];
-			cb.position.z = (ct-now)*-25;
-			cb.position.x = (c._lineIndex-1.5)*1.3+10;
-			cb.position.y = (c._lineLayer-1)*1.3;
-			cb.rotation.x= PI/2;
-			cb.rotation.y = ROTS[c._cutDirection];
-			cb.geometry=geometry;
-			if(c._type==0){
-				cb.material = Redmaterial;
-			}else if(c._type==1){
-				cb.material = Bluematerial;
-			}else{
-				cb.geometry = sphere;
-				cb.material = Blackmaterial;
-			}
-			if(ct-now<0){
-			cb.position.z=10;
-			}
-			}
-		}
-		if(seekNumNow>0){
-				let bluepre = beatObj._notes[findPrev(1)];
-				let bluenxt = beatObj._notes[findNext(1)];
-				let pre2x = bluepre._lineIndex + 1.8*Math.cos(ROTS[bluepre._cutDirection]+PI/2);
-				let pre2y = bluepre._lineLayer + 1.8*Math.sin(ROTS[bluepre._cutDirection]+PI/2);
-				let nxt2x = bluenxt._lineIndex + -1.8*Math.cos(ROTS[bluenxt._cutDirection]+PI/2);
-				let nxt2y = bluenxt._lineLayer + -1.8*Math.sin(ROTS[bluenxt._cutDirection]+PI/2);
-				let ate = (now/60*BPM-bluepre._time) / (bluenxt._time-bluepre._time);
-				let bte = 1-ate;
-				blTrk.position.x = ((bluepre._lineIndex*bte*bte*bte+bluenxt._lineIndex*ate*ate*ate + 3*bte*bte*ate*pre2x + 3*ate*ate*bte*nxt2x)-1.5)*1.3+10;
-				blTrk.position.y = ((bluepre._lineLayer*bte*bte*bte+bluenxt._lineLayer*ate*ate*ate + 3*bte*bte*ate*pre2y+ 3*ate*ate*bte*nxt2y)-1)*1.3;
-				blTrk.position.z = 0;
-
-				bluepre = beatObj._notes[findPrev(0)];
-				bluenxt = beatObj._notes[findNext(0)];
-				pre2x = bluepre._lineIndex + 1.8*Math.cos(ROTS[bluepre._cutDirection]+PI/2);
-				pre2y = bluepre._lineLayer + 1.8*Math.sin(ROTS[bluepre._cutDirection]+PI/2);
-				nxt2x = bluenxt._lineIndex + -1.8*Math.cos(ROTS[bluenxt._cutDirection]+PI/2);
-				nxt2y = bluenxt._lineLayer + -1.8*Math.sin(ROTS[bluenxt._cutDirection]+PI/2);
-				ate = (now/60*BPM-bluepre._time) / (bluenxt._time-bluepre._time);
-				bte = 1-ate;
-				rdTrk.position.x = ((bluepre._lineIndex*bte*bte*bte+bluenxt._lineIndex*ate*ate*ate + 3*bte*bte*ate*pre2x + 3*ate*ate*bte*nxt2x)-1.5)*1.3+10;
-				rdTrk.position.y = ((bluepre._lineLayer*bte*bte*bte+bluenxt._lineLayer*ate*ate*ate + 3*bte*bte*ate*pre2y+ 3*ate*ate*bte*nxt2y)-1)*1.3;
-				rdTrk.position.z = 0;
-
-
-				if(tre%20==0){
-					console.log(ate);
-				}
-			}
-	}
-	renderer.render( scene, camera );
-}
-animate();
 
 
 </script>
