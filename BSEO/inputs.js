@@ -53,6 +53,7 @@ fileInput.onchange = LoadFile;
 document.getElementById("loadTest").onclick = function(){
 	getFileObject('testfile.zip', function (fileObject) {
      fileInput.files[0]=fileObject;
+	 console.log(fileObject.name);
 	 LoadFile();
 }); 
 }
