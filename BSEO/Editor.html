@@ -4,25 +4,47 @@
 <head>
     <meta charset="utf-8" />
     <title>BeatSaberOnlineEditor</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<p>Import Zip File:
-<input type="file" id="zipimport" accept=".zip"></input>
-</p>
+<div id="everything">
+<div id="imdiv">
+
+Import Zip File:
+<input type="file" id="zipimport" accept=".zip">
+<button id="loadTest">Load Test File</button>
+</div>
+
+
+<div id="maindiv">
+	<div id="settings">
+		<table id = "setTable">
+		</table>
+		BPM: <input id="BPMInput" type="number" class="smlin"> </br>
+
+		Song:<input id="songImport" type="file"></br>
+		Image:<input id="imgImport" type="file"><img id="cover"></img>
+	</div>
+	<!--<div id="editor">
+		<canvas id="canvas"></canvas>
+	
+	</div>-->
+<button id="playbutton">Play</button>
 <p></p>
-</body>
+</div>
+</main>
+
 
 <script src = "https://howlerjs.com/assets/howler.js/dist/howler.js"></script>
 <script src = "https://stuk.github.io/jszip/dist/jszip.js"></script>
+<script src	= "https://threejs.org/build/three.js"></script>
+<script src = "fileLoader.js"></script>
+<script src = "inputs.js"></script>
 <script>
-//Use JSZIP   https://stuk.github.io/jszip/;
+//Use JSZIP		https://stuk.github.io/jszip/;
+//Use Howler.js	
 
-
-
-
-
-
-
+let PI = 3.14159265;
 let infoObj;
 /* _version:
  _songName :
@@ -41,65 +63,219 @@ let beatObj;
 // _events[] : [{"_time":29.075332641601562,"_type":0,"_value":5},
 // _bookmarks[] :
 // _BPMChanges[] :
-function UpdateBeatMap(){
+
+
+GenSettings();
+
+let playbutton = document.getElementById("playbutton");
+
+playbutton.onclick = function(){PlaySong();}
+
+let songUrl;
+let coverUrl;
+let songId;
+function PlaySong(){
+	beatSong.stop(songId);
+	songId = beatSong.play();
+	console.log("Playign song");
 }
 
-let fileInput = document.getElementById("zipimport");
-fileInput.onchange = LoadFile;
+/*
+let canv = document.getElementById("canvas");
+let ctx = canv.getContext("2d");
+canv.width=400;
+canv.height=400;*/
+/*let updateLoop = setInterval(SeekUpdate,30);
+
+function SeekUpdate(){
+ctx.clearRect;
+}*/
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+var renderer = new THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
 
 
-function LoadFile(){
-	let file;
-	file = fileInput.files[0];
-	console.log("Importing:",file.name);
-	let azip = new JSZip();
-	azip.loadAsync(file).then(function(zip){
-		let infoFile = azip.file("info.dat");
-		if(infoFile != null){
-			console.log("found info.dat");
-			infoFile.async("string")
-			.then(function (infoString){ //After the info file is read
-				console.log(infoString);
-				infoObj = JSON.parse(infoString);
-				console.log("Loaded " + infoObj._songName);
-				let diffObj = infoObj._difficultyBeatmapSets[0]._difficultyBeatmaps[0];
-				console.log("Loading: " + diffObj._beatmapFilename);
-				let beatFile = azip.file(diffObj._beatmapFilename); // Loads the Beat file
-				if(beatFile != null){
-					beatFile.async("string")
-					.then(function (beatString){ //After the beat file is read
-						//console.log(beatString);
-						beatObj = JSON.parse(beatString);
-						console.log("loaded " + beatFile.name);
-						UpdateBeatMap();
-					});
-				}else{
-					console.log("Could not find " + diffObj._beatmapFilename);
-				}
+//Create Light
+var light = new THREE.AmbientLight( 0x808080 ); // soft white light
+scene.add( light );
+var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+scene.add( directionalLight );
 
-				let songFile = azip.file(infoObj._songFilename);
-				if(songFile != null){
-					songFile.async("blob")
-					.then(function (songBlob){
-					
-						var sound = new Howl({
-							src: [songBlob],
-							format: ['ogg']
-						});
-						sound.play();
-						console.log("Playing Song");
-					})
-				}else{
-					console.log("Could not find " + infoObj._songFilename);
-				}
-			});
-		}else{
-			console.log("Could not load info.dat");
+
+//Create Cube
+var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+var sphere = new THREE.DodecahedronGeometry(0.8,0);
+var Bluematerial = new THREE.MeshLambertMaterial( { color: 0xff, emmisive:0xff } );
+var Redmaterial = new THREE.MeshLambertMaterial( { color: 0xff0000, emmisive:0xff0000 } );
+var Blackmaterial = new THREE.MeshLambertMaterial( { color: 0x404040, emmisive:0x000000 } );
+
+var cube = new THREE.Mesh( geometry, Bluematerial );
+scene.add( cube );
+
+var Trigeometry = new THREE.BufferGeometry( 1, 1, 1 );
+var TriVerts = new Float32Array([
+-.5, 0.51, 0.5,
+0.5, 0.51, 0.5,
+0.0, 0.51, 0.3
+
+])
+Trigeometry.addAttribute('position',new THREE.BufferAttribute( TriVerts, 3 ) ) 
+var Whitematerial = new THREE.MeshLambertMaterial( { color: 0xffffff, emmisive:0xffffff } );
+var tri = new THREE.Mesh( Trigeometry, Whitematerial );
+cube.add( tri);
+
+let idcopy=[];
+let cubes=[];
+camera.position.z = 5;
+camera.position.x = 10;
+
+for(i=0;i<60;i++){
+let cln = cube.clone(true);
+scene.add(cln);
+cln.position.z=i*-1.1;
+cubes.push(cln);
+idcopy.push(0);
+}
+function findSeekNum(){
+	let temp = 0;
+	for(let i=0;i<beatObj._notes.length;i++){
+		let c = beatObj._notes[i];
+		temp=i;
+		if(c._time/BPM*60 > beatSong.seek()){
+			i = beatObj._notes.length;
 		}
-	});
+	}
+	return temp;
 }
+function upSeekNum(){
+	let temp = 0;
+	for(let i=seekNumNow;i<beatObj._notes.length;i++){
+		let c = beatObj._notes[i];
+		temp=i;
+		if(c._time/BPM*60 > beatSong.seek()){
+			i = beatObj._notes.length;
+		}
+	}
+	return temp;
+}
+function findPrev(type){
+	let temp = 0;
+	for(let i=seekNumNow-1;i>=0;i--){
+		let c = beatObj._notes[i];
+		temp=i;
+		if(c._type==type){
+			i = -1;
+		}
+	}
+	return temp;
+}
+function findNext(type){
+	let temp = 0;
+	for(let i=seekNumNow;i<beatObj._notes.length;i++){
+		let c = beatObj._notes[i];
+		temp=i;
+		if(c._type==type){
+			i = beatObj._notes.length;
+		}
+	}
+	return temp;
+}
+
+
+let ROTS = [0,PI,PI/2,3*PI/2,PI/4,7*PI/4,3*PI/4,5*PI/4,PI/8]
+
+//On Animate
+let tre=0;
+let BPM;
+
+var smsphere = new THREE.DodecahedronGeometry(0.2,0);
+var blTrk = new THREE.Mesh(smsphere,Bluematerial);
+var rdTrk = new THREE.Mesh(smsphere,Redmaterial);
+scene.add(blTrk);
+scene.add(rdTrk);
+let seekNumNow=0;
+
+function animate() {
+	requestAnimationFrame( animate );
+	tre++;
+	if(beatSong!=null){
+		BPM = BPMInput.value;
+		let now = beatSong.seek();
+		seekNumNow = upSeekNum();
+		if(tre%60==0){
+			let seekNum = findSeekNum();
+			seekNumNow=seekNum;
+			console.log(seekNum+":"+now);
+			for(i=0;i<cubes.length;i++){
+				let c =beatObj._notes[seekNum+i];
+				idcopy[i]=i+seekNum;
+			}
+		}
+		for(i=0;i<cubes.length;i++){
+			let c =beatObj._notes[idcopy[i]];
+			if(c!=null){
+			let ct = c._time/BPM*60;
+			let cb = cubes[i];
+			cb.position.z = (ct-now)*-25;
+			cb.position.x = (c._lineIndex-1.5)*1.3+10;
+			cb.position.y = (c._lineLayer-1)*1.3;
+			cb.rotation.x= PI/2;
+			cb.rotation.y = ROTS[c._cutDirection];
+			cb.geometry=geometry;
+			if(c._type==0){
+				cb.material = Redmaterial;
+			}else if(c._type==1){
+				cb.material = Bluematerial;
+			}else{
+				cb.geometry = sphere;
+				cb.material = Blackmaterial;
+			}
+			if(ct-now<0){
+			cb.position.z=10;
+			}
+			}
+		}
+		if(seekNumNow>0){
+				let bluepre = beatObj._notes[findPrev(1)];
+				let bluenxt = beatObj._notes[findNext(1)];
+				let pre2x = bluepre._lineIndex + 1.8*Math.cos(ROTS[bluepre._cutDirection]+PI/2);
+				let pre2y = bluepre._lineLayer + 1.8*Math.sin(ROTS[bluepre._cutDirection]+PI/2);
+				let nxt2x = bluenxt._lineIndex + -1.8*Math.cos(ROTS[bluenxt._cutDirection]+PI/2);
+				let nxt2y = bluenxt._lineLayer + -1.8*Math.sin(ROTS[bluenxt._cutDirection]+PI/2);
+				let ate = (now/60*BPM-bluepre._time) / (bluenxt._time-bluepre._time);
+				let bte = 1-ate;
+				blTrk.position.x = ((bluepre._lineIndex*bte*bte*bte+bluenxt._lineIndex*ate*ate*ate + 3*bte*bte*ate*pre2x + 3*ate*ate*bte*nxt2x)-1.5)*1.3+10;
+				blTrk.position.y = ((bluepre._lineLayer*bte*bte*bte+bluenxt._lineLayer*ate*ate*ate + 3*bte*bte*ate*pre2y+ 3*ate*ate*bte*nxt2y)-1)*1.3;
+				blTrk.position.z = 0;
+
+				bluepre = beatObj._notes[findPrev(0)];
+				bluenxt = beatObj._notes[findNext(0)];
+				pre2x = bluepre._lineIndex + 1.8*Math.cos(ROTS[bluepre._cutDirection]+PI/2);
+				pre2y = bluepre._lineLayer + 1.8*Math.sin(ROTS[bluepre._cutDirection]+PI/2);
+				nxt2x = bluenxt._lineIndex + -1.8*Math.cos(ROTS[bluenxt._cutDirection]+PI/2);
+				nxt2y = bluenxt._lineLayer + -1.8*Math.sin(ROTS[bluenxt._cutDirection]+PI/2);
+				ate = (now/60*BPM-bluepre._time) / (bluenxt._time-bluepre._time);
+				bte = 1-ate;
+				rdTrk.position.x = ((bluepre._lineIndex*bte*bte*bte+bluenxt._lineIndex*ate*ate*ate + 3*bte*bte*ate*pre2x + 3*ate*ate*bte*nxt2x)-1.5)*1.3+10;
+				rdTrk.position.y = ((bluepre._lineLayer*bte*bte*bte+bluenxt._lineLayer*ate*ate*ate + 3*bte*bte*ate*pre2y+ 3*ate*ate*bte*nxt2y)-1)*1.3;
+				rdTrk.position.z = 0;
+
+
+				if(tre%20==0){
+					console.log(ate);
+				}
+			}
+	}
+	renderer.render( scene, camera );
+}
+animate();
+
 
 </script>
+</body>
 
 
 
