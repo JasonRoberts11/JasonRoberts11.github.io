@@ -48,12 +48,13 @@ console.log(JSZip.support.blob);
 
 let fileInput = document.getElementById("zipimport");
 fileInput.onchange = LoadFile;
-
+let mfile = null;
 
 document.getElementById("loadTest").onclick = function(){
 	getFileObject('testfile.zip', function (fileObject) {
      fileInput.files[0]=fileObject;
-	 console.log(fileObject.name);
+	 mfile = fileObject;
+	 
 	 LoadFile();
 }); 
 }

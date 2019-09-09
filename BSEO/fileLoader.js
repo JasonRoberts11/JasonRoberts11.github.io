@@ -4,6 +4,9 @@
 function LoadFile(){
 	let file;
 	file = fileInput.files[0];
+	if(mfile!=null){
+		file=mfile;
+	}
 	console.log("Importing:",file.name);
 	let azip = new JSZip();
 	azip.loadAsync(file).then(function(zip){
