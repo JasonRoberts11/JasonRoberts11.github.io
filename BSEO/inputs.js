@@ -1,14 +1,49 @@
 // JavaScript source code
 
+
+//InputShowbuttons
+document.getElementById("openSettings").onclick = function(){
+document.getElementById("openSettings").style.display = visible;
+
+
+};
+
+
+
+//Tasdfjo
 let SETTINGS = ["songName","songSubName","songAuthorName","levelAuthorName"]
 let BPMInput = document.getElementById("BPMInput");
+
+let edivide = 4;
 
 let beatSong;
 let sliderInput = document.getElementById("timeSlider");
 sliderInput.oninput = function(){
-	beatSong.seek(this.value/10000*beatSong.duration());
+
+	let want = this.value/10000*beatSong.duration();
+	let rat = 60 / BPM / edivide;
+	beatSong.seek(Math.floor(want/rat)*rat);
 	upSeek(beatSong.seek());
 }
+document.getElementById("seekback").onclick = function(){sknx(-1)};
+document.getElementById("seeknext").onclick = function(){sknx(1)};
+sliderInput.addEventListener("keydown",function(e){
+e.preventDefault();
+if(e.code=="ArrowRight"){
+sknx(1);
+}
+if(e.code=="ArrowLeft"){
+sknx(-1);
+}
+});
+function sknx(amte){
+	let want = beatSong.seek()+0.01;
+	let rat = 60 / BPM / edivide;
+	beatSong.seek(Math.floor(amte+want/rat)*rat);
+	upSeek(beatSong.seek());
+}
+
+
 
 function GenSettings(){
 	let h = "";
@@ -44,7 +79,8 @@ function UpdateSong(){
 	beatSong = new Howl({
 		src: [songUrl],
 		format: ['ogg'],
-		html5: true
+		html5: true,
+		volume:0.1
 	});
 	beatSong.on("end",function(){
 		playbutton.innerHTML="Play";
