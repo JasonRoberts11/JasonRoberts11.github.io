@@ -3,11 +3,13 @@
 
 //InputShowbuttons
 document.getElementById("openSettings").onclick = function(){
-document.getElementById("openSettings").style.display = visible;
-
-
+document.getElementById("settings").style.display = "inline-block";
+document.getElementById("openSettings").style.display = "none";
 };
-
+document.getElementById("closeSettings").onclick = function(){
+document.getElementById("settings").style.display = "none";
+document.getElementById("openSettings").style.display = "inline-block";
+};
 
 
 //Tasdfjo
