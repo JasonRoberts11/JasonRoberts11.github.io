@@ -10,6 +10,19 @@ document.getElementById("closeSettings").onclick = function(){
 document.getElementById("settings").style.display = "none";
 document.getElementById("openSettings").style.display = "inline-block";
 };
+let dispe = document.getElementById("dispMode");
+document.getElementById("red").onclick = function(){
+	placeMode="r";
+	dispe.innerHTML="Red";
+}
+document.getElementById("blue").onclick = function(){
+	placeMode="b";
+	dispe.innerHTML="Blue";
+}
+document.getElementById("eraser").onclick = function(){
+	placeMode="e";
+	dispe.innerHTML="Erase";
+}
 
 
 //Tasdfjo
@@ -29,7 +42,11 @@ sliderInput.oninput = function(){
 }
 document.getElementById("seekback").onclick = function(){sknx(-1)};
 document.getElementById("seeknext").onclick = function(){sknx(1)};
-sliderInput.addEventListener("keydown",function(e){
+
+
+sliderInput.addEventListener("keydown",slikey);
+window.addEventListener("keydown",slikey);
+function slikey(e){
 e.preventDefault();
 if(e.code=="ArrowRight"){
 sknx(1);
@@ -37,7 +54,7 @@ sknx(1);
 if(e.code=="ArrowLeft"){
 sknx(-1);
 }
-});
+}
 function sknx(amte){
 	let want = beatSong.seek()+0.01;
 	let rat = 60 / BPM / edivide;
