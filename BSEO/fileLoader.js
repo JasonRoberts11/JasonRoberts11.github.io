@@ -11,6 +11,9 @@ function LoadFile(){
 	let azip = new JSZip();
 	azip.loadAsync(file).then(function(zip){
 		let infoFile = azip.file("info.dat");
+		if (infoFile == null){
+			infoFile = azip.file("Info.dat");
+		}
 		if(infoFile != null){
 			console.log("found info.dat");
 			infoFile.async("string")
